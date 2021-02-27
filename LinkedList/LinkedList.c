@@ -1,8 +1,10 @@
-#include<stdio.h>
+#include "./LinkedList.h"
+//#include<stdio.h>
 #include<stdlib.h>
-#include<time.h>
-#include<string.h>
-#include "LinkedList.h"
+//#include<time.h>
+//#include<string.h>
+
+
 
 // ---------------------- 
 // |      STRUCTURES    |
@@ -110,6 +112,18 @@ void* foldr(void* (*f)(void*, void*), void* acc, Queue* qq){
 Queue* emptyQ(){
     return NULL;
 }
+
+/**
+ * @brief Create a Empty Q.
+ * 
+ * @param q 
+ */
+void createEmptyQ(Queue* q){
+    q = (Queue*) malloc(sizeof(Queue));
+    q = emptyQ();
+}
+
+
 /**
  * @brief A version of cons that modifies the structure
  * 
@@ -180,6 +194,20 @@ Queue* snoc(void* value,Queue* q){
 }
 
 /**
+ * @brief Flipped arguments version of snoc
+ * 
+ * @param value 
+ *  Value to be appended at the tail of the list.
+ * @param q 
+ *  List where the append happens
+ * @return Queue* 
+ *  Returns a new list with `value` as the last element of the list.
+ */
+Queue* flipSnoc(Queue* q, void* value){
+    return snoc(value,q);
+}
+
+/**
  * @brief Reverses a list.
  * 
  * @param q 
@@ -213,63 +241,33 @@ Queue* filter(int* (*f)(void*),Queue* qq){
     return q;
 }
 
-// ---------------------- 
-// |      TESTING       |
-// ---------------------- 
 
-void* addOne(void* i){
-    int ii = (int) i;
-    return (void*) (i+1);
+/**
+ * @brief Appends two lists
+ * 
+ * @param qq 
+ * @param ll 
+ * @return Queue* 
+ */
+Queue* append(Queue* qq, Queue* ll){
+    Queue* q = (Queue*) malloc(sizeof(Queue));
+    void* (*f)(void*,void*) = (void* (*)(void *,void*)) flipSnoc;
+    q = qq;
+    return (Queue*) foldl(f,(void*)q,ll);
+
 }
 
-
-void* add(void* i, void* j){
-    int ii = (int) i;
-    int jj = (int) j;
-    return (void*) (ii + jj);
-}
-
-
-
-void printInt(int i){
-    printf("%d\n", i);
-}
-
-void printQInt(Queue *q){
-    void (*f)(void*) = (void (*)(void *)) printInt;
-    sequenceIO(f, q);
-}
-
-void* constF(void* val, void* valP){
-         return val; 
-}
-
-int main(int argc, char const *argv[])
-{   
-    void* (*h)(void*,void*) = (void* (*)(void *,void*)) flipCons;
-    void* (*f)(void*,void*) = (void* (*)(void *,void*)) cons;
-    void* (*fP)(void*,void*) = (void* (*)(void *,void*)) snoc;
-    void* (*hP)(void*,void*) = (void* (*)(void *,void*)) add;
+/**
+ * @brief Flattens a list of lists.
+ * 
+ * @param qq 
+ * @return Queue* 
+ */
+Queue* concat(Queue*qq){
     Queue* q = emptyQ();
-    for(int i=0; i<5; i++){
-        consP((void *) i ,&q);
+    while(qq){
+        q = append(q,(Queue*) (qq->val));
+        qq = qq->sig;
     }
-    printf("Printing the list:\n");
-    printQInt(q);
-    printf("Folding left with sum should result in the sum of the elements: ");
-    printf("%d\n", foldl(hP, (void *) 0, q));
-    printf("Folding right with sum should result in the sum of the elements: ");
-    printf("%d\n", foldr(hP, (void *) 0, q));
-    printf("Reversing the list:\n");
-    printQInt(reverse(q));
-    printf("Printing the list again:\n");
-    printQInt(q);
-    printf("Inserting an element at the last position:\n");
-    printQInt(snoc((void*) 5, q));
-    printf("Adding +1: \n");
-    mapP((void* (*)(void *)) addOne,q);
-    printQInt(q);
-    printf("First element: \n");
-    printf("%d\n",(int) foldr((void* (*)(void *,void*)) constF, (void*) 20,q));
-    return EXIT_SUCCESS;
+    return q;
 }
