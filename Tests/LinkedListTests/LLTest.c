@@ -9,10 +9,12 @@
 #define FROM_DYADIC(f) (void* (*)(void *,void*)) f
 #define FROM_MONADIC(f) (void* (*)(void *)) f
 #define FROM_MONADIC_VOID(f) (void (*)(void *)) f
-
+#define COMPSTR(fst, snd) strcmp(fst,snd) == 0
 // ---------------------- 
 // |    AUX FUNCTIONS   |
 // ---------------------- 
+
+typedef void* (*one_var_func) (void*);
 
 /**
  * @brief Adds one to an integer.
@@ -38,6 +40,22 @@ void* add(void* i, void* j){
     return (void*) (ii + jj);
 }
 
+
+
+void* subs(void* i, void* j){
+    int ii = (int) i;
+    int jj = (int) j;
+    return (void*) (ii - jj);
+}
+
+int gt3(void* i){
+    int ii = (int) i;
+    return ii > 3;
+}
+
+int compareStr(void* s, void*t){
+    return COMPSTR((char*) s, (char*)t);
+}
 
 /**
  * @brief Prints a single integer
@@ -217,6 +235,164 @@ int main(int argc, char const *argv[])
     printf("{ ");
     sequenceIO(FROM_MONADIC_VOID(printQStrPrime),ll);
     printf(" }\n\n");
+
+    // ---------------------- 
+    // |      TEST 10        |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 10        |\n----------------------\n\n");
+    printf("La 4ta palabra, de la 2da lista de palabras es::\n\n");
+    printf("%s\n\n",(char*) valueAt(valueAt(ll,1),3));
+
+    // ---------------------- 
+    // |      TEST 11       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 11       |\n----------------------\n\n");
+    printf("Utilizando map, anadimos 1 a cada elemento de la lista .\n\n");
+    printf("{ ");
+    printQInt(q);
+    printf("} -> ");
+    printf("{ ");
+    printQInt(map(FROM_MONADIC(addOne),q));
+    printf("}\n\n");
+
+    // ---------------------- 
+    // |      TEST 12       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 12       |\n----------------------\n\n");
+    printf("Todos los elementos son mayores que 3: .\n\n");
+    printf("{ ");
+    printQInt(q);
+    printf("} -> ");
+    printf("%d\n\n",all(gt3,q));
+
+    // ---------------------- 
+    // |      TEST 13       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 13       |\n----------------------\n\n");
+    printf("Algun elemento es mayor que 3: .\n\n");
+    printf("{ ");
+    printQInt(q);
+    printf("} -> ");
+    printf("%d\n\n",any(gt3,q));
+    
+    // ---------------------- 
+    // |      TEST 14       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 14       |\n----------------------\n\n");
+    printf("La palabra \"colita\" pertenece a la lista de palabras\n\n");
+    printf("{ ");
+    printQStr(concat(ll));
+    printf("} -> %d\n\n",elemBy(compareStr, (void*) "colita", concat(ll)));
+
+
+    // ---------------------- 
+    // |      TEST 15       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 15       |\n----------------------\n\n");
+    printf("Calculando la longitud de la lista:\n\n");
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> %d\n\n", length(q));
+
+    // ---------------------- 
+    // |      TEST 16       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 16       |\n----------------------\n\n");
+    printf("Taking 3 elements of the list:");
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> { ");
+    printQInt(take(3,q));
+    printf("}\n\n");
+
+    // ---------------------- 
+    // |      TEST 17       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 17       |\n----------------------\n\n");
+    printf("Taking 100 elements of the list:");
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> { ");
+    printQInt(take(100,q));
+    printf("}\n\n");
+
+    // ---------------------- 
+    // |      TEST 18       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 18       |\n----------------------\n\n");
+    printf("Dropping 3 elements of the list:");
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> { ");
+    printQInt(drop(3,q));
+    printf("}\n\n");
+
+    // ---------------------- 
+    // |      TEST 19       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 19       |\n----------------------\n\n");
+    printf("Dropping 100 elements of the list:");
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> { ");
+    printQInt(drop(100,q));
+    printf("}\n\n");
+
+    // ---------------------- 
+    // |      TEST 20       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 20       |\n----------------------\n\n");
+    printf("Zipping the list with itself using addition\n\n");
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> { ");
+    printQInt(zipWith(FROM_DYADIC(add),q,q));
+    printf("}\n\n");
+
+    
+    // ---------------------- 
+    // |      TEST 21       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 21       |\n----------------------\n\n");
+    printf("Zipping the list with its tail using addition:\n\n");
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> { ");
+    printQInt(zipWith(FROM_DYADIC(add),q,tail(q)));
+    printf("}\n\n");
+
+    // ---------------------- 
+    // |      TEST 22       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 22       |\n----------------------\n\n");
+    printf("Checking if all of the elements are greater than 3 using and.\n\n");
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> %d\n\n", and(map((void * (*)(void *)) gt3,q)));
+
+    // ---------------------- 
+    // |      TEST 23       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 23       |\n----------------------\n\n");
+    printf("Checking if any of the elements are greater than 3 using or.\n\n");
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> %d\n\n", or(map((void * (*)(void *)) gt3,q)));
+
 
 
     return EXIT_SUCCESS;

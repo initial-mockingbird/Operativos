@@ -1,9 +1,12 @@
 #include "./LinkedList.h"
-//#include<stdio.h>
 #include<stdlib.h>
-//#include<time.h>
-//#include<string.h>
 
+// ---------------------- 
+// |      MACROS        |
+// ---------------------- 
+#define FROM_DYADIC(f) (void* (*)(void *,void*)) f
+#define FROM_MONADIC(f) (void* (*)(void *)) f
+#define FROM_MONADIC_VOID(f) (void (*)(void *)) f
 
 
 // ---------------------- 
@@ -25,8 +28,44 @@ struct  Queue{
     };
 
 // ---------------------- 
+// |   AUX FUNCTIONS    |
+// ----------------------
+
+static int andL(int p, int q){
+    return p && q;
+}
+
+static int orL(int p, int q){
+    return p || q;
+}
+
+// ---------------------- 
 // |      FUNCTIONS     |
 // ----------------------
+
+
+void* head(Queue* q){
+    return q->val;
+}
+
+Queue* tail(Queue* q){
+    return q->sig;
+}
+
+/**
+ * @brief List index (subscript) function, starting from 0.
+ * 
+ * @param q 
+ * @param i 
+ * @return void* 
+ */
+void* valueAt(Queue* q, int i){
+    while(i){
+        q = q->sig;
+        i--;
+    }
+    return q->val;
+}
 
 /**
  * @brief A version of map that modifies the structure.
@@ -43,6 +82,8 @@ void mapP(void* (*f)(void*), Queue* qq){
         q      = q->sig ;
     }
 }
+
+
 
 /**
  * @brief Given a function that performs IO, sequence the series of actions for each element of the list.
@@ -270,4 +311,166 @@ Queue* concat(Queue*qq){
         qq = qq->sig;
     }
     return q;
+}
+
+/**
+ * @brief maps every element of the list qq using the function f.
+ * 
+ * @param f 
+ * @param qq 
+ * @return Queue* 
+ */
+Queue* map(void* (*f)(void*), Queue* qq){
+    Queue* q = emptyQ();
+
+    while(qq){
+        q = snoc(f(qq->val),q);
+        qq = qq->sig;
+    }
+
+    return q;
+}
+
+/**
+ * @brief Zips together two Lists using a function `f`. Shortcircuits on the list of the shortest lenght, thus the list can have different length.
+ * 
+ * @param f 
+ * @param qq 
+ * @param pp 
+ * @return Queue* 
+ */
+Queue* zipWith (void* (*f)(void*,void*), Queue* qq, Queue* pp){
+    Queue* q = emptyQ();
+    while(qq && pp){
+        q = snoc(f(qq->val,pp->val),q);
+        qq = qq->sig;
+        pp = pp->sig;
+    }
+    return q;
+}
+
+/**
+ * @brief Takes `min(n,length(q))` elements out of a list.
+ * 
+ * @param n 
+ * @param qq 
+ * @return Queue* 
+ */
+Queue* take(int n, Queue* qq){
+    Queue* q = emptyQ();
+    while(n && qq){
+        q = snoc(qq->val,q);
+        qq = qq->sig;
+        n--;
+    }
+    return q;
+}
+/**
+ * @briefDrops `min(n,length(q))` elements out of a list.
+ * 
+ * @param n 
+ * @param qq 
+ * @return Queue* 
+ */
+Queue* drop(int n, Queue* qq){
+    Queue* q = emptyQ();
+    while(n && qq){
+        qq = qq->sig;
+        n--;
+    }
+    while(qq){
+        q = snoc(qq->val,q);
+        qq = qq->sig;
+    }
+    return q;
+
+}
+
+/**
+ * @brief Given a predicate `f`, tells whether every element on the list satisfies the predicate.
+ * 
+ * @param f 
+ * @param qq 
+ * @return int 
+ */
+int all(int (*f)(void*),Queue* qq){
+    while(qq){
+        if (!f(qq->val)){
+            return 0;
+        }
+        qq = qq->sig;
+    }
+    return 1;
+}
+
+
+int and(Queue* qq){
+    while(qq){
+        if (! ((int) (qq->val))){
+            return 0;
+        }
+        qq = qq->sig;
+    }
+    return 1;
+}
+
+/**
+ * @brief Given a predicate `f`, tells if any element on the list satisfies the predicate.
+ * 
+ * @param f 
+ * @param qq 
+ * @return int 
+ */
+int any(int (*f)(void*),Queue* qq){
+    while(qq){
+        if (f(qq->val)){
+            return 1;
+        }
+        qq = qq->sig;
+    }
+    return 0;
+}
+
+int or(Queue* qq){
+    while(qq){
+        if ((int) (qq->val)){
+            return 1;
+        }
+        qq = qq->sig;
+    }
+    return 0;
+}
+
+/**
+ * @brief Given a comparison function `f`, a value `a` and a List, tells whether the value belongs to the list.
+ * 
+ * @param f 
+ * @param a 
+ * @param qq 
+ * @return int 
+ */
+int elemBy(int (*f)(void*,void*),void* a, Queue*qq){
+    while(qq){
+        if (f(qq->val,a)){
+            return 1;
+        }
+        qq = qq->sig;
+    }
+    return 0;
+}
+
+/**
+ * @brief Yields the length of the list.
+ * 
+ * @param qq 
+ * @return int 
+ */
+int length(Queue*qq){
+    int i = 0;
+    while(qq){
+        i++;
+        qq = qq->sig;
+    }
+
+    return i;
 }
