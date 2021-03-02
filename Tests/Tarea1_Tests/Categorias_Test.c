@@ -1,5 +1,5 @@
 #include "../../LinkedList/LinkedList.h"
-#include "../../Tarea1/Try.h"
+#include "../../Tarea1/Categorias.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -7,9 +7,26 @@
 // ---------------------- 
 // |      MACROS        |
 // ---------------------- 
+
+/** @def FROM_DYADIC
+ * @brief Casts a dyadic function of type: `a -> b -> c` to `void* -> void* -> void*`.
+ * 
+ */
 #define FROM_DYADIC(f) (void* (*)(void *,void*)) f
+/** @def FROM_MONADIC
+ * @brief Casts a monadic function of type: `a -> b` to `void* -> void*`.
+ * 
+ */
 #define FROM_MONADIC(f) (void* (*)(void *)) f
+/** @def FROM_MONADIC_VOID
+ * @brief Casts a monadic function of type: `a -> ()` to `void* -> void`.
+ * 
+ */
 #define FROM_MONADIC_VOID(f) (void (*)(void *)) f
+/** @def COMPSTR
+ * @brief Compares two strings, returns 1 if they are the same, and 0 otherwise.
+ * 
+ */
 #define COMPSTR(fst, snd) strcmp(fst,snd) == 0
 
 
@@ -44,10 +61,6 @@ void printQStrPrime(Queue *q){
 
 int main(int argc, char const *argv[])
 {
-    /*
-    struct category *categories_list;
-    readData(categories_list);
-    return 0;*/
 
     struct category *categories_list;
     readData(&categories_list);
@@ -58,7 +71,6 @@ int main(int argc, char const *argv[])
     // |      TEST 1        |
     // ---------------------- 
     
-    // Recordar pedirle a mari que quite los \n. 
     printf("\n");
     printf("----------------------\n|      TEST 1        |\n----------------------\n\n");
     printf("Palabras de la primera categoria:\n\n");
@@ -111,6 +123,8 @@ int main(int argc, char const *argv[])
     // |      TEST 4        |
     // ---------------------- 
     
+    // No estoy seguro de si quitar este test, pensar si la funcion countsCategory deberia ser
+    // static o no.
     printf("----------------------\n|      TEST 4        |\n----------------------\n\n");
     printf("Contaremos cuantas palabras de la categoria 4: Exploracion se presentan en la siguiente franse:\n\n");
     categories = categoriesToList(categories_list);
