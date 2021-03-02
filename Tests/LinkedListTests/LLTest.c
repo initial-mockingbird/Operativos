@@ -10,6 +10,7 @@
 #define FROM_MONADIC(f) (void* (*)(void *)) f
 #define FROM_MONADIC_VOID(f) (void (*)(void *)) f
 #define COMPSTR(fst, snd) strcmp(fst,snd) == 0
+
 // ---------------------- 
 // |    AUX FUNCTIONS   |
 // ---------------------- 

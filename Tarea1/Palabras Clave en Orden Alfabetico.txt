@@ -1,0 +1,214 @@
+
+PRIORIDAD 1: DESPEDIDA
+Acabo el tiempo
+Adios
+Chao
+Debo irme
+Hasta luego
+Hora de irme
+Hora de irse
+Me voy
+Tengo que irme
+
+PRIORIDAD 2: PESAME
+Cobro la vida
+Costo la vida
+Estiro la pata
+Fallece
+Fallecio
+Muere
+Murio
+Paso a mejor vida
+Perdio la vida
+
+PRIORIDAD 3: FREUDIANO
+Abuela
+Abuelo
+Es mi
+Hermana
+Hermano
+Madre
+Mama
+Padre
+Papa
+Prima
+Primo
+Se trata de mi
+Tia
+Tio
+
+PRIORIDAD 4: EXPLORACION
+Cree
+Creo
+Dice
+Digo
+Hace
+Hago
+Igual
+Iguales
+Lo mismo
+Parece
+Parecen
+Parecidos
+Piensa
+Pienso
+Recuerda
+Recuerdo
+
+PRIORIDAD 5: ESPACIO SEGURO
+Deberia
+Debo
+Desgraciado
+Disculpa
+Lamento
+Lo Siento
+Maldito
+Perdon
+Puede
+
+PRIORIDAD 6: EXPLORACION SENTIMIENTOS
+Abusa
+Abuso
+Avento
+Cayo
+Dolor
+Duele
+Era
+Estoy
+Exagera
+Fue
+Gane
+Gano
+Hice
+Hizo
+Karma
+Lanzo
+Llego
+Llegue
+Logre
+Logro
+Ocurre
+Ocurrio
+Paso
+Perdi
+Perdio
+Soy
+Trauma
+
+PRIORIDAD 7: PROFUNDIZACION SENTIMIENTOS
+Agrada
+Agrado
+Aguanta
+Aguantar
+Aguanto
+Alegre
+Alegria
+Asco
+Buena
+Bueno
+Colera
+Contento
+Coraje
+Desagrado
+Disgusto
+Divertida
+Divertido
+Estoy sintiendo
+Felicidad
+Feliz
+Gusta
+Ira
+Me siento
+Molesta
+Molestia
+Molesto
+Nauseas
+Pena
+Siento que
+Sola
+Solo
+Triste
+Tristeza
+
+PRIORIDAD 8: POSITIVISMO
+Aguanta
+Aguante
+Aguanto
+Chingada
+Contrario
+Horrible
+Mala
+Malo
+No
+Pesima
+Pesimo
+Resiste
+Resistira
+Resisto
+Terrible
+
+PRIORIDAD 9: DEFLEXION
+Como
+Cual
+Cuales
+Cuando
+Donde
+el es
+Ella es
+Eres
+Estas
+Por que
+Que es
+Quien
+Sois
+Sos
+Tu
+Usted
+Vos
+
+PRIORIDAD 10: AYUDA
+Como funciona
+No se
+Que debo hacer
+Que hacer
+Que hago
+
+PRIORIDAD 11: EXPLORACION
+Desde
+Hacia
+Hasta
+Mediante
+Mientras
+Para
+Por
+Segun
+
+PRIORIDAD 12: DELIMITACION
+Abrumador
+Ellos
+Lleva
+Muchas
+Muchos
+Nos
+Nosotros
+Sobrecogedor
+Tan
+Todas
+Todos
+
+IDENTIFICAR NOMBRE:
+Decimos
+Dicen
+Digo
+Es
+Llama
+Llamo
+
+IDENTIFICAR LUGAR:
+De
+En
+
+IDENTIFICAR GENTILICIO:
+Es
+Es un
+Parece
