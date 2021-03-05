@@ -91,6 +91,35 @@ static int compareStr(void* s, void*t){
 }
 
 /**
+ * @brief Dada una linea, retorna una lista con las palabras que contiene la linea, todas en minuscula y sin simbolos.
+ * 
+ * @param s 
+ * @return Queue* 
+ */
+Queue* tokenizeInput(char* s){
+    char *token;
+    // TODO: reemplazar con la longitud del string en vez de 250
+    char* ss = malloc(250*sizeof(s));
+    strcpy(ss,s);
+    Queue* q = emptyQ();
+    str_tolower(ss);
+    strip_punctuation(ss);
+    if (ss[strlen(ss)-1] == '\n'){
+            ss[strlen(ss)-1] = ' ';
+            if (ss[strlen(ss)-2] == '\r'){
+                ss[strlen(ss)-2] = ' ';
+            }
+        }
+    token = strtok(ss," ");
+    while( token != NULL ) {
+      q = snoc((void*) token,q);
+      token = strtok(NULL, " ");
+   }
+
+   return q;
+}
+
+/**
  * @brief Cuenta cuantas repeteiciones de la frase `ph` se presentan en el string `s`
  * 
  * @param s String representado como linked list de palabras
@@ -102,7 +131,7 @@ int countPhraseBelongsToString(Queue*s, Queue* ph){
     int i = length(s);
     int count = 0;
     while(i >= l){
-        if (and(zipWith(FROM_DYADIC(compareStr),take(l,s),ph))){
+        if (and(zipWith(FROM_DYADIC(compareStr),s,ph))){
             count++;
         }
         i--;
@@ -114,7 +143,10 @@ int countPhraseBelongsToString(Queue*s, Queue* ph){
 
 // ---------------------- 
 // |      FUNCTIONS     |
-// ---------------------- 
+// ----------------------
+
+extern Queue* categorias = NULL;
+
 /**
  * @brief Cuenta la frecuencia de una categoria en un string.
  * 
@@ -125,24 +157,15 @@ int countPhraseBelongsToString(Queue*s, Queue* ph){
 int countsCategory(char* s, Queue* cat){
     char *token;
     int count = 0;
-    // TODO: reemplazar con la longitud del string en vez de 250
-    char* ss = malloc(250*sizeof(s));
-    strcpy(ss,s);
-    token = strtok(ss," ");
-    Queue* q = emptyQ();
-    while( token != NULL ) {
-      q = snoc((void*) token,q);
-      token = strtok(NULL, " ");
-   }
-
     
-   cat = tail(cat);
-   while(cat){
+    Queue* q = tokenizeInput(s);
+    cat = tail(cat);
+    while(cat){
        count += countPhraseBelongsToString(q,head(cat));
        cat = tail(cat);
-   }
+    }
 
-   return count;
+    return count;
 }
 
 /**
@@ -157,9 +180,6 @@ int yieldCategory(char*s, Queue* categories){
     int max = 0;
     int current = 0;
     int i = 0;
-    // TODO: copiar el mensaje a una variable ss, para evitar que el side effect salga fuera de la funcion.
-    str_tolower(s);
-    strip_punctuation(s);
     while(categories){
         current = countsCategory(s,head(categories));
         if (current > max){
@@ -305,24 +325,10 @@ Queue* wordsToList(struct words_list* words){
     Queue* wordsL = emptyQ();
     char *token;
     Queue* q;
-    char* word;
+    Queue* word;
     while(words){
-        q = emptyQ();
-        word = words->value;
-        if (word[strlen(word)-1] == '\n'){
-            word[strlen(word)-1] = ' ';
-            if (word[strlen(word)-2] == '\r'){
-                word[strlen(word)-2] = ' ';
-            }
-        }
-
-        str_tolower(word);
-        token = strtok(word, " ");
-        while(token != NULL){
-            q = snoc((void*) token,q);
-            token = strtok(NULL, " ");
-        }
-        wordsL = snoc((void*) q, wordsL);
+        word = tokenizeInput(words->value);
+        wordsL = snoc((void*) word, wordsL);
         words  = words->next; 
     }
     return wordsL;
@@ -344,5 +350,15 @@ Queue* categoriesToList(struct category *categories){
         categories = categories->next;
     }
 
+    categorias = categoriesL;
     return categoriesL;
+}
+
+void crearCategorias(){
+    struct category *categories_list;
+    readData(&categories_list);
+    Queue* categories = emptyQ();
+    Queue* words = emptyQ();
+    
+    categoriesToList(categories_list);
 }

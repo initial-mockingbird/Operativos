@@ -13,10 +13,13 @@ struct category
     struct category* next;
 };
 
+extern Queue* categorias;
+Queue* tokenizeInput(char* s);
 void readData(struct category **categories);
 Queue* wordsToList(struct words_list* words);
 Queue* categoriesToList(struct category *categories);
 int countPhraseBelongsToString(Queue*s, Queue* ph);
 int countsCategory(char* s, Queue* cat);
 int yieldCategory(char*s, Queue* categories);
+void crearCategorias();
 #endif // CATEGORIAS_H_
