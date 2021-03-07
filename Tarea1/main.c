@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
 
 #define MAX_LEN 100
 #define INTRO_MSG "Bienvenido. Acabas de ingresar a ELIZAG6, una version del bot conversacional ELIZA desarrollado por "\
