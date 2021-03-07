@@ -24,17 +24,17 @@ LINKEAR  = cc
 OBJDIR   = archivosO
 
 #tambien suele hacerse un define con todos los archivos intermedios que se pueden crear
-#cuando hay varis archivos, debe ir separados por espacios en la misma linea
+#cuando hay varios archivos, debe ir separados por espacios en la misma linea
 #Pueden incluirse variables anteriores en las definiciones de otras variables
-OBJETOS  = $(OBJDIR)/techo.o $(OBJDIR)/paredes.o $(OBJDIR)/puerta.o $(OBJDIR)/ventana.o $(OBJDIR)/piso.o $(OBJDIR)/escaleras.o $(OBJDIR)/main.o
+OBJETOS  = $(OBJDIR)/Categorias.o $(OBJDIR)/Persona.o $(OBJDIR)/LinkedList.o $(OBJDIR)/main.o
 
 #El nombre del ejecutable suele darse como un DEFINE tambien
-PROGRAMA = casa.exe
+PROGRAMA = chatbot.out
 
 
 
 #pueden especificarse parametros con ".PHONY" (archivos de mentira)
-#perimitr hacer "make all" y "make clean" es muy comun
+#permitir hacer "make all" y "make clean" es muy comun
 .PHONY: all clean
 
 #el comando "make all" por convencion crea todos los programas
@@ -58,26 +58,17 @@ clean:
 $(PROGRAMA): $(OBJETOS)
 	$(LINKEAR) $(OBJETOS) -o $(PROGRAMA)
 
-$(OBJDIR)/main.o: main.c $(OBJDIR) techo.h paredes.h piso.h escaleras.h
+$(OBJDIR)/main.o: main.c $(OBJDIR) ../LinkedList/LinkedList.h Categorias.h Persona.h
 	$(COMPILAR) main.c -o $(OBJDIR)/main.o
 
-$(OBJDIR)/techo.o: techo.c $(OBJDIR) techo.h paredes.h
-	$(COMPILAR) techo.c -o $(OBJDIR)/techo.o
+$(OBJDIR)/Categorias.o: Categorias.c $(OBJDIR) ../LinkedList/LinkedList.h Categorias.h PC.h
+	$(COMPILAR) Categorias.c -o $(OBJDIR)/Categorias.o
 
-$(OBJDIR)/paredes.o: paredes.c $(OBJDIR) paredes.h puerta.h ventana.h
-	$(COMPILAR) paredes.c -o $(OBJDIR)/paredes.o
+$(OBJDIR)/Persona.o: Persona.c $(OBJDIR) ../LinkedList/LinkedList.h Categorias.h Persona.h
+	$(COMPILAR) Persona.c -o $(OBJDIR)/Persona.o
 
-$(OBJDIR)/puerta.o: puerta.c $(OBJDIR) puerta.h
-	$(COMPILAR) puerta.c -o $(OBJDIR)/puerta.o
-
-$(OBJDIR)/ventana.o: ventana.c $(OBJDIR) ventana.h
-	$(COMPILAR) ventana.c -o $(OBJDIR)/ventana.o
-
-$(OBJDIR)/piso.o: piso.c $(OBJDIR) piso.h
-	$(COMPILAR) piso.c -o $(OBJDIR)/piso.o
-
-$(OBJDIR)/escaleras.o: escaleras.c $(OBJDIR) escaleras.h piso.h
-	$(COMPILAR) escaleras.c -o $(OBJDIR)/escaleras.o
+$(OBJDIR)/LinkedList.o: ../LinkedList/LinkedList.c $(OBJDIR) ../LinkedList/LinkedList.h
+	$(COMPILAR) ../LinkedList/LinkedList.c -o $(OBJDIR)/LinkedList.o
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
