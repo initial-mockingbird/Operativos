@@ -1,0 +1,112 @@
+\hypertarget{main_8c}{}\doxysection{main.\+c File Reference}
+\label{main_8c}\index{main.c@{main.c}}
+
+
+Modulo principal.  
+
+
+{\ttfamily \#include \char`\"{}../\+Linked\+List/\+Linked\+List.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./\+Categorias.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./\+Persona.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{main_8c_aabf4f709c8199e41cf279c77112345fe}\label{main_8c_aabf4f709c8199e41cf279c77112345fe}} 
+\#define {\bfseries MAX\+\_\+\+LEN}~100
+\item 
+\#define {\bfseries INTRO\+\_\+\+MSG}
+\item 
+\mbox{\Hypertarget{main_8c_aa93f0eb578d23995850d61f7d61c55c1}\label{main_8c_aa93f0eb578d23995850d61f7d61c55c1}} 
+\#define {\bfseries FALSE}~0
+\item 
+\mbox{\Hypertarget{main_8c_aa8cecfc5c5c054d2875c03e77b7be15d}\label{main_8c_aa8cecfc5c5c054d2875c03e77b7be15d}} 
+\#define {\bfseries TRUE}~!FALSE
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{main_8c_aabb4a519612556abef1c9752675dbb99}{read\+Input}} (char $\ast$inp)
+\begin{DoxyCompactList}\small\item\em Dado un input del usuario, le asigna un mensaje de respuesta según la categoría a la que pertenezca. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{main_8c_a86f34478f25cda3b4aa7144eaab3024e}{random\+Message}} ()
+\begin{DoxyCompactList}\small\item\em Imprime un mensaje conversacional random. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{main_8c_abf9e6b7e6f15df4b525a2e7705ba3089}\label{main_8c_abf9e6b7e6f15df4b525a2e7705ba3089}} 
+int {\bfseries main} (int argc, char const $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Modulo principal. 
+
+\begin{DoxyAuthor}{Author}
+Daniel Pinto, Mariangela Rizzo, Ka Shing Fu. 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2021-\/03-\/08
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2021 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{main_8c_a0d80b1ab34b9dc2ade9ad18d6a262aff}\label{main_8c_a0d80b1ab34b9dc2ade9ad18d6a262aff}} 
+\index{main.c@{main.c}!INTRO\_MSG@{INTRO\_MSG}}
+\index{INTRO\_MSG@{INTRO\_MSG}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{INTRO\_MSG}{INTRO\_MSG}}
+{\footnotesize\ttfamily \#define INTRO\+\_\+\+MSG}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{                  \textcolor{stringliteral}{"{}Bienvenido. Acabas de ingresar a ELIZAG6, una version del bot conversacional ELIZA desarrollado por "{}}\(\backslash\)}
+\DoxyCodeLine{                  \textcolor{stringliteral}{"{}IBM entre 1964 y 1966 buscando parodiar al psicologo Carl Rogers.\(\backslash\)n\(\backslash\)nELIZA actua como un piscoterapeuta "{}}\(\backslash\)}
+\DoxyCodeLine{                  \textcolor{stringliteral}{"{}y te ayudara a que expreses tus emociones. Para lograrlo, tienes que comunicarte con «ella» como si estuvieses hablando con una persona real.\(\backslash\)n\(\backslash\)n"{}}\(\backslash\)}
+\DoxyCodeLine{                  \textcolor{stringliteral}{"{}Debes tener en cuenta que ELIZA no es un psicoterapeuta real, por lo que solo sirve como desahogo temporal y no puede sustituir la ayuda profesional.\(\backslash\)n\(\backslash\)n"{}}\(\backslash\)}
+\DoxyCodeLine{                  \textcolor{stringliteral}{"{}\#\# Caveats de la version actual:\(\backslash\)n\(\backslash\)n"{}}\(\backslash\)}
+\DoxyCodeLine{                  \textcolor{stringliteral}{"{} -\/ La respuesta de Eliza se eligen en base a la frencuencia de palabras por categoria, en vez de por jerarquia, es decir. E.g: me dio el ultimo adios, murio, fallecio"{}}\(\backslash\)}
+\DoxyCodeLine{                  \textcolor{stringliteral}{"{} es clasificado como mensaje de pesame y no mensaje de despedida, pues hay mas palabras de pesame que de despedida. Si dos categorias empatan, se selecciona"{}}\(\backslash\)}
+\DoxyCodeLine{                  \textcolor{stringliteral}{"{} la que tenga mayor prioridad.\(\backslash\)n\(\backslash\)n"{}}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{main_8c_a86f34478f25cda3b4aa7144eaab3024e}\label{main_8c_a86f34478f25cda3b4aa7144eaab3024e}} 
+\index{main.c@{main.c}!randomMessage@{randomMessage}}
+\index{randomMessage@{randomMessage}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{randomMessage()}{randomMessage()}}
+{\footnotesize\ttfamily int random\+Message (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Imprime un mensaje conversacional random. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{main_8c_aabb4a519612556abef1c9752675dbb99}\label{main_8c_aabb4a519612556abef1c9752675dbb99}} 
+\index{main.c@{main.c}!readInput@{readInput}}
+\index{readInput@{readInput}!main.c@{main.c}}
+\doxysubsubsection{\texorpdfstring{readInput()}{readInput()}}
+{\footnotesize\ttfamily int read\+Input (\begin{DoxyParamCaption}\item[{char $\ast$}]{inp }\end{DoxyParamCaption})}
+
+
+
+Dado un input del usuario, le asigna un mensaje de respuesta según la categoría a la que pertenezca. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em char$\ast$} & \\
+\hline
+{\em Queue$\ast$} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}

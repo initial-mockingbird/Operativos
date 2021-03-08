@@ -1,0 +1,341 @@
+\hypertarget{_categorias_8c}{}\doxysection{Categorias.\+c File Reference}
+\label{_categorias_8c}\index{Categorias.c@{Categorias.c}}
+
+
+Modulo que se encarga de todas las funcionalidades relacionadas con categorias.  
+
+
+{\ttfamily \#include \char`\"{}../\+Linked\+List/\+Linked\+List.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Categorias.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}PC.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{_categorias_8c_ae4def3a4703ce37342ad1e1148d4edd9}\label{_categorias_8c_ae4def3a4703ce37342ad1e1148d4edd9}} 
+\#define \mbox{\hyperlink{_categorias_8c_ae4def3a4703ce37342ad1e1148d4edd9}{FROM\+\_\+\+DYADIC}}(f)~(void$\ast$ ($\ast$)(void $\ast$,void$\ast$)) f
+\begin{DoxyCompactList}\small\item\em Casts a dyadic function of type\+: {\ttfamily a -\/$>$ b -\/$>$ c} to {\ttfamily void$\ast$ -\/$>$ void$\ast$ -\/$>$ void$\ast$}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_categorias_8c_a9212c250bad7bdf1133216e7b37d8186}\label{_categorias_8c_a9212c250bad7bdf1133216e7b37d8186}} 
+\#define \mbox{\hyperlink{_categorias_8c_a9212c250bad7bdf1133216e7b37d8186}{FROM\+\_\+\+MONADIC}}(f)~(void$\ast$ ($\ast$)(void $\ast$)) f
+\begin{DoxyCompactList}\small\item\em Casts a monadic function of type\+: {\ttfamily a -\/$>$ b} to {\ttfamily void$\ast$ -\/$>$ void$\ast$}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_categorias_8c_a306e51290037f0b67429c84f1cf02938}\label{_categorias_8c_a306e51290037f0b67429c84f1cf02938}} 
+\#define \mbox{\hyperlink{_categorias_8c_a306e51290037f0b67429c84f1cf02938}{FROM\+\_\+\+MONADIC\+\_\+\+VOID}}(f)~(void ($\ast$)(void $\ast$)) f
+\begin{DoxyCompactList}\small\item\em Casts a monadic function of type\+: {\ttfamily a -\/$>$ ()} to {\ttfamily void$\ast$ -\/$>$ void}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_categorias_8c_a4ccf2c1fd8dcfa9e4caef5d3d67b4d7a}\label{_categorias_8c_a4ccf2c1fd8dcfa9e4caef5d3d67b4d7a}} 
+\#define \mbox{\hyperlink{_categorias_8c_a4ccf2c1fd8dcfa9e4caef5d3d67b4d7a}{COMPSTR}}(fst,  snd)~strcmp(fst,snd) == 0
+\begin{DoxyCompactList}\small\item\em Compares two strings, returns 1 if they are the same, and 0 otherwise. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_categorias_8c_aabf4f709c8199e41cf279c77112345fe}\label{_categorias_8c_aabf4f709c8199e41cf279c77112345fe}} 
+\#define \mbox{\hyperlink{_categorias_8c_aabf4f709c8199e41cf279c77112345fe}{MAX\+\_\+\+LEN}}~100
+\begin{DoxyCompactList}\small\item\em Maxima longitud de una cadena de texto. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_categorias_8c_aa5e9be47d76a4e1865914bcb7a2a7479}\label{_categorias_8c_aa5e9be47d76a4e1865914bcb7a2a7479}} 
+\#define \mbox{\hyperlink{_categorias_8c_aa5e9be47d76a4e1865914bcb7a2a7479}{ELEMENT}}~char$\ast$
+\begin{DoxyCompactList}\small\item\em Tipo de elemento que almacena la lista (en este caso, un char) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_categorias_8c_ab117546549783a058d0321a287699579}\label{_categorias_8c_ab117546549783a058d0321a287699579}} 
+\#define \mbox{\hyperlink{_categorias_8c_ab117546549783a058d0321a287699579}{FILE\+\_\+\+NAME}}~\char`\"{}PC.\+txt\char`\"{}
+\begin{DoxyCompactList}\small\item\em Path del archivo a leer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{_categorias_8c_a28b5dc99d5c0283fabc8547a4f44646f}{str\+\_\+tolower}} (char $\ast$s)
+\begin{DoxyCompactList}\small\item\em Dado un apuntador a string, modifica el string convirtiendo cada letra a minuscula. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_categorias_8c_a29a5f3b478ebb429df2898777c15a802}{strip\+\_\+punctuation}} (char $\ast$s)
+\begin{DoxyCompactList}\small\item\em Dado un apuntador a string, reemplaza cada no letra minuscula por un espacio en blanco. \end{DoxyCompactList}\item 
+Queue $\ast$ \mbox{\hyperlink{_categorias_8c_a8ce1c7a49a66888a2f474790029d5a66}{tokenize\+Input}} (char $\ast$s)
+\begin{DoxyCompactList}\small\item\em Dada una linea, retorna una lista con las palabras que contiene la linea, todas en minuscula y sin simbolos. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_categorias_8c_af84859102ccc0043521dbe2e99214a0a}{count\+Phrase\+Belongs\+To\+String}} (Queue $\ast$s, Queue $\ast$ph)
+\begin{DoxyCompactList}\small\item\em Cuenta cuantas repeticiones de la frase {\ttfamily ph} se presentan en el string {\ttfamily s} \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_categorias_8c_a8804ad29a0afabe1d80b8af116fd8441}{counts\+Category}} (char $\ast$s, Queue $\ast$cat)
+\begin{DoxyCompactList}\small\item\em Cuenta la frecuencia de una categoria en un string. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_categorias_8c_afabeb284a4e15f3367586e5b452d42fe}{yield\+Category}} (char $\ast$s, Queue $\ast$categories)
+\begin{DoxyCompactList}\small\item\em Dado un string, y una lista con las categorias. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}} $\ast$ \mbox{\hyperlink{_categorias_8c_a760a77d15cc29aab6acdcaff191eb976}{generate\+Word\+List}} (\mbox{\hyperlink{_categorias_8c_aa5e9be47d76a4e1865914bcb7a2a7479}{ELEMENT}} first)
+\begin{DoxyCompactList}\small\item\em Inicializa una lista enlazada sin header asignándole el valor pasado como parámetro al primer nodo. Si el malloc falla, no hace nada. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structcategory}{category}} $\ast$ \mbox{\hyperlink{_categorias_8c_a459b6a9dda01c7c1a310bbcda17e354a}{generate\+Categories\+List}} (char $\ast$category\+\_\+name, struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}} $\ast$element)
+\begin{DoxyCompactList}\small\item\em Inicializa una lista enlazada sin header asignándole el nombre y una lista enlazada pasados como parametros. Si el malloc falla, no hace nada. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_categorias_8c_ad82c0eb62593b7545008db91d0ef87cd}{append\+Word}} (\mbox{\hyperlink{_categorias_8c_aa5e9be47d76a4e1865914bcb7a2a7479}{ELEMENT}} new\+Element, struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}} $\ast$start)
+\begin{DoxyCompactList}\small\item\em Añade un nueva palabra a una lista enlazada. Retorna EXIT\+\_\+\+FAILURE si no se pudo agregar, EXIT\+\_\+\+SUCCESS si no hubo inconveniente. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_categorias_8c_acc97766ccbb03ea4ef311c7b7183a1fe}{append\+Category}} (char $\ast$name, struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}} $\ast$new\+Element, struct \mbox{\hyperlink{structcategory}{category}} $\ast$category\+\_\+list)
+\begin{DoxyCompactList}\small\item\em Añade una nueva categoría a una lista enlazada. Retorna EXIT\+\_\+\+FAILURE si no se pudo agregar, EXIT\+\_\+\+SUCCESS si no hubo inconveniente. \end{DoxyCompactList}\item 
+Queue $\ast$ \mbox{\hyperlink{_categorias_8c_a8111fd9334a89b505e322bab1c143b4a}{words\+To\+List}} (struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}} $\ast$words)
+\begin{DoxyCompactList}\small\item\em Convierte una lista de palabras en una lista generica. \end{DoxyCompactList}\item 
+Queue $\ast$ \mbox{\hyperlink{_categorias_8c_afcae750b4bdf3e68f7ebfdf3db1867cb}{categories\+To\+List}} (struct \mbox{\hyperlink{structcategory}{category}} $\ast$categories)
+\begin{DoxyCompactList}\small\item\em Convierte una lista de categorias en una lista de listas, en donde el primer elemento es el nombre de la categoria y el resto son listas de palabras. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_categorias_8c_af42549a401eb5873b4db3b5202780bec}{read\+Data}} (struct \mbox{\hyperlink{structcategory}{category}} $\ast$$\ast$categories)
+\begin{DoxyCompactList}\small\item\em Lee el archivo con categorías y palabras, las parsea en un diccionario que tiene la categoría con un apuntador a su lista de palabras correspondientes. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_categorias_8c_abc86dc313c88f395b5bc88b1e2a0602f}\label{_categorias_8c_abc86dc313c88f395b5bc88b1e2a0602f}} 
+void \mbox{\hyperlink{_categorias_8c_abc86dc313c88f395b5bc88b1e2a0602f}{crear\+Categorias}} ()
+\begin{DoxyCompactList}\small\item\em Llena el estado global {\ttfamily categorias} con las categorias. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{_categorias_8c_a3be08b251954b4286341061de569def4}\label{_categorias_8c_a3be08b251954b4286341061de569def4}} 
+Queue $\ast$ {\bfseries categorias} = NULL
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Modulo que se encarga de todas las funcionalidades relacionadas con categorias. 
+
+\begin{DoxyAuthor}{Author}
+Daniel Pinto, Mariangela Rizzo, Ka Shing Fu. 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2021-\/03-\/08
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2021 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_categorias_8c_acc97766ccbb03ea4ef311c7b7183a1fe}\label{_categorias_8c_acc97766ccbb03ea4ef311c7b7183a1fe}} 
+\index{Categorias.c@{Categorias.c}!appendCategory@{appendCategory}}
+\index{appendCategory@{appendCategory}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{appendCategory()}{appendCategory()}}
+{\footnotesize\ttfamily int append\+Category (\begin{DoxyParamCaption}\item[{char $\ast$}]{name,  }\item[{struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}} $\ast$}]{new\+Element,  }\item[{struct \mbox{\hyperlink{structcategory}{category}} $\ast$}]{category\+\_\+list }\end{DoxyParamCaption})}
+
+
+
+Añade una nueva categoría a una lista enlazada. Retorna EXIT\+\_\+\+FAILURE si no se pudo agregar, EXIT\+\_\+\+SUCCESS si no hubo inconveniente. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & \\
+\hline
+{\em new\+Element} & \\
+\hline
+{\em category\+\_\+list} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_ad82c0eb62593b7545008db91d0ef87cd}\label{_categorias_8c_ad82c0eb62593b7545008db91d0ef87cd}} 
+\index{Categorias.c@{Categorias.c}!appendWord@{appendWord}}
+\index{appendWord@{appendWord}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{appendWord()}{appendWord()}}
+{\footnotesize\ttfamily int append\+Word (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_categorias_8c_aa5e9be47d76a4e1865914bcb7a2a7479}{ELEMENT}}}]{new\+Element,  }\item[{struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}} $\ast$}]{start }\end{DoxyParamCaption})}
+
+
+
+Añade un nueva palabra a una lista enlazada. Retorna EXIT\+\_\+\+FAILURE si no se pudo agregar, EXIT\+\_\+\+SUCCESS si no hubo inconveniente. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+Element} & \\
+\hline
+{\em start} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_afcae750b4bdf3e68f7ebfdf3db1867cb}\label{_categorias_8c_afcae750b4bdf3e68f7ebfdf3db1867cb}} 
+\index{Categorias.c@{Categorias.c}!categoriesToList@{categoriesToList}}
+\index{categoriesToList@{categoriesToList}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{categoriesToList()}{categoriesToList()}}
+{\footnotesize\ttfamily Queue$\ast$ categories\+To\+List (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structcategory}{category}} $\ast$}]{categories }\end{DoxyParamCaption})}
+
+
+
+Convierte una lista de categorias en una lista de listas, en donde el primer elemento es el nombre de la categoria y el resto son listas de palabras. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em categories} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Queue$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_af84859102ccc0043521dbe2e99214a0a}\label{_categorias_8c_af84859102ccc0043521dbe2e99214a0a}} 
+\index{Categorias.c@{Categorias.c}!countPhraseBelongsToString@{countPhraseBelongsToString}}
+\index{countPhraseBelongsToString@{countPhraseBelongsToString}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{countPhraseBelongsToString()}{countPhraseBelongsToString()}}
+{\footnotesize\ttfamily int count\+Phrase\+Belongs\+To\+String (\begin{DoxyParamCaption}\item[{Queue $\ast$}]{s,  }\item[{Queue $\ast$}]{ph }\end{DoxyParamCaption})}
+
+
+
+Cuenta cuantas repeticiones de la frase {\ttfamily ph} se presentan en el string {\ttfamily s} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & String representado como linked list de palabras \\
+\hline
+{\em ph} & Frase representada como linked list de palabras \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Numero de repeticiones de la frase en el string. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_a8804ad29a0afabe1d80b8af116fd8441}\label{_categorias_8c_a8804ad29a0afabe1d80b8af116fd8441}} 
+\index{Categorias.c@{Categorias.c}!countsCategory@{countsCategory}}
+\index{countsCategory@{countsCategory}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{countsCategory()}{countsCategory()}}
+{\footnotesize\ttfamily int counts\+Category (\begin{DoxyParamCaption}\item[{char $\ast$}]{s,  }\item[{Queue $\ast$}]{cat }\end{DoxyParamCaption})}
+
+
+
+Cuenta la frecuencia de una categoria en un string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \\
+\hline
+{\em cat} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_a459b6a9dda01c7c1a310bbcda17e354a}\label{_categorias_8c_a459b6a9dda01c7c1a310bbcda17e354a}} 
+\index{Categorias.c@{Categorias.c}!generateCategoriesList@{generateCategoriesList}}
+\index{generateCategoriesList@{generateCategoriesList}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{generateCategoriesList()}{generateCategoriesList()}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structcategory}{category}}$\ast$ generate\+Categories\+List (\begin{DoxyParamCaption}\item[{char $\ast$}]{category\+\_\+name,  }\item[{struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}} $\ast$}]{element }\end{DoxyParamCaption})}
+
+
+
+Inicializa una lista enlazada sin header asignándole el nombre y una lista enlazada pasados como parametros. Si el malloc falla, no hace nada. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em category\+\_\+name} & \\
+\hline
+{\em element} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct category$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_a760a77d15cc29aab6acdcaff191eb976}\label{_categorias_8c_a760a77d15cc29aab6acdcaff191eb976}} 
+\index{Categorias.c@{Categorias.c}!generateWordList@{generateWordList}}
+\index{generateWordList@{generateWordList}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{generateWordList()}{generateWordList()}}
+{\footnotesize\ttfamily struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}}$\ast$ generate\+Word\+List (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_categorias_8c_aa5e9be47d76a4e1865914bcb7a2a7479}{ELEMENT}}}]{first }\end{DoxyParamCaption})}
+
+
+
+Inicializa una lista enlazada sin header asignándole el valor pasado como parámetro al primer nodo. Si el malloc falla, no hace nada. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em first} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+struct words\+\_\+list$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_af42549a401eb5873b4db3b5202780bec}\label{_categorias_8c_af42549a401eb5873b4db3b5202780bec}} 
+\index{Categorias.c@{Categorias.c}!readData@{readData}}
+\index{readData@{readData}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{readData()}{readData()}}
+{\footnotesize\ttfamily void read\+Data (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structcategory}{category}} $\ast$$\ast$}]{categories }\end{DoxyParamCaption})}
+
+
+
+Lee el archivo con categorías y palabras, las parsea en un diccionario que tiene la categoría con un apuntador a su lista de palabras correspondientes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em categories} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_categorias_8c_a28b5dc99d5c0283fabc8547a4f44646f}\label{_categorias_8c_a28b5dc99d5c0283fabc8547a4f44646f}} 
+\index{Categorias.c@{Categorias.c}!str\_tolower@{str\_tolower}}
+\index{str\_tolower@{str\_tolower}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{str\_tolower()}{str\_tolower()}}
+{\footnotesize\ttfamily int str\+\_\+tolower (\begin{DoxyParamCaption}\item[{char $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Dado un apuntador a string, modifica el string convirtiendo cada letra a minuscula. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS si no hubo ningun problema. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_a29a5f3b478ebb429df2898777c15a802}\label{_categorias_8c_a29a5f3b478ebb429df2898777c15a802}} 
+\index{Categorias.c@{Categorias.c}!strip\_punctuation@{strip\_punctuation}}
+\index{strip\_punctuation@{strip\_punctuation}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{strip\_punctuation()}{strip\_punctuation()}}
+{\footnotesize\ttfamily int strip\+\_\+punctuation (\begin{DoxyParamCaption}\item[{char $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Dado un apuntador a string, reemplaza cada no letra minuscula por un espacio en blanco. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+EXIT\+\_\+\+SUCCESS si no hubo ningun problema. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_a8ce1c7a49a66888a2f474790029d5a66}\label{_categorias_8c_a8ce1c7a49a66888a2f474790029d5a66}} 
+\index{Categorias.c@{Categorias.c}!tokenizeInput@{tokenizeInput}}
+\index{tokenizeInput@{tokenizeInput}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{tokenizeInput()}{tokenizeInput()}}
+{\footnotesize\ttfamily Queue$\ast$ tokenize\+Input (\begin{DoxyParamCaption}\item[{char $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Dada una linea, retorna una lista con las palabras que contiene la linea, todas en minuscula y sin simbolos. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Queue$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_a8111fd9334a89b505e322bab1c143b4a}\label{_categorias_8c_a8111fd9334a89b505e322bab1c143b4a}} 
+\index{Categorias.c@{Categorias.c}!wordsToList@{wordsToList}}
+\index{wordsToList@{wordsToList}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{wordsToList()}{wordsToList()}}
+{\footnotesize\ttfamily Queue$\ast$ words\+To\+List (\begin{DoxyParamCaption}\item[{struct \mbox{\hyperlink{structwords__list}{words\+\_\+list}} $\ast$}]{words }\end{DoxyParamCaption})}
+
+
+
+Convierte una lista de palabras en una lista generica. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em words} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Queue$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_categorias_8c_afabeb284a4e15f3367586e5b452d42fe}\label{_categorias_8c_afabeb284a4e15f3367586e5b452d42fe}} 
+\index{Categorias.c@{Categorias.c}!yieldCategory@{yieldCategory}}
+\index{yieldCategory@{yieldCategory}!Categorias.c@{Categorias.c}}
+\doxysubsubsection{\texorpdfstring{yieldCategory()}{yieldCategory()}}
+{\footnotesize\ttfamily int yield\+Category (\begin{DoxyParamCaption}\item[{char $\ast$}]{s,  }\item[{Queue $\ast$}]{categories }\end{DoxyParamCaption})}
+
+
+
+Dado un string, y una lista con las categorias. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \\
+\hline
+{\em categories} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}

@@ -1,0 +1,9 @@
+# Corrida de ejemplo 2.
+
+Eliza: Hola, soy Eliza, tu psicoterapeuta. ¿Hay algo que te esté perturbando?
+Usuario: me dio el ultimo adios, murio, fallecio
+# Se identifican los tokens: "adios", "murio", "fallecio", se decide que la categoria es pesame
+# ya que hay mas frecuencia de pesames.
+Eliza: Eso es muy triste de leer. Mi mas sentido pesame.
+Usuario: Se acabo el tiempo
+Eliza: Me alegra que hayas hablado conmigo. Espero volver a verte pronto.

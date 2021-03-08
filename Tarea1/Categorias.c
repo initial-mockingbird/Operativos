@@ -1,3 +1,15 @@
+/**
+ * @file Categorias.c
+ * @author Daniel Pinto, Mariangela Rizzo, Ka Shing Fu.
+ * @brief Modulo que se encarga de todas las funcionalidades relacionadas con categorias.
+ * @version 0.1
+ * @date 2021-03-08
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
+
 #include "../LinkedList/LinkedList.h"
 #include "Categorias.h"
 #include "PC.h"
@@ -121,7 +133,7 @@ Queue* tokenizeInput(char* s){
 }
 
 /**
- * @brief Cuenta cuantas repeteiciones de la frase `ph` se presentan en el string `s`
+ * @brief Cuenta cuantas repeticiones de la frase `ph` se presentan en el string `s`
  * 
  * @param s String representado como linked list de palabras
  * @param ph Frase representada como linked list de palabras
@@ -143,10 +155,14 @@ int countPhraseBelongsToString(Queue*s, Queue* ph){
 }
 
 // ---------------------- 
-// |      FUNCTIONS     |
+// |      ESTADO        |
 // ----------------------
 
 extern Queue* categorias = NULL;
+
+// ---------------------- 
+// |      FUNCTIONS     |
+// ----------------------
 
 /**
  * @brief Cuenta la frecuencia de una categoria en un string.
@@ -190,8 +206,7 @@ int yieldCategory(char*s, Queue* categories){
         i++;
         categories = tail(categories);
     }
-
-    if (max = 0) {return -1;}
+    if (max == 0) {return -1;}
 
     return pos;
 }
@@ -314,6 +329,7 @@ Queue* categoriesToList(struct category *categories){
  * 
  * @param categories 
  */
+/*
 void readData(struct category **categories){
     char file_name[25], linebuf[MAX_LEN], cat_name[35], *token;
     struct words_list* words;
@@ -349,10 +365,57 @@ void readData(struct category **categories){
     //PARA HACER PRUEBAS: printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
     //printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
 }
+*/
 
+
+void readData(struct category **categories){
+     char file_name[25], linebuf[MAX_LEN], cat_name[35];
+     struct words_list* words;
+     int i = 0;   
+     FILE *fp = fopen(FILE_NAME, "r"); // modo lectura
+
+     if (fp == NULL) // Se falla leyendo el archivo
+     {  
+        perror("Ocurrió un error abriendo el archivo.\n");
+        exit(EXIT_FAILURE);
+     }
+
+     while(fgets(linebuf, sizeof linebuf, fp) != NULL) {
+         if(linebuf[0] == '\r' || linebuf[0] == '\n'){
+             if (i > 1) //Es decir, la lista de cateogrías ya se creó
+                 i = 1;     
+             continue; //Se salta el resto del while
+         } else if (strstr(linebuf, "PRIORIDAD") != NULL || strstr(linebuf, "IDENTIFICAR") != NULL) {
+             strcpy(cat_name, linebuf);
+             continue; //Se salta el resto del while
+         }
+         if (i == 0){ //Si no se ha creado la lista de categorías
+             words = generateWordList(linebuf);
+             (*categories) = generateCategoriesList(cat_name, words);
+             i += 2;
+         }else if (i == 1){ //La lista de categorías está creada, pero se necesita insertar una categoría nueva.
+             words = generateWordList(linebuf);
+             appendCategory(cat_name, words, *categories);
+             i++;
+         }else{ //Añadimos palabras a la categoría en la que nos encontramos.
+             appendWord(linebuf, words);
+         }
+     }
+
+     fclose(fp); //Cerramos el archivo que está siento leido
+
+     //PARA HACER PRUEBAS: printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
+     //printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
+ }
+
+/**
+ * @brief Llena el estado global `categorias` con las categorias.
+ * 
+ */
 void crearCategorias(){
     struct category *categories_list;
     readData(&categories_list);
+    
     Queue* categories = emptyQ();
     Queue* words = emptyQ();
     

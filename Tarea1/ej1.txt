@@ -1,0 +1,33 @@
+# Corrida de ejemplo 1.
+
+Eliza: Hola, soy Eliza, tu psicoterapeuta. ¿Hay algo que te esté perturbando?
+Usuario: Se trata de mi jefe
+# Se identifica el token: "Se trata de mi", como no hay mas tokens, se decide que la categoria es freudiana
+# y se trata de recopilar informacion para luego imprimir el mensaje freudiano.
+# Como la relacion "jefe" es nueva, se pregunta el nombre.
+ELIZA: Y cual es su nombre?
+Usuario: Carlos, por que?
+Eliza: Gracias! continua
+Eliza: Cuentame mas sobre esa persona.
+Usuario: Es que es un desgraciado!
+# Se reconoce el token "desgraciado" y se imprime el mensaje correspondiente a la categoria
+# mensaje de espacio seguro
+Eliza: Entiendo como te sientes. Expresate con libertad.
+Usuario: No quiero hablar de eso
+# Se identifica el token "No" y se imprime un mensaje positivista.
+Eliza: Te aseguro que pronto todo va a mejorar.
+Usuario: Es que se supone que es mi jefe!
+# Se identifica el token "jefe", como es una relacion, toma preferencia.
+# Dado que jefe no tiene toda la info necesario, se trata de llenar el siguiente campo: origen
+ELIZA: tu jefe carlos ? y de donde es?
+Usuario: Es Maracucho, tal vez sea por eso
+Eliza: Gracias! continua
+Usuario: Deberia portarse como jefe!
+# Se identifica el token jefe de nuevo, como se tiene toda la info, se imprime.
+Eliza: te refieres a tu jefe carlos, que es maracucho?
+Usuario: Si! Cual otro?
+# Se identifica el token "cual", y se imprime el mensaje correspondiente
+Eliza: Sigueme contando sobre lo que me decias antes. El tema importante aqui eres tu.
+Usuario: adios
+# Se identifica el token "adios", y se termina la ejecucion
+Eliza: Me alegra que hayas hablado conmigo. Espero volver a verte pronto.

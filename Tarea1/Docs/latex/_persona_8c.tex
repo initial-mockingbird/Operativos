@@ -1,0 +1,374 @@
+\hypertarget{_persona_8c}{}\doxysection{Persona.\+c File Reference}
+\label{_persona_8c}\index{Persona.c@{Persona.c}}
+
+
+Modulo que se encarga de todas las funcionalidades relacionadas con Personas.  
+
+
+{\ttfamily \#include \char`\"{}../\+Linked\+List/\+Linked\+List.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./\+Categorias.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}./\+Persona.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+\doxysubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_persona}{Persona}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{_persona_8c_ae4def3a4703ce37342ad1e1148d4edd9}\label{_persona_8c_ae4def3a4703ce37342ad1e1148d4edd9}} 
+\#define \mbox{\hyperlink{_persona_8c_ae4def3a4703ce37342ad1e1148d4edd9}{FROM\+\_\+\+DYADIC}}(f)~(void$\ast$ ($\ast$)(void $\ast$,void$\ast$)) f
+\begin{DoxyCompactList}\small\item\em Casts a dyadic function of type\+: {\ttfamily a -\/$>$ b -\/$>$ c} to {\ttfamily void$\ast$ -\/$>$ void$\ast$ -\/$>$ void$\ast$}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_persona_8c_a9212c250bad7bdf1133216e7b37d8186}\label{_persona_8c_a9212c250bad7bdf1133216e7b37d8186}} 
+\#define \mbox{\hyperlink{_persona_8c_a9212c250bad7bdf1133216e7b37d8186}{FROM\+\_\+\+MONADIC}}(f)~(void$\ast$ ($\ast$)(void $\ast$)) f
+\begin{DoxyCompactList}\small\item\em Casts a monadic function of type\+: {\ttfamily a -\/$>$ b} to {\ttfamily void$\ast$ -\/$>$ void$\ast$}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_persona_8c_a306e51290037f0b67429c84f1cf02938}\label{_persona_8c_a306e51290037f0b67429c84f1cf02938}} 
+\#define \mbox{\hyperlink{_persona_8c_a306e51290037f0b67429c84f1cf02938}{FROM\+\_\+\+MONADIC\+\_\+\+VOID}}(f)~(void ($\ast$)(void $\ast$)) f
+\begin{DoxyCompactList}\small\item\em Casts a monadic function of type\+: {\ttfamily a -\/$>$ ()} to {\ttfamily void$\ast$ -\/$>$ void}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{_persona_8c_a4ccf2c1fd8dcfa9e4caef5d3d67b4d7a}\label{_persona_8c_a4ccf2c1fd8dcfa9e4caef5d3d67b4d7a}} 
+\#define \mbox{\hyperlink{_persona_8c_a4ccf2c1fd8dcfa9e4caef5d3d67b4d7a}{COMPSTR}}(fst,  snd)~strcmp(fst,snd) == 0
+\begin{DoxyCompactList}\small\item\em Compares two strings, returns 1 if they are the same, and 0 otherwise. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{_persona_8c_accf053bfd7bd14a3f8ac1cb7e2b8009b}\label{_persona_8c_accf053bfd7bd14a3f8ac1cb7e2b8009b}} 
+typedef struct \mbox{\hyperlink{struct_persona}{Persona}} {\bfseries Persona}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char $\ast$ \mbox{\hyperlink{_persona_8c_a49907ba6746f8bb03004614af1aac423}{nombre}} (\mbox{\hyperlink{struct_persona}{Persona}} $\ast$p)
+\begin{DoxyCompactList}\small\item\em Retorna el nombre de una persona. \end{DoxyCompactList}\item 
+char $\ast$ \mbox{\hyperlink{_persona_8c_a98ba0f88dd5e31067ea2054bc09c8899}{relacion}} (\mbox{\hyperlink{struct_persona}{Persona}} $\ast$p)
+\begin{DoxyCompactList}\small\item\em Retorna la relacion con el usuario de una persona. \end{DoxyCompactList}\item 
+char $\ast$ \mbox{\hyperlink{_persona_8c_ae53ee7d40afa1f53b3fe820e3bd42ea5}{origen}} (\mbox{\hyperlink{struct_persona}{Persona}} $\ast$p)
+\begin{DoxyCompactList}\small\item\em Retorna el origen de una persona. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_persona_8c_a068a9040b26938276baab63325771456}{origen\+Modo}} (\mbox{\hyperlink{struct_persona}{Persona}} $\ast$p)
+\begin{DoxyCompactList}\small\item\em Retorna el modo de origen de una persona. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_persona}{Persona}} $\ast$ \mbox{\hyperlink{_persona_8c_a3924ffdd42d4578309837786dad99c76}{lookup\+By\+Name}} (char $\ast$\mbox{\hyperlink{_persona_8c_a49907ba6746f8bb03004614af1aac423}{nombre}})
+\begin{DoxyCompactList}\small\item\em Retorna la persona (si existe) que posea el nombre {\ttfamily nombre}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_persona}{Persona}} $\ast$ \mbox{\hyperlink{_persona_8c_a3e11028ee1d9776d3922e2d619fecfda}{lookup\+By\+Relacion}} (char $\ast$\mbox{\hyperlink{_persona_8c_a98ba0f88dd5e31067ea2054bc09c8899}{relacion}})
+\begin{DoxyCompactList}\small\item\em Retorna la persona (si existe) que posea la relacion {\ttfamily relacion}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_persona_8c_a9bf75354efb5893bce45044a14053490}{update\+Persona}} (char $\ast$name, char $\ast$\mbox{\hyperlink{_persona_8c_a98ba0f88dd5e31067ea2054bc09c8899}{relacion}}, char $\ast$\mbox{\hyperlink{_persona_8c_ae53ee7d40afa1f53b3fe820e3bd42ea5}{origen}}, int \mbox{\hyperlink{_persona_8c_a068a9040b26938276baab63325771456}{origen\+Modo}})
+\begin{DoxyCompactList}\small\item\em Actualiza la informacion de una persona, si la persona no existe, la crea. Para campos desconocidos inicializar con {\ttfamily NULL} o {\ttfamily 0}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_persona_8c_a1e074ca02af4c98b973fe14c2711e4ba}{find\+After\+Mi}} (Queue $\ast$input, char $\ast$$\ast$\mbox{\hyperlink{_persona_8c_a98ba0f88dd5e31067ea2054bc09c8899}{relacion}})
+\begin{DoxyCompactList}\small\item\em Encuentra la siguiente palabra despues del token \char`\"{}mi\char`\"{}, y la guarda en relacion. Util para mensajes freudianos. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_persona_8c_a26389e28122f297caf7edffdd9385e9d}{parentezco}} (Queue $\ast$input, char $\ast$$\ast$\mbox{\hyperlink{_persona_8c_a98ba0f88dd5e31067ea2054bc09c8899}{relacion}})
+\begin{DoxyCompactList}\small\item\em Dado un input y un apuntador a un string, copia la relacion actual del input al string. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_persona_8c_a0e6a3c25d9368cb6a1951799942c4245}{update\+Nombre}} (\mbox{\hyperlink{struct_persona}{Persona}} $\ast$$\ast$p)
+\begin{DoxyCompactList}\small\item\em Actualiza el nombre de una persona. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_persona_8c_a12d80c23a48af34f08b6caecb336052c}{update\+Origen}} (\mbox{\hyperlink{struct_persona}{Persona}} $\ast$$\ast$p)
+\begin{DoxyCompactList}\small\item\em Actualiza el origen de una persona. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_persona_8c_a5eda0174456a5b402fd8a9c09c90d098}{discoveryP}} (\mbox{\hyperlink{struct_persona}{Persona}} $\ast$$\ast$p)
+\begin{DoxyCompactList}\small\item\em Dada una persona, decide que puede actualizar. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_persona_8c_aa199039a08b90c5be49ccbfb175e7b01}{is\+Complete}} (\mbox{\hyperlink{struct_persona}{Persona}} $\ast$p)
+\begin{DoxyCompactList}\small\item\em Decide si se tiene TODA la informacion de una persona. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_persona_8c_a181483eff892a4dd4c5e96c710f96239}{complete}} (\mbox{\hyperlink{struct_persona}{Persona}} $\ast$p)
+\begin{DoxyCompactList}\small\item\em Dada una persona, si se tiene TODA su informacion, imprime un mensaje sobre esa persona, de lo contrario no hace nada. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_persona_8c_a5893a041e362ba37ecc08da322c4c7d3}{discovery}} (char $\ast$s)
+\begin{DoxyCompactList}\small\item\em Dado un input, verifica si se habla de alguna persona existente, si es asi, toma las medidas necesarias, sino, no hace nada. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{_persona_8c_aa4715c81722afbd76d78e92bceca4e78}{freudiano}} (char $\ast$s)
+\begin{DoxyCompactList}\small\item\em Busca algun parentezco en el string, y actualiza la persona correspondiente, creando una nueva si no existe. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{_persona_8c_a49ae0f7c82493267e6caabc714fe90bc}\label{_persona_8c_a49ae0f7c82493267e6caabc714fe90bc}} 
+Queue $\ast$ {\bfseries personas} = NULL
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Modulo que se encarga de todas las funcionalidades relacionadas con Personas. 
+
+\begin{DoxyAuthor}{Author}
+Daniel Pinto, Mariangela Rizzo, Ka Shing Fu. 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+2021-\/03-\/08
+\end{DoxyDate}
+\begin{DoxyCopyright}{Copyright}
+Copyright (c) 2021 
+\end{DoxyCopyright}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{_persona_8c_a181483eff892a4dd4c5e96c710f96239}\label{_persona_8c_a181483eff892a4dd4c5e96c710f96239}} 
+\index{Persona.c@{Persona.c}!complete@{complete}}
+\index{complete@{complete}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{complete()}{complete()}}
+{\footnotesize\ttfamily int complete (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_persona}{Persona}} $\ast$}]{p }\end{DoxyParamCaption})}
+
+
+
+Dada una persona, si se tiene TODA su informacion, imprime un mensaje sobre esa persona, de lo contrario no hace nada. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_persona_8c_a5893a041e362ba37ecc08da322c4c7d3}\label{_persona_8c_a5893a041e362ba37ecc08da322c4c7d3}} 
+\index{Persona.c@{Persona.c}!discovery@{discovery}}
+\index{discovery@{discovery}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{discovery()}{discovery()}}
+{\footnotesize\ttfamily int discovery (\begin{DoxyParamCaption}\item[{char $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Dado un input, verifica si se habla de alguna persona existente, si es asi, toma las medidas necesarias, sino, no hace nada. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_persona_8c_a5eda0174456a5b402fd8a9c09c90d098}\label{_persona_8c_a5eda0174456a5b402fd8a9c09c90d098}} 
+\index{Persona.c@{Persona.c}!discoveryP@{discoveryP}}
+\index{discoveryP@{discoveryP}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{discoveryP()}{discoveryP()}}
+{\footnotesize\ttfamily void discoveryP (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_persona}{Persona}} $\ast$$\ast$}]{p }\end{DoxyParamCaption})}
+
+
+
+Dada una persona, decide que puede actualizar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_persona_8c_a1e074ca02af4c98b973fe14c2711e4ba}\label{_persona_8c_a1e074ca02af4c98b973fe14c2711e4ba}} 
+\index{Persona.c@{Persona.c}!findAfterMi@{findAfterMi}}
+\index{findAfterMi@{findAfterMi}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{findAfterMi()}{findAfterMi()}}
+{\footnotesize\ttfamily void find\+After\+Mi (\begin{DoxyParamCaption}\item[{Queue $\ast$}]{input,  }\item[{char $\ast$$\ast$}]{relacion }\end{DoxyParamCaption})}
+
+
+
+Encuentra la siguiente palabra despues del token \char`\"{}mi\char`\"{}, y la guarda en relacion. Util para mensajes freudianos. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & \\
+\hline
+{\em relacion} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_persona_8c_aa4715c81722afbd76d78e92bceca4e78}\label{_persona_8c_aa4715c81722afbd76d78e92bceca4e78}} 
+\index{Persona.c@{Persona.c}!freudiano@{freudiano}}
+\index{freudiano@{freudiano}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{freudiano()}{freudiano()}}
+{\footnotesize\ttfamily void freudiano (\begin{DoxyParamCaption}\item[{char $\ast$}]{s }\end{DoxyParamCaption})}
+
+
+
+Busca algun parentezco en el string, y actualiza la persona correspondiente, creando una nueva si no existe. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_persona_8c_aa199039a08b90c5be49ccbfb175e7b01}\label{_persona_8c_aa199039a08b90c5be49ccbfb175e7b01}} 
+\index{Persona.c@{Persona.c}!isComplete@{isComplete}}
+\index{isComplete@{isComplete}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{isComplete()}{isComplete()}}
+{\footnotesize\ttfamily int is\+Complete (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_persona}{Persona}} $\ast$}]{p }\end{DoxyParamCaption})}
+
+
+
+Decide si se tiene TODA la informacion de una persona. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_persona_8c_a3924ffdd42d4578309837786dad99c76}\label{_persona_8c_a3924ffdd42d4578309837786dad99c76}} 
+\index{Persona.c@{Persona.c}!lookupByName@{lookupByName}}
+\index{lookupByName@{lookupByName}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{lookupByName()}{lookupByName()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_persona}{Persona}}$\ast$ lookup\+By\+Name (\begin{DoxyParamCaption}\item[{char $\ast$}]{nombre }\end{DoxyParamCaption})}
+
+
+
+Retorna la persona (si existe) que posea el nombre {\ttfamily nombre}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nombre} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Persona$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_persona_8c_a3e11028ee1d9776d3922e2d619fecfda}\label{_persona_8c_a3e11028ee1d9776d3922e2d619fecfda}} 
+\index{Persona.c@{Persona.c}!lookupByRelacion@{lookupByRelacion}}
+\index{lookupByRelacion@{lookupByRelacion}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{lookupByRelacion()}{lookupByRelacion()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_persona}{Persona}}$\ast$ lookup\+By\+Relacion (\begin{DoxyParamCaption}\item[{char $\ast$}]{relacion }\end{DoxyParamCaption})}
+
+
+
+Retorna la persona (si existe) que posea la relacion {\ttfamily relacion}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em relacion} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Persona$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_persona_8c_a49907ba6746f8bb03004614af1aac423}\label{_persona_8c_a49907ba6746f8bb03004614af1aac423}} 
+\index{Persona.c@{Persona.c}!nombre@{nombre}}
+\index{nombre@{nombre}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{nombre()}{nombre()}}
+{\footnotesize\ttfamily char$\ast$ nombre (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_persona}{Persona}} $\ast$}]{p }\end{DoxyParamCaption})}
+
+
+
+Retorna el nombre de una persona. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_persona_8c_ae53ee7d40afa1f53b3fe820e3bd42ea5}\label{_persona_8c_ae53ee7d40afa1f53b3fe820e3bd42ea5}} 
+\index{Persona.c@{Persona.c}!origen@{origen}}
+\index{origen@{origen}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{origen()}{origen()}}
+{\footnotesize\ttfamily char$\ast$ origen (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_persona}{Persona}} $\ast$}]{p }\end{DoxyParamCaption})}
+
+
+
+Retorna el origen de una persona. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_persona_8c_a068a9040b26938276baab63325771456}\label{_persona_8c_a068a9040b26938276baab63325771456}} 
+\index{Persona.c@{Persona.c}!origenModo@{origenModo}}
+\index{origenModo@{origenModo}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{origenModo()}{origenModo()}}
+{\footnotesize\ttfamily int origen\+Modo (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_persona}{Persona}} $\ast$}]{p }\end{DoxyParamCaption})}
+
+
+
+Retorna el modo de origen de una persona. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Modo, 1 para gentilicios, 0 para lo demas. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_persona_8c_a26389e28122f297caf7edffdd9385e9d}\label{_persona_8c_a26389e28122f297caf7edffdd9385e9d}} 
+\index{Persona.c@{Persona.c}!parentezco@{parentezco}}
+\index{parentezco@{parentezco}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{parentezco()}{parentezco()}}
+{\footnotesize\ttfamily void parentezco (\begin{DoxyParamCaption}\item[{Queue $\ast$}]{input,  }\item[{char $\ast$$\ast$}]{relacion }\end{DoxyParamCaption})}
+
+
+
+Dado un input y un apuntador a un string, copia la relacion actual del input al string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & \\
+\hline
+{\em relacion} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_persona_8c_a98ba0f88dd5e31067ea2054bc09c8899}\label{_persona_8c_a98ba0f88dd5e31067ea2054bc09c8899}} 
+\index{Persona.c@{Persona.c}!relacion@{relacion}}
+\index{relacion@{relacion}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{relacion()}{relacion()}}
+{\footnotesize\ttfamily char$\ast$ relacion (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_persona}{Persona}} $\ast$}]{p }\end{DoxyParamCaption})}
+
+
+
+Retorna la relacion con el usuario de una persona. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+char$\ast$ 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_persona_8c_a0e6a3c25d9368cb6a1951799942c4245}\label{_persona_8c_a0e6a3c25d9368cb6a1951799942c4245}} 
+\index{Persona.c@{Persona.c}!updateNombre@{updateNombre}}
+\index{updateNombre@{updateNombre}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{updateNombre()}{updateNombre()}}
+{\footnotesize\ttfamily void update\+Nombre (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_persona}{Persona}} $\ast$$\ast$}]{p }\end{DoxyParamCaption})}
+
+
+
+Actualiza el nombre de una persona. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_persona_8c_a12d80c23a48af34f08b6caecb336052c}\label{_persona_8c_a12d80c23a48af34f08b6caecb336052c}} 
+\index{Persona.c@{Persona.c}!updateOrigen@{updateOrigen}}
+\index{updateOrigen@{updateOrigen}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{updateOrigen()}{updateOrigen()}}
+{\footnotesize\ttfamily void update\+Origen (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_persona}{Persona}} $\ast$$\ast$}]{p }\end{DoxyParamCaption})}
+
+
+
+Actualiza el origen de una persona. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_persona_8c_a9bf75354efb5893bce45044a14053490}\label{_persona_8c_a9bf75354efb5893bce45044a14053490}} 
+\index{Persona.c@{Persona.c}!updatePersona@{updatePersona}}
+\index{updatePersona@{updatePersona}!Persona.c@{Persona.c}}
+\doxysubsubsection{\texorpdfstring{updatePersona()}{updatePersona()}}
+{\footnotesize\ttfamily void update\+Persona (\begin{DoxyParamCaption}\item[{char $\ast$}]{name,  }\item[{char $\ast$}]{relacion,  }\item[{char $\ast$}]{origen,  }\item[{int}]{origen\+Modo }\end{DoxyParamCaption})}
+
+
+
+Actualiza la informacion de una persona, si la persona no existe, la crea. Para campos desconocidos inicializar con {\ttfamily NULL} o {\ttfamily 0}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & \\
+\hline
+{\em relacion} & \\
+\hline
+{\em origen} & \\
+\hline
+{\em origen\+Modo} & \\
+\hline
+\end{DoxyParams}

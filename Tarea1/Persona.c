@@ -1,9 +1,24 @@
+/**
+ * @file Persona.c
+ * @author Daniel Pinto, Mariangela Rizzo, Ka Shing Fu.
+ * @brief Modulo que se encarga de todas las funcionalidades relacionadas con Personas
+ * @version 0.1
+ * @date 2021-03-08
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "../LinkedList/LinkedList.h"
 #include "./Categorias.h"
 #include "./Persona.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+// ---------------------- 
+// |      MACROS        |
+// ----------------------
 
 /** @def FROM_DYADIC
  * @brief Casts a dyadic function of type: `a -> b -> c` to `void* -> void* -> void*`.
@@ -26,6 +41,10 @@
  */
 #define COMPSTR(fst, snd) strcmp(fst,snd) == 0
 
+// ---------------------- 
+// |      ESTADO        |
+// ----------------------
+
 typedef struct Persona {
     char* nombre;
     char* origen;
@@ -33,7 +52,15 @@ typedef struct Persona {
     int origenModo;
 }Persona;
 
+/** @var 
+ * @brief Lista que contiene todas las personas hasta el momento. 
+ * 
+ */
 extern Queue* personas = NULL;
+
+// ---------------------- 
+// |      FUNCTIONS     |
+// ----------------------
 
 /**
  * @brief Retorna el nombre de una persona.
@@ -55,10 +82,22 @@ char* relacion(Persona* p){
     return p->relacion;
 }
 
+/**
+ * @brief Retorna el origen de una persona
+ * 
+ * @param p 
+ * @return char* 
+ */
 char* origen(Persona* p){
     return p->origen;
 }
 
+/**
+ * @brief Retorna el modo de origen de una persona 
+ * 
+ * @param p 
+ * @return int Modo, 1 para gentilicios, 0 para lo demas.
+ */
 int origenModo(Persona* p){
     return p->origenModo;
 }
@@ -104,8 +143,8 @@ Persona* lookupByRelacion(char* relacion){
 }
 
 /**
- * @brief Actualiza la informacion de una persona, si la persona no existe, la crea.
- * 
+ * @brief Actualiza la informacion de una persona, si la persona no existe, la crea. Para campos desconocidos inicializar con `NULL` o `0`.
+ *  
  * @param name 
  * @param relacion 
  * @param origen 
@@ -147,6 +186,12 @@ void updatePersona(char* name, char* relacion, char* origen, int origenModo){
     
 }
 
+/**
+ * @brief Encuentra la siguiente palabra despues del token "mi", y la guarda en relacion. Util para mensajes freudianos.
+ * 
+ * @param input 
+ * @param relacion 
+ */
 void findAfterMi(Queue* input, char** relacion){
     size_t len;
     char* rel;
@@ -223,7 +268,7 @@ void updateNombre(Persona** p){
         nombre = (char*) head(qq);
     }
     (*p)->nombre = nombre;
-    printf("Gracias! continua\n");
+    printf("Eliza: Gracias! continua\n");
     return ;
 }
 
@@ -265,7 +310,7 @@ void updateOrigen(Persona** p){
     }
     (*p)->origen = origen;
     (*p)->origenModo = origenModo;
-    //printf("Gracias! continua\n");
+    printf("Eliza: Gracias! continua\n");
     return ;
 }
 
@@ -288,8 +333,35 @@ void discoveryP(Persona** p){
      
 }
 
+/**
+ * @brief Decide si se tiene TODA la informacion de una persona.
+ * 
+ * @param p 
+ * @return int 
+ */
 int isComplete(Persona* p){
     return p && p->nombre && p->origen && p->relacion;
+}
+
+/**
+ * @brief Dada una persona, si se tiene TODA su informacion, imprime un mensaje sobre esa persona, de lo contrario no hace nada.
+ * 
+ * @param p 
+ * @return int 
+ */
+int complete(Persona* p){
+    if (isComplete(p)){
+                char* modo;
+                if (p->origenModo){
+                    modo = "que es";
+                } else {
+                    modo = "de";
+
+                }
+                printf("Eliza: te refieres a tu %s %s, %s %s?\n",p->relacion, p->nombre, modo, p->origen);
+                return 1;
+    }
+    return 0;
 }
 
 /**
@@ -303,26 +375,19 @@ int discovery(char* s){
     Persona* p;
     int i;
     while(words){
-        
         p  = lookupByName((char*) head(words));
-        if (isComplete(p)){
-            char* modo;
-            if (p->origenModo){
-                modo = "de";
-            } else {
-                modo = "que es";
-
-            }
-            printf("Eliza: te refieres a tu %s %s, %s %s?\n",p->relacion, p->nombre, modo, p->origen);
-            return 1 ;
+        if (complete(p)){
+            return 1;
         }
         if (p){
             discoveryP(&p);
             return 1;
         }
         p = lookupByRelacion((char*) head(words));
+        if (complete(p)){
+            return 1;
+        }
         if (p){
-            
             discoveryP(&p);
             return 1;
         }
