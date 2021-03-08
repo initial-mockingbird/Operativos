@@ -396,7 +396,21 @@ void readData(struct category **categories){
     //printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
 }
 
+/**
+ * @brief Llena el estado global `categorias` con las categorias.
+ * 
+ */
+void crearCategorias(){
+    struct category *categories_list;
+    readData(&categories_list);
+    
+    Queue* categories = emptyQ();
+    Queue* words = emptyQ();
+    
+    categoriesToList(categories_list);
+}
 
+// Si PC se tiene que leer del .txt
 // void readData(struct category **categories){
 //      char file_name[25], linebuf[MAX_LEN], cat_name[35];
 //      struct words_list* words;
@@ -437,21 +451,5 @@ void readData(struct category **categories){
 //      //PARA HACER PRUEBAS: printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
 //      //printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
 //  }
-
-/**
- * @brief Llena el estado global `categorias` con las categorias.
- * 
- */
-void crearCategorias(){
-    struct category *categories_list;
-    readData(&categories_list);
-    
-    Queue* categories = emptyQ();
-    Queue* words = emptyQ();
-    
-    categoriesToList(categories_list);
-}
-
-
 
 
