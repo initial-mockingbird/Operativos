@@ -61,7 +61,7 @@ $(PROGRAMA): $(OBJETOS)
 $(OBJDIR)/main.o: main.c $(OBJDIR) ../LinkedList/LinkedList.h Categorias.h Persona.h
 	$(COMPILAR) main.c -o $(OBJDIR)/main.o
 
-$(OBJDIR)/Categorias.o: Categorias.c $(OBJDIR) ../LinkedList/LinkedList.h Categorias.h PC.h
+$(OBJDIR)/Categorias.o: Categorias.c $(OBJDIR) ../LinkedList/LinkedList.h Categorias.h 
 	$(COMPILAR) Categorias.c -o $(OBJDIR)/Categorias.o
 
 $(OBJDIR)/Persona.o: Persona.c $(OBJDIR) ../LinkedList/LinkedList.h Categorias.h Persona.h
