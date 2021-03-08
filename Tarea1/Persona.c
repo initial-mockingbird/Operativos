@@ -1,6 +1,6 @@
 /**
  * @file Persona.c
- * @author Daniel Pinto, Mariangela Rizzo, Ka Shing Fu.
+ * @author Daniel Pinto, Mariangela Rizzo, Ka Shing Fung.
  * @brief Modulo que se encarga de todas las funcionalidades relacionadas con Personas
  * @version 0.1
  * @date 2021-03-08

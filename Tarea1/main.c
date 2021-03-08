@@ -1,6 +1,6 @@
 /**
  * @file main.c
- * @author Daniel Pinto, Mariangela Rizzo, Ka Shing Fu.
+ * @author Daniel Pinto, Mariangela Rizzo, Ka Shing Fung.
  * @brief Modulo principal.
  * @version 0.1
  * @date 2021-03-08

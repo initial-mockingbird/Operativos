@@ -1,6 +1,6 @@
 /**
  * @file Categorias.c
- * @author Daniel Pinto, Mariangela Rizzo, Ka Shing Fu.
+ * @author Daniel Pinto, Mariangela Rizzo, Ka Shing Fung.
  * @brief Modulo que se encarga de todas las funcionalidades relacionadas con categorias.
  * @version 0.1
  * @date 2021-03-08
@@ -12,7 +12,6 @@
 
 #include "../LinkedList/LinkedList.h"
 #include "Categorias.h"
-#include "PC.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,6 +58,34 @@
  * 
  */
 #define FILE_NAME "PC.txt"
+/** @def PC
+ * @brief Archivo en forma de string.
+ * 
+ */
+char PC[] = "\r\nPRIORIDAD 1: DESPEDIDA\n"
+            "Acabo el tiempo\nAdios\nChao\nDebo irme\nHasta luego\nHora de irme\nHora de irse\nMe voy\nTengo que irme\n\n"
+            "\r\nPRIORIDAD 2: PESAME\n"
+            "Cobro la vida\nCosto la vida\nEstiro la pata\nFallece\nFallecio\nMuere\nMurio\nPaso a mejor vida\nPerdio la vida\n\n"
+            "\r\nPRIORIDAD 3: FREUDIANO\n"
+            "Abuela\nAbuelo\nEs mi\nHermana\nHermano\nMadre\nMama\nPadre\nPapa\nPrima\nPrimo\nSe trata de mi\nTia\nTio\n\n"
+            "\r\nPRIORIDAD 4: EXPLORACION\n"
+            "Cree\nCreo\nDice\nDigo\nHace\nHago\nIgual\nIguales\nLo mismo\nParece\nParecen\nParecidos\nPiensa\nPienso\nRecuerda\nRecuerdo\n\n"
+            "\r\nPRIORIDAD 5: ESPACIO SEGURO\n"
+            "Deberia\nDebo\nDesgraciado\nDisculpa\nLamento\nLo Siento\nMaldito\nPerdon\nPuede\n\n"
+            "\r\nPRIORIDAD 6: EXPLORACION SENTIMIENTOS\n"
+            "Abusa\nAbuso\nAvento\nCayo\nDolor\nDuele\nEra\nEstoy\nExagera\nFue\nGane\nGano\nHice\nHizo\nKarma\nLanzo\nLlego\nLlegue\nLogre\nLogro\nOcurre\nOcurrio\nPaso\nPerdi\nPerdio\nSoy\nTrauma\n\n"
+            "\r\nPRIORIDAD 7: PROFUNDIZACION SENTIMIENTOS\n"
+            "Agrada\nAgrado\nAguanta\nAguantar\nAguanto\nAlegre\nAlegria\nAsco\nBuena\nBueno\nColera\nContento\nCoraje\nDesagrado\nDisgusto\nDivertida\nDivertido\nEstoy sintiendo\nFelicidad\nFeliz\nGusta\nIra\nMe siento\nMolesta\nMolestia\nMolesto\nNauseas\nPena\nSiento que\nSola\nSolo\nTriste\nTristeza\n\n"
+            "\r\nPRIORIDAD 8: POSITIVISMO\n"
+            "Aguanta\nAguante\nAguanto\nChingada\nContrario\nHorrible\nMala\nMalo\nNo\nPesima\nPesimo\nResiste\nResistira\nResisto\nTerrible\n\n"
+            "\r\nPRIORIDAD 9: DEFLEXION\n"
+            "Como\nCual\nCuales\nCuando\nDonde\nel es\nElla es\nEres\nEstas\nPor que\nQue es\nQuien\nSois\nSos\nTu\nUsted\nVos\n\n"
+            "\r\nPRIORIDAD 10: AYUDA\n"
+            "Como funciona\nNo se\nQue debo hacer\nQue hacer\nQue hago\n\n"
+            "\r\nPRIORIDAD 11: EXPLORACION\n"
+            "Desde\nHacia\nHasta\nMediante\nMientras\nPara\nPor\nSegun\n\n"
+            "\r\nPRIORIDAD 12: DELIMITACION\n"
+            "Abrumador\nEllos\nLleva\nMuchas\nMuchos\nNos\nNosotros\nSobrecogedor\nTan\nTodas\nTodos\n\r";
 
 // ---------------------- 
 // |    AUX FUNCTIONS   |
@@ -329,21 +356,25 @@ Queue* categoriesToList(struct category *categories){
  * 
  * @param categories 
  */
-/*
 void readData(struct category **categories){
-    char file_name[25], linebuf[MAX_LEN], cat_name[35], *token;
+    char linebuf[MAX_LEN], cat_name[35], *token, str[2] = "\n";
     struct words_list* words;
     int i = 0; 
     
-    token = strtok(PC,"\n");
+    token = strtok(PC, str);
     while( token != NULL ) {
+        
         strcpy(linebuf, token);
+        strcat(linebuf, str);
+        printf("%s", linebuf);
         if(linebuf[0] == '\r' || linebuf[0] == '\n'){
             if (i > 1) //Es decir, la lista de cateogrías ya se creó
                 i = 1;     
+            token = strtok(NULL, str);
             continue; //Se salta el resto del while
         } else if (strstr(linebuf, "PRIORIDAD") != NULL || strstr(linebuf, "IDENTIFICAR") != NULL) {
             strcpy(cat_name, linebuf);
+            token = strtok(NULL, str);
             continue; //Se salta el resto del while
         }
 
@@ -359,54 +390,54 @@ void readData(struct category **categories){
             appendWord(linebuf, words);
         }
 
-        token = strtok(NULL, " ");
+        token = strtok(NULL, str);
     }
 
     //PARA HACER PRUEBAS: printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
     //printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
 }
-*/
 
 
-void readData(struct category **categories){
-     char file_name[25], linebuf[MAX_LEN], cat_name[35];
-     struct words_list* words;
-     int i = 0;   
-     FILE *fp = fopen(FILE_NAME, "r"); // modo lectura
+// void readData(struct category **categories){
+//      char file_name[25], linebuf[MAX_LEN], cat_name[35];
+//      struct words_list* words;
+//      int i = 0;   
+//      FILE *fp = fopen(FILE_NAME, "r"); // modo lectura
 
-     if (fp == NULL) // Se falla leyendo el archivo
-     {  
-        perror("Ocurrió un error abriendo el archivo.\n");
-        exit(EXIT_FAILURE);
-     }
+//      if (fp == NULL) // Se falla leyendo el archivo
+//      {  
+//         perror("Ocurrió un error abriendo el archivo.\n");
+//         exit(EXIT_FAILURE);
+//      }
 
-     while(fgets(linebuf, sizeof linebuf, fp) != NULL) {
-         if(linebuf[0] == '\r' || linebuf[0] == '\n'){
-             if (i > 1) //Es decir, la lista de cateogrías ya se creó
-                 i = 1;     
-             continue; //Se salta el resto del while
-         } else if (strstr(linebuf, "PRIORIDAD") != NULL || strstr(linebuf, "IDENTIFICAR") != NULL) {
-             strcpy(cat_name, linebuf);
-             continue; //Se salta el resto del while
-         }
-         if (i == 0){ //Si no se ha creado la lista de categorías
-             words = generateWordList(linebuf);
-             (*categories) = generateCategoriesList(cat_name, words);
-             i += 2;
-         }else if (i == 1){ //La lista de categorías está creada, pero se necesita insertar una categoría nueva.
-             words = generateWordList(linebuf);
-             appendCategory(cat_name, words, *categories);
-             i++;
-         }else{ //Añadimos palabras a la categoría en la que nos encontramos.
-             appendWord(linebuf, words);
-         }
-     }
+//      while(fgets(linebuf, sizeof linebuf, fp) != NULL) {
+//          printf("%s", linebuf);
+//          if(linebuf[0] == '\r' || linebuf[0] == '\n'){
+//              if (i > 1) //Es decir, la lista de cateogrías ya se creó
+//                  i = 1;     
+//              continue; //Se salta el resto del while
+//          } else if (strstr(linebuf, "PRIORIDAD") != NULL || strstr(linebuf, "IDENTIFICAR") != NULL) {
+//              strcpy(cat_name, linebuf);
+//              continue; //Se salta el resto del while
+//          }
+//          if (i == 0){ //Si no se ha creado la lista de categorías
+//              words = generateWordList(linebuf);
+//              (*categories) = generateCategoriesList(cat_name, words);
+//              i += 2;
+//          }else if (i == 1){ //La lista de categorías está creada, pero se necesita insertar una categoría nueva.
+//              words = generateWordList(linebuf);
+//              appendCategory(cat_name, words, *categories);
+//              i++;
+//          }else{ //Añadimos palabras a la categoría en la que nos encontramos.
+//              appendWord(linebuf, words);
+//          }
+//      }
 
-     fclose(fp); //Cerramos el archivo que está siento leido
+//      fclose(fp); //Cerramos el archivo que está siento leido
 
-     //PARA HACER PRUEBAS: printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
-     //printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
- }
+//      //PARA HACER PRUEBAS: printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
+//      //printf("Primera Categoria: %s y Novena Palabra: %s\n", categories->name, categories->words->next->next->next->next->next->next->next->next->value);
+//  }
 
 /**
  * @brief Llena el estado global `categorias` con las categorias.
