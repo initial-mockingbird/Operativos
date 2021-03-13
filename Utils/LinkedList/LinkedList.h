@@ -1,6 +1,6 @@
 #ifndef LinkedList_H_
 #define LinkedList_H_
-
+#include "../Closures/Closure.h"
 typedef struct Queue Queue;
 void createEmptyQ(Queue* q);
 
@@ -32,5 +32,15 @@ int and(Queue* qq);
 int any(int (*f)(void*),Queue* qq);
 int or(Queue* qq);
 int elemBy(int (*f)(void*,void*),void* a, Queue*qq);
+
+void sequenceIOC(Closure* c, Queue* qq);
+void* foldrC(Closure* c, void* acc, Queue* qq);
+void* foldlC(Closure* c, void* acc, Queue* qq);
+Queue* filterC(Closure* c,Queue* qq);
+Queue* mapC(Closure* c, Queue* qq);
+Queue* zipWithC (Closure* c, Queue* qq, Queue* pp);
+int allC(Closure* c,Queue* qq);
+int anyC(Closure* c,Queue* qq);
+int elemByC(Closure* c,void* a, Queue*qq);
 
 #endif // LinkedList_H_

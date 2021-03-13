@@ -1,4 +1,5 @@
-#include "../../LinkedList/LinkedList.h"
+#include "../../Utils/LinkedList/LinkedList.h"
+#include "../../Utils/Closures/Closure.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -41,6 +42,9 @@ void* add(void* i, void* j){
     return (void*) (ii + jj);
 }
 
+void* geq(void* i, void* j){
+    return (int) j >= (int) i;  
+}
 
 
 void* subs(void* i, void* j){
@@ -394,7 +398,42 @@ int main(int argc, char const *argv[])
     printQInt(q);
     printf("} -> %d\n\n", or(map((void * (*)(void *)) gt3,q)));
 
+    // ---------------------- 
+    // |      TEST 24       |
+    // ---------------------- 
 
+    printf("----------------------\n|      TEST 24       |\n----------------------\n\n");
+    printf("foldr using (+):\n\n");
+    Closure* addC = dyadicToClosure(add);
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> %d\n\n", foldrC(addC,(void*) 0,q) );
+
+
+    // ---------------------- 
+    // |      TEST 25       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 25       |\n----------------------\n\n");
+    printf("foldl using (+):\n\n");
+    addC = dyadicToClosure(add);
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> %d\n\n", foldlC(addC,(void*) 0,q) );
+
+    // ---------------------- 
+    // |      TEST 26       |
+    // ---------------------- 
+
+    printf("----------------------\n|      TEST 26       |\n----------------------\n\n");
+    printf("filter by >= 3:\n\n");
+    Closure* geq3C = dyadicToClosure(geq);
+    geq3C = apply(geq3C,(void*) 3);
+    printf("q: { ");
+    printQInt(q);
+    printf("} -> { ");
+    printQInt(filterC(geq3C,q) );
+    printf("}\n\n");
 
     return EXIT_SUCCESS;
 }

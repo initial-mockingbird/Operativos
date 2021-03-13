@@ -102,11 +102,25 @@ void sequenceIO(void (*f)(void*), Queue* qq){
 }
 
 /**
+ * @brief Given a Closure that performs IO, sequence the series of actions for each element of the list.
+ * 
+ * @param c 
+ * @param qq 
+ */
+void sequenceIOC(Closure* c, Queue* qq){
+    Queue* q = qq;
+    while(q){
+        apply(c,q->val);
+        q = q->sig;
+    }
+}
+
+/**
  * @brief Reduces a list from left to right (left associativity)
  * 
  * @param f 
  *  Function that combines the accumulator with the values of the list.
- *  f has type: `(acc-> a -> acc)` where `a` is the type of the list and `acc` is the type of the accumulator.
+ *  f has type: `(acc -> a -> acc)` where `a` is the type of the list and `acc` is the type of the accumulator.
  * @param acc 
  *  Accumulator
  * @param qq 
@@ -118,6 +132,28 @@ void* foldl(void* (*f)(void*, void*), void* acc, Queue* qq){
     
     while(qq){
         acc = f(acc,qq->val);
+        qq   = qq->sig;
+    }
+    return acc;
+}
+
+/**
+ * @brief Reduces a list from left to right (left associativity)
+ * 
+ * @param c 
+ *  Closure that combines the accumulator with the values of the list.
+ *  c has type: `(acc -> a -> acc)` where `a` is the type of the list and `acc` is the type of the accumulator.
+ * @param acc 
+ *  Accumulator
+ * @param qq 
+ *  Queue to apply the function
+ * @return void* 
+ *  Reduced value.
+ */
+void* foldlC(Closure* c, void* acc, Queue* qq){
+    
+    while(qq){
+        acc = getVal(apply2(c,acc,qq->val));
         qq   = qq->sig;
     }
     return acc;
@@ -144,6 +180,31 @@ void* foldr(void* (*f)(void*, void*), void* acc, Queue* qq){
 
     return f(qq->val, foldr(f,acc,qq->sig));
 }
+
+
+/**
+ * @brief Reduce a list from right to left (right associativity)
+ * 
+ * @param c 
+ *  Closure that combines the accumulator with the values of the list.
+ *  f has type: `(a->acc->acc)` where `a` is the type of the list and `acc` is the type of the accumulator.
+ * @param acc 
+ *  Accumulator
+ * @param qq 
+ *  Queue to apply the function
+ * @return void* 
+ *  Reduced value
+ */
+void* foldrC(Closure* c, void* acc, Queue* qq){
+    
+    if (!qq){
+        return acc;
+    }
+
+    return getVal(apply2(c,qq->val,foldrC(c,acc,qq->sig)));
+}
+
+
 /**
  * @brief Builds an empty list
  * 
@@ -284,6 +345,28 @@ Queue* filter(int* (*f)(void*),Queue* qq){
 
 
 /**
+ * @brief \f$ \mathcal{O}(n) \f$ filter, applied to a predicate and a list, returns the list of those elements that satisfy the predicate; i.e.,
+ * 
+ *      filter(odd,[1:2:3:4:5:6]) == [1,3,5]
+ * 
+ * @param c
+ * @param qq 
+ * @return Queue* 
+ */
+Queue* filterC(Closure* c,Queue* qq){
+    Queue* q = (Queue*) malloc(sizeof(Queue));
+    q = emptyQ();
+    while(qq){
+        if (applyAndGetVal(c,qq->val)){
+            q = snoc(qq->val,q);
+        }
+        qq = qq->sig;
+    }
+    return q;
+}
+
+
+/**
  * @brief Appends two lists
  * 
  * @param qq 
@@ -332,6 +415,24 @@ Queue* map(void* (*f)(void*), Queue* qq){
 }
 
 /**
+ * @brief maps every element of the list qq using the closure c.
+ * 
+ * @param c
+ * @param qq 
+ * @return Queue* 
+ */
+Queue* mapC(Closure* c, Queue* qq){
+    Queue* q = emptyQ();
+
+    while(qq){
+        q = snoc(applyAndGetVal(c,qq->val),q);
+        qq = qq->sig;
+    }
+
+    return q;
+}
+
+/**
  * @brief Zips together two Lists using a function `f`. Shortcircuits on the list of the shortest lenght, thus the list can have different length.
  * 
  * @param f 
@@ -343,6 +444,25 @@ Queue* zipWith (void* (*f)(void*,void*), Queue* qq, Queue* pp){
     Queue* q = emptyQ();
     while(qq && pp){
         q = snoc(f(qq->val,pp->val),q);
+        qq = qq->sig;
+        pp = pp->sig;
+    }
+    return q;
+}
+
+
+/**
+ * @brief Zips together two Lists using a closure `c`. Shortcircuits on the list of the shortest lenght, thus the list can have different length.
+ * 
+ * @param c
+ * @param qq 
+ * @param pp 
+ * @return Queue* 
+ */
+Queue* zipWithC (Closure* c, Queue* qq, Queue* pp){
+    Queue* q = emptyQ();
+    while(qq && pp){
+        q = snoc(applyAndGelValN(c,2,qq->val,pp->val),q);
         qq = qq->sig;
         pp = pp->sig;
     }
@@ -366,7 +486,7 @@ Queue* take(int n, Queue* qq){
     return q;
 }
 /**
- * @briefDrops `min(n,length(q))` elements out of a list.
+ * @brief Drops `min(n,length(q))` elements out of a list.
  * 
  * @param n 
  * @param qq 
@@ -403,6 +523,23 @@ int all(int (*f)(void*),Queue* qq){
     return 1;
 }
 
+/**
+ * @brief Given a predicate (closure) `c`, tells whether every element on the list satisfies the predicate.
+ * 
+ * @param c
+ * @param qq 
+ * @return int 
+ */
+int allC(Closure* c,Queue* qq){
+    while(qq){
+        if (!((int) applyAndGetVal(c,qq->val))){
+            return 0;
+        }
+        qq = qq->sig;
+    }
+    return 1;
+}
+
 
 int and(Queue* qq){
     while(qq){
@@ -431,6 +568,23 @@ int any(int (*f)(void*),Queue* qq){
     return 0;
 }
 
+/**
+ * @brief Given a predicate (closure) `c`, tells if any element on the list satisfies the predicate.
+ * 
+ * @param c
+ * @param qq 
+ * @return int 
+ */
+int anyC(Closure* c,Queue* qq){
+    while(qq){
+        if ((int) applyAndGetVal(c,qq->val)){
+            return 1;
+        }
+        qq = qq->sig;
+    }
+    return 0;
+}
+
 int or(Queue* qq){
     while(qq){
         if ((int) (qq->val)){
@@ -452,6 +606,25 @@ int or(Queue* qq){
 int elemBy(int (*f)(void*,void*),void* a, Queue*qq){
     while(qq){
         if (f(qq->val,a)){
+            return 1;
+        }
+        qq = qq->sig;
+    }
+    return 0;
+}
+
+
+/**
+ * @brief Given a comparison function (closure) `c`, a value `a` and a List, tells whether the value belongs to the list.
+ * 
+ * @param c
+ * @param a 
+ * @param qq 
+ * @return int 
+ */
+int elemByC(Closure* c,void* a, Queue*qq){
+    while(qq){
+        if ((int) applyAndGelValN(c,2,qq->val,a)){
             return 1;
         }
         qq = qq->sig;
