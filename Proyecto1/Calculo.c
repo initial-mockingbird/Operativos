@@ -47,28 +47,28 @@ MensajeInformacional *contagioPais(struct pais *pais){
  * @param dato
  * @param estrato
  */
-void printPais(FILE *fp, Pais *pais, MR *MR, char dato, char *estrato){
+void printPais(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
     // dato: i (infectados), m (muertos)
     // estrato: Alta, Media, Baja
     double aux;
     switch(dato){
         case 'i':
             if(COMPSTR(estrato, "Alta")){
-                aux = ((MR -> altaNuevosInfectados) * 100) / ((pais->poblacionTotal) * (pais->claseAlta));
+                aux = ((MR -> altaNuevosInfectados) * 100) / (poblacionTotal(p) * claseAlta(p));
             }else if(COMPSTR(estrato, "Media")){
-                aux = ((MR -> mediaNuevosInfectados) * 100) / ((pais->poblacionTotal) * (pais->claseMedia));
+                aux = ((MR -> mediaNuevosInfectados) * 100) / (poblacionTotal(p) * claseMedia(p));
             }else if(COMPSTR(estrato, "Baja")){
-                aux = ((MR -> bajaNuevosInfectados) * 100) / ((pais->poblacionTotal) * (pais->claseBaja));
+                aux = ((MR -> bajaNuevosInfectados) * 100) / (poblacionTotal(p) * claseBaja(p));
             }
             fprintf(fp, "%s, %s, nuevos infectados, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);
             return;
         case 'm':
             if(COMPSTR(estrato, "Alta")){
-                aux = ((MR -> altaNuevosMuertos) * 100) / ((pais->poblacionTotal) * (pais->claseAlta));
+                aux = ((MR -> altaNuevosMuertos) * 100) / (poblacionTotal(p) * claseAlta(p));
             }else if(COMPSTR(estrato, "Media")){
-                aux = ((MR -> mediaNuevosMuertos) * 100) / ((pais->poblacionTotal) * (pais->claseMedia));
+                aux = ((MR -> mediaNuevosMuertos) * 100) / (poblacionTotal(p) * claseMedia(p));
             }else if(COMPSTR(estrato, "Baja")){
-                aux = ((MR -> bajaNuevosMuertos) * 100) / ((pais->poblacionTotal) * (pais->claseBaja));
+                aux = ((MR -> bajaNuevosMuertos) * 100) / (poblacionTotal(p) * claseBaja(p));
             }
             fprintf(fp, "%s, %s, nuevos muertos, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);
             return;
