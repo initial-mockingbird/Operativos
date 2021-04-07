@@ -42,7 +42,7 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
             }else if(COMPSTR(estrato, "Baja")){
                 aux = porcentaje(bajaNuevosInfectados(MR), poblacionTotal(p) * claseBaja(p));
             }
-            fprintf(fp, "%s, %s, nuevos infectados, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);
+            fprintf(fp, "%s, %s, nuevos infectados, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);   //Modificar <Agregar fecha>
             return;
         case 'm':
             if(COMPSTR(estrato, "Alta")){
@@ -52,7 +52,7 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
             }else if(COMPSTR(estrato, "Baja")){
                 aux = porcentaje(bajaNuevosMuertos(MR), poblacionTotal(p) * claseBaja(p));
             }
-            fprintf(fp, "%s, %s, nuevos muertos, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);
+            fprintf(fp, "%s, %s, nuevos muertos, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);      //Modificar <Agregar fecha>
             return;
     }
 }
@@ -79,7 +79,7 @@ void printME(FILE *fp, Pais *p, ME *ME){
                     "reabre sus negocios", "clausura sus mercados por primera vez", "reabre sus mercados",
                     "detiene sus transportes publicos por primera vez", "reactiva su transporte publico"};
 
-    fprintf(fp, "%s %s.\n", ME->pais, Hitos[tipoHito(ME)]);
+    fprintf(fp, "%s %s %d.\n", ME->pais, Hitos[tipoHito(ME)], 0);     //Modificar <Agregar fecha>
 }
 
 /**
@@ -89,54 +89,65 @@ void printME(FILE *fp, Pais *p, ME *ME){
  * @return int 
  */
 int print(Mundo *mundo, char *fileName[]){
-    FILE *fp;
+    FILE *fp, *bi;
     MensajeInformacional *msj;
     ME *ME;
     MR *MR;
     Pais *pais;
     Queue *q = mundo->eventos;  
-    int globalInfectados = 0, globalMuertos = 0;
+    long long globalInfectados = 0, globalMuertos = 0;
     char buffer[MAX_LEN];
     
-    // Abrir archivo en modo append+, si no existe se crea
+    // Abrir archivo para reportes por pais en modo append+, si no existe se crea
     strcpy(buffer, fileName);
     strcat(buffer, ".txt");
     fp = fopen(buffer, "a+");
     // Si ocurre un error al abrir 
     if(fp) return EXIT_FAILURE;
+    // Abrir archivo para hitos en modo append+, si no existe se crea
+    bi = fopen("BoletinInformativo.txt", "a+");
+    // Si ocurre un error al abrir 
+    if(bi) return EXIT_FAILURE;
 
-    // Imprimir todos los mensajes informacionales
+    // Imprimir/Guardar los mensajes informacionales
     while(q){
-        msj = q->value;
+        msj = (MensajeInformacional*) head(q);
         if(msj->tipo == 0){
             ME = (msj->MI)->ME;
-            pais = lookupByName(MR->pais);
+            pais = lookupByName(ME->pais);
             
             //Guardar informacion sobre un evento en cierto pais en el archivo
-            printME(fp, pais, ME);
-
+            printME(bi, pais, ME);
+            
         }else if(msj->tipo == 1){
             MR = (msj->MI)->MR;
             pais = lookupByName(MR->pais);
 
             //Guardar información sobre el país en el archivo
-            printMR(fp, pais, MR, 'i', "Alta");
-            printMR(fp, pais, MR, 'm', "Alta");
-            printMR(fp, pais, MR, 'i', "Media");
-            printMR(fp, pais, MR, 'm', "Media");
-            printMR(fp, pais, MR, 'i', "Baja");
-            printMR(fp, pais, MR, 'm', "Baja");
+            if(days % 7 == 0){
+                printMR(fp, pais, MR, 'i', "Alta");
+                printMR(fp, pais, MR, 'm', "Alta");
+                printMR(fp, pais, MR, 'i', "Media");
+                printMR(fp, pais, MR, 'm', "Media");
+                printMR(fp, pais, MR, 'i', "Baja");
+                printMR(fp, pais, MR, 'm', "Baja");
+            }
+            
             // Sumar el numero de infectados y numero de muertos por pais
             globalInfectados += (MR->totalNuevosInfectados);
             globalMuertos += (MR->totalNuevosMuertos);
         }
-        q = q->next;
+        q = tail(q);
     }
     // Imprimir informacion global
-    fprintf(fp, "Global, Total, nuevos infectados, %d, %d\n", MR->fecha, globalInfectados);
-    fprintf(fp, "Global, Total, nuevos muertos, %d, %d\n", MR->fecha, globalMuertos);
+    fprintf(fp, "Global, Total, nuevos infectados, %d, %lld\n", 0, globalInfectados);   //Modificar <Agregar fecha>
+    fprintf(fp, "Global, Total, nuevos muertos, %d, %lld\n", 0, globalMuertos);         //Modificar <Agregar fecha>
     
     fclose(fp);
+    fclose(bi);
+
+    mundo->eventos = NULL;
+
     return EXIT_SUCCESS;
 }
 
@@ -155,7 +166,7 @@ MensajeInformacional *contagioPais(struct pais *p){
     MR->pais = nombre(p);
 
     // Nuevos infectados por clase
-    MR->altaNuevosInfectados = abs(ceil(altosInfectados(p) * tasaContagio) - altosInfectados(p));
+    MR->altaNuevosInfectados = abs(ceil(altosInfectados(p) * tasaContagio) - altosInfectados(p));   
     MR->mediaNuevosInfectados = abs(ceil(mediaInfectados(p) * tasaContagio) - mediaInfectados(p));
     MR->bajaNuevosInfectados = abs(ceil(bajaInfectados(p) * tasaContagio) - bajaInfectados(p));
 
@@ -171,7 +182,7 @@ MensajeInformacional *contagioPais(struct pais *p){
     MR->bajaNuevosMuertos = ceil(tratado * 0.5) + ceil(ntratado * mortalidadNoTratarla);
 
     // Actualizar datos restantes de MR
-    MR->fecha = 0;      //Modificar
+    MR->fecha = 0;      //Modificar <Agregar fecha>
     MR->totalNuevosInfectados += (MR->altaNuevosInfectados) + (MR->mediaNuevosInfectados) + (MR->bajaNuevosInfectados);
     MR->totalNuevosMuertos += (MR->altaNuevosMuertos) + (MR->mediaNuevosMuertos) + (MR->bajaNuevosMuertos);
 
@@ -194,27 +205,25 @@ MensajeInformacional *contagioPais(struct pais *p){
  * @param mundo
  */
 void calculoContagio(Mundo *mundo){
-    Queue *r = regionesToList(regiones);
     Queue *eventos = malloc(sizeof(struct Queue));
-    Pais *p;
+    Queue *p = paises;
+    Pais *pais;
 
     //Asignar dir de la lista de eventos al mundo
     mundo->eventos = eventos;
 
     //Iterar por las regiones
-    while(r){
-        p = (r->value)->next;
-        //Iterar por los paises
-        while(p){
-            p = lookupByName(p->value);
-            eventos->value = contagioPais(p);
-            eventos->next = NULL;
-            p = p->next;
-            if(p){
-                eventos->next = malloc(sizeof(struct Queue));
-                eventos = eventos->next;
-            }
-        }
-        r = r->next;
+    while(p){
+        pais = (Pais*) head(p);
+        eventos->value = contagioPais(pais);
+        eventos->next = NULL;
+        p = tail(p);
+        if(p){
+            eventos->next = malloc(sizeof(struct Queue));
+            eventos = eventos->next;
+        }        
     }
+
+    days += 1;
 }
+
