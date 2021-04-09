@@ -1,10 +1,7 @@
 #ifndef CALCULO_H_
 #define CALCULO_H_
 
-#include "../Utils/LinkedList/LinkedList.h"
-#include "../Utils/Closures/Closure.h"
 #include "Modelos.h"
-#include "Mensaje.h"
 
 int days;
 double tasaContagio;

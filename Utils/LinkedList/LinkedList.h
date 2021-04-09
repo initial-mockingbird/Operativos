@@ -25,6 +25,7 @@ void* foldr(void* (*f)(void*, void*), void* acc, Queue* qq);
 void* foldl(void* (*f)(void*, void*), void* acc, Queue* qq);
 void sequenceIO(void (*f)(void*), Queue* qq);
 void mapP(void* (*f)(void*), Queue* qq);
+void snocP(void* value, Queue* q);
 
 int length(Queue*qq);
 int all(int (*f)(void*),Queue* qq);

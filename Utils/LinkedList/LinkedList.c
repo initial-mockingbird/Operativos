@@ -296,6 +296,24 @@ Queue* snoc(void* value,Queue* q){
 }
 
 /**
+ * @brief Appends an element to the tail of the list modifying it. 
+ * 
+ * @param value 
+ *  Value to be appended at the tail of the list.
+ * @param q 
+ *  List where the append happens
+ */
+void snocP(void* value, Queue* q){
+
+    while(q->sig){
+        q = q->sig;
+    }
+    Queue * qq = emptyQ();
+    consP(value,&qq);
+    q->sig = qq;
+}
+
+/**
  * @brief Flipped arguments version of snoc
  * 
  * @param value 

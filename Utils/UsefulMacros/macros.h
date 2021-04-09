@@ -25,4 +25,16 @@
  */
 #define COMPSTR(fst, snd) strcmp(fst,snd) == 0
 
+/** @def MAX
+ * @brief returns the maximum between `a` and `b`.
+ * 
+ */
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
+/** @def MIN
+ * @brief returns the minimum between `a` and `b`.
+ * 
+ */
+#define MIN(a,b) (((a)<(b))?(a):(b))
+
 #endif // Macros_H_

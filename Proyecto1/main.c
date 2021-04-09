@@ -1,4 +1,6 @@
 #include "../Utils/LinkedList/LinkedList.h"
+#include "../Utils/UsefulMacros/macros.h"
+#include "../Utils/Closures/Closure.h"
 #include "Calculo.h"
 #include "Etapa1.h"
 #include "Etapa2.h"
@@ -8,6 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void main(int args, char *argv[]){
+int main(int args, char *argv[]){
     return EXIT_SUCCESS;
 }

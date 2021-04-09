@@ -54,30 +54,30 @@ clean:
 #"make" no ejecutara los comandos indentados a menos que todos esten presentes
 #Puede pasarle cualquiera de estos como parametro a make ej.: "make archivosO/techo.o"
 $(PROGRAMA): $(OBJETOS)
-	$(LINKEAR) $(OBJETOS) -o $(PROGRAMA)
+	$(LINKEAR) $(OBJETOS) -o $(PROGRAMA) -lm -lpthread
 
-$(OBJDIR)/main.o: main.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h Calculo.h Etapa1.h Etapa2.h Lectura.h Mensaje.h Modelos.h
+$(OBJDIR)/main.o: main.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h ../Utils/UsefulMacros/macros.h ../Utils/Closures/Closure.h Calculo.h Etapa1.h Etapa2.h Lectura.h Mensaje.h Modelos.h
 	$(COMPILAR) main.c -o $(OBJDIR)/main.o
 
-$(OBJDIR)/Calculo.o: Calculo.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h Modelos.h Mensaje.h Calculo.h 
+$(OBJDIR)/Calculo.o: Calculo.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Modelos.h Mensaje.h Calculo.h 
 	$(COMPILAR) Calculo.c -o $(OBJDIR)/Calculo.o 
 
-$(OBJDIR)/Etapa1.o: Etapa1.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h ../Utils/UsefulMacros/macros.h ../Utils/Closures/Closure.h Mensaje.h Modelos.h Etapa1.h
+$(OBJDIR)/Etapa1.o: Etapa1.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Mensaje.h Modelos.h Etapa1.h
 	$(COMPILAR) Etapa1.c -o $(OBJDIR)/Etapa1.o 
 
 $(OBJDIR)/Etapa2.o: Etapa2.c $(OBJDIR) Modelos.h Etapa2.h
 	$(COMPILAR) Etapa2.c -o $(OBJDIR)/Etapa2.o
 
-$(OBJDIR)/Lectura.o: Lectura.c $(OBJDIR) Mensaje.h Lectura.h
+$(OBJDIR)/Lectura.o: Lectura.c $(OBJDIR) ../Utils/UsefulMacros/macros.h Mensaje.h Lectura.h
 	$(COMPILAR) Lectura.c -o $(OBJDIR)/Lectura.o
 
 $(OBJDIR)/Mensaje.o: Mensaje.c $(OBJDIR) Mensaje.h 
 	$(COMPILAR) Mensaje.c -o $(OBJDIR)/Mensaje.o
 
-$(OBJDIR)/Modelos.o: Modelos.c $(OBJDIR) Modelos.h 
+$(OBJDIR)/Modelos.o: Modelos.c $(OBJDIR) ../Utils/UsefulMacros/macros.h Modelos.h 
 	$(COMPILAR) Modelos.c -o $(OBJDIR)/Modelos.o 
 
-$(OBJDIR)/LinkedList.o: ../Utils/LinkedList/LinkedList.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h
+$(OBJDIR)/LinkedList.o: ../Utils/LinkedList/LinkedList.c $(OBJDIR) ../Utils/Closures/Closure.h ../Utils/LinkedList/LinkedList.h
 	$(COMPILAR) ../Utils/LinkedList/LinkedList.c -o $(OBJDIR)/LinkedList.o
 
 $(OBJDIR):

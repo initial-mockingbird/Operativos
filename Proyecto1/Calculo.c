@@ -1,4 +1,5 @@
 #include "../Utils/LinkedList/LinkedList.h"
+#include "../Utils/UsefulMacros/macros.h"
 #include "../Utils/Closures/Closure.h"
 #include "Modelos.h"
 #include "Mensaje.h"
@@ -12,12 +13,6 @@
 // ---------------------- 
 // |      MACROS        |
 // ----------------------
-/** @def COMPSTR
- * @brief Compares two strings, returns 1 if they are the same, and 0 otherwise.
- * 
- */
-#define COMPSTR(fst, snd) strcmp(fst,snd) == 0
-
 /** @def MAX_LEN
  * @brief Maxima longitud de una cadena de texto.
  * 
@@ -259,7 +254,7 @@ int print(Mundo *mundo, char *fileName){
 MensajeInformacional *contagioPais(Mundo *mundo, Pais *p){
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
     MR *MR = (msj->mensaje)->reporteDiario;
-    long long tratado, ntratado, aux;
+    long long tratado, ntratado;
 
     //------------------------------------ Mensaje Reporte ------------------------------------//
     MR->pais = p->nombre;
@@ -297,12 +292,9 @@ MensajeInformacional *contagioPais(Mundo *mundo, Pais *p){
     // p->poblacionTotal -= MR->totalNuevosMuertos;
 
     // Actualizar cantidad de contagiados del pais p 
-    aux = ceiLL(poblacionTotal(p) * altaInfectados(p))  + (MR->altaNuevosInfectados)  - (MR->altaNuevosMuertos);
-    actualizarAltaInfectados(p, porcentaje(aux, ceiLL(poblacionTotal(p) * claseAlta(p))));
-    aux = ceiLL(poblacionTotal(p) * mediaInfectados(p)) + (MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos);
-    actualizarMediaInfectados(p, porcentaje(aux, ceiLL(poblacionTotal(p) * claseMedia(p))));
-    aux = ceiLL(poblacionTotal(p) * bajaInfectados(p))  + (MR->bajaNuevosInfectados)  - (MR->bajaNuevosMuertos);
-    actualizarBajaInfectados(p, porcentaje(aux, ceiLL(poblacionTotal(p) * claseBaja(p))));
+    actualizarAltaInfectados(p, (double)((MR->altaNuevosInfectados)  - (MR->altaNuevosMuertos)));
+    actualizarMediaInfectados(p, (double)((MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos)));
+    actualizarBajaInfectados(p, (double)((MR->bajaNuevosInfectados)  - (MR->bajaNuevosMuertos)));
     // p->altosInfectados += (MR->altaNuevosInfectados) - (MR->altaNuevosMuertos);
     // p->mediaInfectados += (MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos);
     // p->bajaInfectados += (MR->bajaNuevosInfectados) - (MR->bajaNuevosMuertos);

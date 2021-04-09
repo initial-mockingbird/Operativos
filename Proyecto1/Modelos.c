@@ -1,16 +1,8 @@
+#include "../Utils/UsefulMacros/macros.h"
 #include "Modelos.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-// ---------------------- 
-// |      MACROS        |
-// ----------------------
-/** @def COMPSTR
- * @brief Compares two strings, returns 1 if they are the same, and 0 otherwise.
- * 
- */
-#define COMPSTR(fst, snd) strcmp(fst,snd) == 0
 
 // ---------------------- 
 // |      FUNCTIONS     |
@@ -130,7 +122,7 @@ double limitacionesBaja(Pais *p){
  * @return long long
  */
 long long altaInfectados(Pais *p){
-    return (long long) ceil((p->infectadosClase[0] * claseAlta(p)) * poblacionTotal(p));
+    return (long long) ceil(p->infectadosClase[0]);
 }
 
 /**
@@ -139,7 +131,7 @@ long long altaInfectados(Pais *p){
  * @return long long
  */
 long long mediaInfectados(Pais *p){
-    return (long long) ceil((p->infectadosClase[1] * claseMedia(p)) * poblacionTotal(p));
+    return (long long) ceil(p->infectadosClase[1]);
 }
 
 /**
@@ -148,7 +140,7 @@ long long mediaInfectados(Pais *p){
  * @return long long
  */
 long long bajaInfectados(Pais *p){
-    return (long long) ceil((p->infectadosClase[2] * claseBaja(p)) * poblacionTotal(p));
+    return (long long) ceil(p->infectadosClase[2]);
 }
 
 /**
@@ -184,7 +176,7 @@ void actualizarClaseBaja(Pais *p, double data){
  * @param data
  */
 void actualizarAltaInfectados(Pais *p, double data){
-    p->infectadosClase[0] = data;
+    p->infectadosClase[0] += data;
 }
 
 /**
@@ -193,7 +185,7 @@ void actualizarAltaInfectados(Pais *p, double data){
  * @param data
  */
 void actualizarMediaInfectados(Pais *p, double data){
-    p->infectadosClase[1] = data;
+    p->infectadosClase[1] = +data;
 }
 
 /**
@@ -202,7 +194,7 @@ void actualizarMediaInfectados(Pais *p, double data){
  * @param data
  */
 void actualizarBajaInfectados(Pais *p, double data){
-    p->infectadosClase[2] = data;
+    p->infectadosClase[2] += data;
 }
 
 /**

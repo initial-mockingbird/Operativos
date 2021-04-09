@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "modelos.h": "c",
+        "etapa2.h": "c",
+        "linkedlist.h": "c",
+        "calculo.h": "c",
+        "etapa1.h": "c",
+        "lectura.h": "c",
+        "mensaje.h": "c",
+        "macros.h": "c",
+        "closure.h": "c"
+    }
+}
