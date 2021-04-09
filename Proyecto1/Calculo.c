@@ -1,25 +1,107 @@
 #include "../Utils/LinkedList/LinkedList.h"
 #include "./Region.h"
 #include "./Paises.h"
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 
+// ---------------------- 
+// |      MACROS        |
+// ----------------------
+/** @def COMPSTR
+ * @brief Compares two strings, returns 1 if they are the same, and 0 otherwise.
+ * 
+ */
+#define COMPSTR(fst, snd) strcmp(fst,snd) == 0
+
+/** @def MAX_LEN
+ * @brief Maxima longitud de una cadena de texto.
+ * 
+ */
 #define MAX_LEN 100
-int days = 0;
-int tasaContagio = 0;
-int mortalidadNoTratarla = 0;
+
+// ---------------------- 
+// |      ESTADO        |
+// ----------------------
+
+extern int days = 0;
+extern int tasaContagio = 0;
+extern int mortalidadNoTratarla = 0;
+
+extern Queue* pacienteCero = NULL;
+extern Queue* primerMuerto = NULL;
+extern Queue* libraEnfermedad = NULL;
+extern Queue* enCuarentena = NULL;
+extern Queue* primerCierreAereopuertos = NULL;
+extern Queue* aereopuertosCerrados = NULL;
+extern Queue* primerCierreNegocios = NULL;
+extern Queue* negociosCerrados = NULL;
+extern Queue* primerClausuraMercados = NULL;
+extern Queue* mercadosCerrados = NULL;
+extern Queue* primerTransporteDetenido = NULL;
+extern Queue* transportesDetenidos = NULL;
+
+// ---------------------- 
+// |    AUX FUNCTIONS   |
+// ---------------------- 
 
 /**
  * @brief Saca el porcentaje de un dato con respecto a otro.
- * @param partial
+ * @param partial 
  * @param total
  * @return double
  */
-double porcentaje(int partial, double total){
-    return (partial * 100) / total;
+double porcentaje(long long partial, double total){
+    return (double) ((partial * 100) / total);
 }
+
+/**
+ * @brief Busca si un string aparece en una lista.
+ * @param q
+ * @param name
+ * @return bool
+ */
+bool searchQueue(Queue *q, char *name){
+    while(q){
+        if(head(q) && COMPSTR(name, (char*) head(q))) return true;
+        q = tail(q);
+    }
+    return false;
+}
+
+/**
+ * @brief Retorna una nueva lista, sin el elemento pasado como argumento.
+ * @param q
+ * @param name
+ * @return Queue*
+ */
+Queue *withoutNode(Queue *q, char *name){
+    Queue *qq = emptyQ();
+
+    while(q){
+        if(head(q) && COMPSTR(name, (char*) head(q))) continue;
+        qq = snoc((void*) head(q), qq);
+        q = tail(q);
+    }
+
+    return qq;
+}
+
+/**
+ * @brief Chequea si un pais tiene algún caso de contagio en un momento determinado.
+ * @param p
+ * @return int
+ */
+int firstCase(Pais *p){
+    //Si no hay infectados, retorna false
+    return (altosInfectados(p) || mediaInfectados(p) || bajaInfectados(p));
+}
+
+// ---------------------- 
+// |      FUNCTIONS     |
+// ----------------------
 
 /**
  * @brief Guarda informacion del mensaje de reporte de un pais en un archivo .txt.
@@ -36,21 +118,21 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
     switch(dato){
         case 'i':
             if(COMPSTR(estrato, "Alta")){
-                aux = porcentaje(altaNuevosInfectados(MR), poblacionTotal(p) * claseAlta(p));
+                aux = porcentaje(altaNuevosInfectados(MR), (double) (poblacionTotal(p) * claseAlta(p)));
             }else if(COMPSTR(estrato, "Media")){
-                aux = porcentaje(mediaNuevosInfectados(MR), poblacionTotal(p) * claseMedia(p));
+                aux = porcentaje(mediaNuevosInfectados(MR), (double) (poblacionTotal(p) * claseMedia(p)));
             }else if(COMPSTR(estrato, "Baja")){
-                aux = porcentaje(bajaNuevosInfectados(MR), poblacionTotal(p) * claseBaja(p));
+                aux = porcentaje(bajaNuevosInfectados(MR), (double) (poblacionTotal(p) * claseBaja(p)));
             }
             fprintf(fp, "%s, %s, nuevos infectados, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);   //Modificar <Agregar fecha>
             return;
         case 'm':
             if(COMPSTR(estrato, "Alta")){
-                aux = porcentaje(altaNuevosMuertos(MR), poblacionTotal(p) * claseAlta(p));
+                aux = porcentaje(altaNuevosMuertos(MR), (double) (poblacionTotal(p) * claseAlta(p)));
             }else if(COMPSTR(estrato, "Media")){
-                aux = porcentaje(mediaNuevosMuertos(MR), poblacionTotal(p) * claseMedia(p));
+                aux = porcentaje(mediaNuevosMuertos(MR), (double) (poblacionTotal(p) * claseMedia(p)));
             }else if(COMPSTR(estrato, "Baja")){
-                aux = porcentaje(bajaNuevosMuertos(MR), poblacionTotal(p) * claseBaja(p));
+                aux = porcentaje(bajaNuevosMuertos(MR), (double) (poblacionTotal(p) * claseBaja(p)));
             }
             fprintf(fp, "%s, %s, nuevos muertos, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);      //Modificar <Agregar fecha>
             return;
@@ -69,7 +151,7 @@ void printME(FILE *fp, Pais *p, ME *ME){
     //      1. Un país tiene su primer muerto               8. Un país reabre sus negocios
     //      2. Un país se libra de la enfermedad            9. Un país clausura sus mercados por 1ra vez
     //      3. Un país entra en cuarentena                  10. Un país reabre sus mercados
-    //      4. Un país sale de cuarentena                   11. Un  país  detiene  su  transporte  publico  por primera vez
+    //      4. Un país sale de cuarentena                   11. Un  país  detiene  su  transporte  publico  por 1ra vez
     //      5. Un país cierra sus aeropuertos por 1ra vez   12. Un país reactiva su transporte publico
     //      6. Un país reabre sus aeropuertos
 
@@ -162,7 +244,7 @@ MensajeInformacional *contagioPais(struct pais *p){
     MR *MR = (msj->MI)->MR;
     int tratado, ntratado;
 
-    //Mensaje Reporte
+    //------------------------------------ Mensaje Reporte ------------------------------------//
     MR->pais = nombre(p);
 
     // Nuevos infectados por clase
@@ -186,6 +268,7 @@ MensajeInformacional *contagioPais(struct pais *p){
     MR->totalNuevosInfectados += (MR->altaNuevosInfectados) + (MR->mediaNuevosInfectados) + (MR->bajaNuevosInfectados);
     MR->totalNuevosMuertos += (MR->altaNuevosMuertos) + (MR->mediaNuevosMuertos) + (MR->bajaNuevosMuertos);
 
+    //------------------------------------ Datos Pais p ------------------------------------//
     // Actualizar la poblacion del pais p
     p->claseAlta -= porcentaje(altaNuevosMuertos(MR), poblacionTotal(p) * claseAlta(p));
     p->claseMedia -= porcentaje(mediaNuevosMuertos(MR), poblacionTotal(p) * claseMedia(p));
@@ -200,28 +283,122 @@ MensajeInformacional *contagioPais(struct pais *p){
     return msj;
 }
 
+MensajeInformacional *writeME(char *pais, int tipoHito){
+    MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
+    ME *ME = (msj->MI)->ME; 
+    //Asignar la informarcion al ME
+    ME->pais = pais;
+    ME->tipoHito = tipoHito;
+
+    return msj;
+}
+
+
+
+Queue *hitoPais(Queue *eventos, Pais *p){
+    // tipoHito:    
+    //      0. Pais recibe paciente cero                    7. Un país cierra sus negocios por 1ra vez    	
+    //      1. Un país tiene su primer muerto               8. Un país reabre sus negocios
+    //      2. Un país se libra de la enfermedad            9. Un país clausura sus mercados por 1ra vez
+    //      3. Un país entra en cuarentena                  10. Un país reabre sus mercados
+    //      4. Un país sale de cuarentena                   11. Un  país  detiene  su  transporte  publico  por 1ra vez
+    //      5. Un país cierra sus aeropuertos por 1ra vez   12. Un país reactiva su transporte publico
+    //      6. Un país reabre sus aeropuertos
+
+    long long aux;
+    //2. Un país se libra de la enfermedad
+    if(!searchQueue(libraEnfermedad, nombre(p)) && searchQueue(pacienteCero, nombre(p)) && firstCase(p)){
+        libraEnfermedad = snoc((void*) nombre(p), libraEnfermedad);
+        eventos = snoc((void*) writeME(nombre(p), 2), eventos);
+    }
+    //0. Pais recibe paciente cero
+    if(!searchQueue(pacienteCero, nombre(p)) && !firstCase(p)){
+        pacienteCero = snoc((void*) nombre(p), pacienteCero);
+        eventos = snoc((void*) writeME(nombre(p), 0), eventos);
+    }
+    //1. Un país tiene su primer muerto 
+    if(!searchQueue(primerMuerto, nombre(p)) && (totalMuertos(p) > 0)){
+        primerMuerto = snoc((void*) nombre(p), primerMuerto);
+        eventos = snoc((void*) writeME(nombre(p), 1), eventos);
+    }
+    //4. Un país sale de cuarentena
+    aux = altosInfectados(p) + mediaInfectados(p) + bajaInfectados(p);
+    if(!searchQueue(enCuarentena, nombre(p)) && (aux >= contagiadosCuarentena(p))){
+        enCuarentena = snoc((void*) nombre(p), enCuarentena);
+        eventos = snoc((void*) writeME(nombre(p), 4), eventos);
+    }
+    //5. Un país cierra sus aeropuertos por 1ra vez
+    if(!searchQueue(primerCierreAereopuertos, nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
+        primerCierreAereopuertos = snoc((void*) nombre(p), primerCierreAereopuertos);
+        eventos = snoc((void*) writeME(nombre(p), 5), eventos);
+    }
+    //6. Un país reabre sus aeropuertos
+    if(searchQueue(aereopuertosCerrados, nombre(p)) && (aux < contagiadosCierreAeropuertos(p))){
+        aereopuertosCerrados = withoutNode(aereopuertosCerrados, nombre(p));
+        eventos = snoc((void*) writeME(nombre(p), 6), eventos);
+    }else if(!searchQueue(aereopuertosCerrados, nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
+        aereopuertosCerrados = snoc((void*) nombre(p), aereopuertosCerrados);
+    }
+    // 7. Un país cierra sus negocios por 1ra vez 
+    if(!searchQueue(primerCierreNegocios, nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
+        primerCierreNegocios = snoc((void*) nombre(p), primerCierreNegocios);
+        eventos = snoc((void*) writeME(nombre(p), 7), eventos);
+    }
+    //8. Un país reabre sus negocios
+    if(searchQueue(negociosCerrados, nombre(p)) && (aux < contagiadosCierreNegocios(p))){
+        negociosCerrados = withoutNode(negociosCerrados, nombre(p));
+        eventos = snoc((void*) writeME(nombre(p), 8), eventos);
+    }else if(!searchQueue(negociosCerrados, nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
+        negociosCerrados = snoc((void*) nombre(p), negociosCerrados);
+    }
+    //9. Un país clausura sus mercados por 1ra vez
+    if(!searchQueue(primerClausuraMercados, nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
+        primerClausuraMercados = snoc((void*) nombre(p), primerClausuraMercados);
+        eventos = snoc((void*) writeME(nombre(p), 9), eventos);
+    }
+    //10. Un país reabre sus mercados
+    if(searchQueue(mercadosCerrados, nombre(p)) && (aux < contagiadosClausuraMercados(p))){
+        mercadosCerrados = withoutNode(mercadosCerrados, nombre(p));
+        eventos = snoc((void*) writeME(nombre(p), 10), eventos);
+    }else if(!searchQueue(mercadosCerrados, nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
+        mercadosCerrados = snoc((void*) nombre(p), mercadosCerrados);
+    }
+    //11. Un  país  detiene  su  transporte  publico  por 1ra vez
+    if(!searchQueue(primerTransporteDetenido, nombre(p)) && (aux >= contagiadosDetenerTransporte(p))){
+        primerTransporteDetenido = snoc((void*) nombre(p), primerTransporteDetenido);
+        eventos = snoc((void*) writeME(nombre(p), 11), eventos);
+    }
+    //12. Un país reactiva su transporte publico
+    if(searchQueue(transportesDetenidos, nombre(p)) && (aux < contagiadosDetenerTransporte(p))){
+        transportesDetenidos = withoutNode(transportesDetenidos, nombre(p));
+        eventos = snoc((void*) writeME(nombre(p), 12), eventos);
+    }else if(!searchQueue(transportesDetenidos, nombre(p)) && (aux >= contagiadosDetenerTransporte(p))){
+        transportesDetenidos = snoc((void*) nombre(p), transportesDetenidos);
+    }
+
+    return eventos;
+}
+
 /**
  * @brief Calcula el contagio por region de todos los paises.
  * @param mundo
  */
 void calculoContagio(Mundo *mundo){
-    Queue *eventos = malloc(sizeof(struct Queue));
-    Queue *p = paises;
     Pais *pais;
+    Queue *eventos = emptyQ();    
+    Queue *p = paises;
 
-    //Asignar dir de la lista de eventos al mundo
-    mundo->eventos = eventos;
-
-    //Iterar por las regiones
+    //Iterar por los paises y calcular su contagio
     while(p){
         pais = (Pais*) head(p);
-        eventos->value = contagioPais(pais);
-        eventos->next = NULL;
-        p = tail(p);
-        if(p){
-            eventos->next = malloc(sizeof(struct Queue));
-            eventos = eventos->next;
-        }        
+
+        //Si el pais no ha recibido su primer contagiado, continue
+        if(!firstCase(pais)) continue;
+        //Caso contrario, calcular el contagio
+        mundo->eventos = snoc((void*) contagioPais(pais), eventos);
+        mundo->eventos = hitoPais(mundo->eventos, pais);
+
+        p = tail(p); 
     }
 
     days += 1;
