@@ -44,4 +44,24 @@ typedef struct Mundo {
     Queue* eventos; // nuevo
 }Mundo;
 
+long long poblacionTotal(Pais *p);
+int contagiadosCierreAeropuertos(Pais *p);
+int contagiadosCuarentena(Pais *p);
+int contagiadosCierreNegocios(Pais *p);
+int contagiadosClausuraMercados(Pais *p);
+int contagiadosDetenerTransporte(Pais *p);
+double claseAlta(Pais *p);
+double claseMedia(Pais *p);
+double claseBaja(Pais *p);
+double limitacionesMedia(Pais *p);
+double limitacionesBaja(Pais *p);
+long long altaInfectados(Pais *p);
+long long mediaInfectados(Pais *p);
+long long bajaInfectados(Pais *p);
+void actualizarClaseAlta(Pais *p, double data);
+void actualizarClaseMedia(Pais *p, double data);
+void actualizarClaseBaja(Pais *p, double data);
+void actualizarPoblacionTotal(Pais *p, double data);
+Pais *lookupByName(Mundo *mundo, char *nombre);
+
 #endif // MODELOS_H_
