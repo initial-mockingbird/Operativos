@@ -2,6 +2,7 @@
 #include "../Utils/Closures/Closure.h"
 #include "Modelos.h"
 #include "Mensaje.h"
+#include "Calculo.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,22 +28,23 @@
 // |      ESTADO        |
 // ----------------------
 
-extern int days = 0;
-extern double tasaContagio = 0;
-extern int mortalidadNoTratarla = 0;
+int days = 0;
+double tasaContagio = 0;
+double mortalidadNoTratarla = 0;
 
-extern Queue* pacienteCero = NULL;
-extern Queue* primerMuerto = NULL;
-extern Queue* libraEnfermedad = NULL;
-extern Queue* enCuarentena = NULL;
-extern Queue* primerCierreAereopuertos = NULL;
-extern Queue* aereopuertosCerrados = NULL;
-extern Queue* primerCierreNegocios = NULL;
-extern Queue* negociosCerrados = NULL;
-extern Queue* primerClausuraMercados = NULL;
-extern Queue* mercadosCerrados = NULL;
-extern Queue* primerTransporteDetenido = NULL;
-extern Queue* transportesDetenidos = NULL;
+Queue* pacienteCero = NULL;
+Queue* primerMuerto = NULL;
+Queue* primerMuertoImpreso = NULL;
+Queue* libraEnfermedad = NULL;
+Queue* enCuarentena = NULL;
+Queue* primerCierreAereopuertos = NULL;
+Queue* aereopuertosCerrados = NULL;
+Queue* primerCierreNegocios = NULL;
+Queue* negociosCerrados = NULL;
+Queue* primerClausuraMercados = NULL;
+Queue* mercadosCerrados = NULL;
+Queue* primerTransporteDetenido = NULL;
+Queue* transportesDetenidos = NULL;
 
 // ---------------------- 
 // |    AUX FUNCTIONS   |
@@ -53,7 +55,7 @@ extern Queue* transportesDetenidos = NULL;
  * @return double
  */
 long long ceiLL(double dato){
-    return (long long) ceiLL(dato);
+    return (long long) ceil(dato);
 }
 
 /**
@@ -63,17 +65,17 @@ long long ceiLL(double dato){
  * @return double
  */
 double porcentaje(long long partial, long long total){
-    return (double) (partial * 100) / total;
+    return (double) (partial * 100) / (double) total;
 }
 
 /**
  * @brief Saca la porción de un dato con respecto a un porcentaje.
  * @param partial 
  * @param total
- * @return double
+ * @return long long
  */
-double porcentajeR(double partial, long long total){
-    return ceiLL((partial * total) / 100);
+long long porcentajeR(double partial, long long total){
+    return ceiLL((double) (partial * total) / 100);
 }
 
 /**
@@ -104,7 +106,6 @@ Queue *withoutNode(Queue *q, char *name){
         qq = snoc((void*) head(q), qq);
         q = tail(q);
     }
-
     return qq;
 }
 
@@ -115,7 +116,7 @@ Queue *withoutNode(Queue *q, char *name){
  */
 bool firstCase(Pais *p){
     //Si no hay infectados, retorna false
-    return ((altosInfectados(p) > 0) || (mediaInfectados(p) > 0) || (bajaInfectados(p) > 0));
+    return ((altaInfectados(p) > 0) || (mediaInfectados(p) > 0) || (bajaInfectados(p) > 0));
 }
 
 // ---------------------- 
@@ -161,10 +162,9 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
 /**
  * @brief Guarda informacion del mensaje eventual de un pais en un archivo .txt.
  * @param fp
- * @param pais
  * @param ME
  */
-void printME(FILE *fp, Pais *p, ME *ME){
+void printME(FILE *fp, ME *ME){
     // tipoHito:    
     //      0. Pais recibe paciente cero                    7. Un país cierra sus negocios por 1ra vez    	
     //      1. Un país tiene su primer muerto               8. Un país reabre sus negocios
@@ -180,7 +180,7 @@ void printME(FILE *fp, Pais *p, ME *ME){
                     "reabre sus negocios", "clausura sus mercados por primera vez", "reabre sus mercados",
                     "detiene sus transportes publicos por primera vez", "reactiva su transporte publico"};
 
-    fprintf(fp, "%s %s %d.\n", ME->pais, Hitos[tipoHito(ME)], 0);     //Modificar <Agregar fecha>
+    fprintf(fp, "%s %s %d.\n", ME->pais, Hitos[ME->tipoHito], 0);     //Modificar <Agregar fecha>
 }
 
 /**
@@ -189,7 +189,7 @@ void printME(FILE *fp, Pais *p, ME *ME){
  * @param filename
  * @return int 
  */
-int print(Mundo *mundo, char *fileName[]){
+int print(Mundo *mundo, char *fileName){
     MensajeInformacional *msj;
     FILE *fp, *bi;  
     Pais *pais;  
@@ -215,10 +215,8 @@ int print(Mundo *mundo, char *fileName[]){
         msj = (MensajeInformacional*) head(q);
         if(msj->tipo == 0){
             ME = (msj->mensaje)->eventualidad;
-            pais = lookupByName(mundo, ME->pais);
-            
             //Guardar informacion sobre un evento en cierto pais en el archivo
-            printME(bi, pais, ME);
+            printME(bi, ME);
             
         }else if(msj->tipo == 1){
             MR = (msj->mensaje)->reporteDiario;
@@ -258,23 +256,21 @@ int print(Mundo *mundo, char *fileName[]){
  * @param msj
  * @return struct MensajeInformacional*
  */
-MensajeInformacional *contagioPais(Mundo *mundo, char *p){
+MensajeInformacional *contagioPais(Mundo *mundo, Pais *p){
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
     MR *MR = (msj->mensaje)->reporteDiario;
-    Pais *p;
-    long long tratado, ntratado;
-    
-    p = lookupByName(mundo, p);
+    long long tratado, ntratado, aux;
+
     //------------------------------------ Mensaje Reporte ------------------------------------//
-    MR->pais = nombre(p);
+    MR->pais = p->nombre;
 
     // Nuevos infectados por clase
-    MR->altaNuevosInfectados = abs(ceiLL(altosInfectados(p) * tasaContagio) - altaInfectados(p));   
+    MR->altaNuevosInfectados = abs(ceiLL(altaInfectados(p) * tasaContagio) - altaInfectados(p));   
     MR->mediaNuevosInfectados = abs(ceiLL(mediaInfectados(p) * tasaContagio) - mediaInfectados(p));
     MR->bajaNuevosInfectados = abs(ceiLL(bajaInfectados(p) * tasaContagio) - bajaInfectados(p));
 
     // Nuevos muertos por clase
-    MR->altaNuevosMuertos = ceiLL(altaInfectados(p)) * ((double) 1/8);
+    MR->altaNuevosMuertos = ceiLL(altaInfectados(p) * ((double) 1/8));
 
     ntratado = ceiLL(mediaInfectados(p) * limitacionesMedia(p));
     tratado = mediaInfectados(p) - ntratado;
@@ -301,13 +297,22 @@ MensajeInformacional *contagioPais(Mundo *mundo, char *p){
     // p->poblacionTotal -= MR->totalNuevosMuertos;
 
     // Actualizar cantidad de contagiados del pais p 
-    //p->altosInfectados += (MR->altaNuevosInfectados) - (MR->altaNuevosMuertos);
+    aux = ceiLL(poblacionTotal(p) * altaInfectados(p))  + (MR->altaNuevosInfectados)  - (MR->altaNuevosMuertos);
+    actualizarAltaInfectados(p, porcentaje(aux, ceiLL(poblacionTotal(p) * claseAlta(p))));
+    aux = ceiLL(poblacionTotal(p) * mediaInfectados(p)) + (MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos);
+    actualizarMediaInfectados(p, porcentaje(aux, ceiLL(poblacionTotal(p) * claseMedia(p))));
+    aux = ceiLL(poblacionTotal(p) * bajaInfectados(p))  + (MR->bajaNuevosInfectados)  - (MR->bajaNuevosMuertos);
+    actualizarBajaInfectados(p, porcentaje(aux, ceiLL(poblacionTotal(p) * claseBaja(p))));
+    // p->altosInfectados += (MR->altaNuevosInfectados) - (MR->altaNuevosMuertos);
     // p->mediaInfectados += (MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos);
     // p->bajaInfectados += (MR->bajaNuevosInfectados) - (MR->bajaNuevosMuertos);
-    actualizarAltosInfectados(p, porcentaje((MR->altaNuevosInfectados) - (MR->altaNuevosMuertos), ceiLL(poblacionTotal(p) * claseAlta(p))));
-    actualizarMediaInfectados(p, porcentaje((MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos), ceiLL(poblacionTotal(p) * claseMedia(p))));
-    actualizarBajaInfectados(p, porcentaje((MR->bajaNuevosInfectados) - (MR->bajaNuevosMuertos), ceiLL(poblacionTotal(p) * claseBaja(p))));
 
+    if(!searchQueue(primerMuerto, nombre(p))){
+        if((MR->altaNuevosMuertos > 0) || (MR->mediaNuevosMuertos) || (MR->bajaNuevosMuertos)){
+            primerMuerto = snoc((void*) nombre(p), primerMuerto);
+        }
+    }
+    
     return msj;
 }
 
@@ -355,12 +360,12 @@ Queue *hitoPais(Queue *eventos, Pais *p){
         eventos = snoc((void*) writeME(nombre(p), 0), eventos);
     }
     //1. Un país tiene su primer muerto 
-    if(!searchQueue(primerMuerto, nombre(p)) && (totalMuertos(p) > 0)){
-        primerMuerto = snoc((void*) nombre(p), primerMuerto);
+    if(searchQueue(primerMuerto, nombre(p)) && !searchQueue(primerMuertoImpreso, nombre(p))){
+        primerMuertoImpreso = snoc((void*) nombre(p), primerMuertoImpreso);
         eventos = snoc((void*) writeME(nombre(p), 1), eventos);
     }
     //4. Un país sale de cuarentena
-    aux = altosInfectados(p) + mediaInfectados(p) + bajaInfectados(p);
+    aux = altaInfectados(p) + mediaInfectados(p) + bajaInfectados(p);
     if(!searchQueue(enCuarentena, nombre(p)) && (aux >= contagiadosCuarentena(p))){
         enCuarentena = snoc((void*) nombre(p), enCuarentena);
         eventos = snoc((void*) writeME(nombre(p), 4), eventos);
@@ -418,7 +423,7 @@ Queue *hitoPais(Queue *eventos, Pais *p){
 }
 
 /**
- * @brief Calcula el contagio por region de todos los paises.
+ * @brief Calcula el contagio por region de todos los paises, y emite mensajes de eventualidad si se presenta un hito.
  * @param mundo
  */
 void calculoContagio(Mundo *mundo){

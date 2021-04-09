@@ -33,13 +33,14 @@ typedef struct MR {
 
 typedef union MI {
     // Mensaje Eventual
-    ME* eventualidad;
+    ME *eventualidad;
     // Mensaje Reporte
-    MR* reporteDiario;
+    MR *reporteDiario;
 }MI;
 
 
 typedef struct MensajeInformacional {
+    // 0: ME, 1: MR
     int tipo;
     MI* mensaje;
 }MensajeInformacional;

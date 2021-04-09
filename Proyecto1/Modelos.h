@@ -44,6 +44,7 @@ typedef struct Mundo {
     Queue* eventos; // nuevo
 }Mundo;
 
+char *nombre(Pais *p);
 long long poblacionTotal(Pais *p);
 int contagiadosCierreAeropuertos(Pais *p);
 int contagiadosCuarentena(Pais *p);
@@ -61,7 +62,10 @@ long long bajaInfectados(Pais *p);
 void actualizarClaseAlta(Pais *p, double data);
 void actualizarClaseMedia(Pais *p, double data);
 void actualizarClaseBaja(Pais *p, double data);
-void actualizarPoblacionTotal(Pais *p, double data);
+void actualizarAltaInfectados(Pais *p, double data);
+void actualizarMediaInfectados(Pais *p, double data);
+void actualizarBajaInfectados(Pais *p, double data);
+void actualizarPoblacionTotal(Pais *p, long long data);
 Pais *lookupByName(Mundo *mundo, char *nombre);
 
 #endif // MODELOS_H_
