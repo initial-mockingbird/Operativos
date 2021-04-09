@@ -20,3 +20,27 @@ Mensaje* emptyMessage(char* regionOrigen, char* paisOrigen){
 
     return empty;
 }
+
+long long altaNuevosInfectados(MR *MR){
+    return (MR->altaNuevosInfectados);
+}
+
+long long mediaNuevosInfectados(MR *MR){
+    return (MR->mediaNuevosInfectados);
+}
+
+long long bajaNuevosInfectados(MR *MR){
+    return (MR->bajaNuevosInfectados);
+}
+
+long long altaNuevosMuertos(MR *MR){
+    return (MR->altaNuevosMuertos);
+}
+
+long long mediaNuevosMuertos(MR *MR){
+    return (MR->mediaNuevosMuertos);
+}
+
+long long bajaNuevosMuertos(MR *MR){
+    return (MR->bajaNuevosMuertos);
+}
