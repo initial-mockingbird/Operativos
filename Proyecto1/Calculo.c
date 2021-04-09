@@ -1,6 +1,7 @@
 #include "../Utils/LinkedList/LinkedList.h"
-#include "./Region.h"
-#include "./Paises.h"
+#include "../Utils/Closures/Closure.h"
+#include "Modelos.h"
+#include "Mensaje.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,7 +28,7 @@
 // ----------------------
 
 extern int days = 0;
-extern int tasaContagio = 0;
+extern double tasaContagio = 0;
 extern int mortalidadNoTratarla = 0;
 
 extern Queue* pacienteCero = NULL;
@@ -46,6 +47,14 @@ extern Queue* transportesDetenidos = NULL;
 // ---------------------- 
 // |    AUX FUNCTIONS   |
 // ---------------------- 
+/**
+ * @brief Aplica la funcion techo y convierte en long long.
+ * @param dato
+ * @return double
+ */
+long long ceiLL(double dato){
+    return (long long) ceiLL(dato);
+}
 
 /**
  * @brief Saca el porcentaje de un dato con respecto a otro.
@@ -53,8 +62,18 @@ extern Queue* transportesDetenidos = NULL;
  * @param total
  * @return double
  */
-double porcentaje(long long partial, double total){
-    return (double) ((partial * 100) / total);
+double porcentaje(long long partial, long long total){
+    return (double) (partial * 100) / total;
+}
+
+/**
+ * @brief Saca la porción de un dato con respecto a un porcentaje.
+ * @param partial 
+ * @param total
+ * @return double
+ */
+double porcentajeR(double partial, long long total){
+    return ceiLL((partial * total) / 100);
 }
 
 /**
@@ -92,11 +111,11 @@ Queue *withoutNode(Queue *q, char *name){
 /**
  * @brief Chequea si un pais tiene algún caso de contagio en un momento determinado.
  * @param p
- * @return int
+ * @return bool
  */
-int firstCase(Pais *p){
+bool firstCase(Pais *p){
     //Si no hay infectados, retorna false
-    return (altosInfectados(p) || mediaInfectados(p) || bajaInfectados(p));
+    return ((altosInfectados(p) > 0) || (mediaInfectados(p) > 0) || (bajaInfectados(p) > 0));
 }
 
 // ---------------------- 
@@ -118,23 +137,23 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
     switch(dato){
         case 'i':
             if(COMPSTR(estrato, "Alta")){
-                aux = porcentaje(altaNuevosInfectados(MR), (double) (poblacionTotal(p) * claseAlta(p)));
+                aux = porcentaje(altaNuevosInfectados(MR), ceiLL(poblacionTotal(p) * claseAlta(p)));
             }else if(COMPSTR(estrato, "Media")){
-                aux = porcentaje(mediaNuevosInfectados(MR), (double) (poblacionTotal(p) * claseMedia(p)));
+                aux = porcentaje(mediaNuevosInfectados(MR), ceiLL(poblacionTotal(p) * claseMedia(p)));
             }else if(COMPSTR(estrato, "Baja")){
-                aux = porcentaje(bajaNuevosInfectados(MR), (double) (poblacionTotal(p) * claseBaja(p)));
+                aux = porcentaje(bajaNuevosInfectados(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
             }
-            fprintf(fp, "%s, %s, nuevos infectados, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);   //Modificar <Agregar fecha>
+            fprintf(fp, "%s, %s, nuevos infectados, %d, %0.3f\n", MR->pais, estrato, 0, aux);   //Modificar <Agregar fecha>
             return;
         case 'm':
             if(COMPSTR(estrato, "Alta")){
-                aux = porcentaje(altaNuevosMuertos(MR), (double) (poblacionTotal(p) * claseAlta(p)));
+                aux = porcentaje(altaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseAlta(p)));
             }else if(COMPSTR(estrato, "Media")){
-                aux = porcentaje(mediaNuevosMuertos(MR), (double) (poblacionTotal(p) * claseMedia(p)));
+                aux = porcentaje(mediaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseMedia(p)));
             }else if(COMPSTR(estrato, "Baja")){
-                aux = porcentaje(bajaNuevosMuertos(MR), (double) (poblacionTotal(p) * claseBaja(p)));
+                aux = porcentaje(bajaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
             }
-            fprintf(fp, "%s, %s, nuevos muertos, %d, %0.3f\n", MR->pais, estrato, MR->fecha, aux);      //Modificar <Agregar fecha>
+            fprintf(fp, "%s, %s, nuevos muertos, %d, %0.3f\n", MR->pais, estrato, 0, aux);      //Modificar <Agregar fecha>
             return;
     }
 }
@@ -171,11 +190,11 @@ void printME(FILE *fp, Pais *p, ME *ME){
  * @return int 
  */
 int print(Mundo *mundo, char *fileName[]){
-    FILE *fp, *bi;
     MensajeInformacional *msj;
+    FILE *fp, *bi;  
+    Pais *pais;  
     ME *ME;
     MR *MR;
-    Pais *pais;
     Queue *q = mundo->eventos;  
     long long globalInfectados = 0, globalMuertos = 0;
     char buffer[MAX_LEN];
@@ -195,15 +214,15 @@ int print(Mundo *mundo, char *fileName[]){
     while(q){
         msj = (MensajeInformacional*) head(q);
         if(msj->tipo == 0){
-            ME = (msj->MI)->ME;
-            pais = lookupByName(ME->pais);
+            ME = (msj->mensaje)->eventualidad;
+            pais = lookupByName(mundo, ME->pais);
             
             //Guardar informacion sobre un evento en cierto pais en el archivo
             printME(bi, pais, ME);
             
         }else if(msj->tipo == 1){
-            MR = (msj->MI)->MR;
-            pais = lookupByName(MR->pais);
+            MR = (msj->mensaje)->reporteDiario;
+            pais = lookupByName(mundo, MR->pais);
 
             //Guardar información sobre el país en el archivo
             if(days % 7 == 0){
@@ -239,53 +258,68 @@ int print(Mundo *mundo, char *fileName[]){
  * @param msj
  * @return struct MensajeInformacional*
  */
-MensajeInformacional *contagioPais(struct pais *p){
+MensajeInformacional *contagioPais(Mundo *mundo, char *p){
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
-    MR *MR = (msj->MI)->MR;
-    int tratado, ntratado;
-
+    MR *MR = (msj->mensaje)->reporteDiario;
+    Pais *p;
+    long long tratado, ntratado;
+    
+    p = lookupByName(mundo, p);
     //------------------------------------ Mensaje Reporte ------------------------------------//
     MR->pais = nombre(p);
 
     // Nuevos infectados por clase
-    MR->altaNuevosInfectados = abs(ceil(altosInfectados(p) * tasaContagio) - altosInfectados(p));   
-    MR->mediaNuevosInfectados = abs(ceil(mediaInfectados(p) * tasaContagio) - mediaInfectados(p));
-    MR->bajaNuevosInfectados = abs(ceil(bajaInfectados(p) * tasaContagio) - bajaInfectados(p));
+    MR->altaNuevosInfectados = abs(ceiLL(altosInfectados(p) * tasaContagio) - altaInfectados(p));   
+    MR->mediaNuevosInfectados = abs(ceiLL(mediaInfectados(p) * tasaContagio) - mediaInfectados(p));
+    MR->bajaNuevosInfectados = abs(ceiLL(bajaInfectados(p) * tasaContagio) - bajaInfectados(p));
 
     // Nuevos muertos por clase
-    MR->altaNuevosMuertos = (altaInfectados(p)) * ((double) 1/8);
+    MR->altaNuevosMuertos = ceiLL(altaInfectados(p)) * ((double) 1/8);
 
-    ntratado = ceil(mediaInfectados(p) * limitacionesMedia(p));
+    ntratado = ceiLL(mediaInfectados(p) * limitacionesMedia(p));
     tratado = mediaInfectados(p) - ntratado;
-    MR->mediaNuevosMuertos = ceil(tratado * 0.25) + ceil(ntratado * mortalidadNoTratarla);
+    MR->mediaNuevosMuertos = ceiLL(tratado * 0.25) + ceiLL(ntratado * mortalidadNoTratarla);
 
-    ntratado = ceil(bajaInfectados(p) * limitacionesBaja(p));
+    ntratado = ceiLL(bajaInfectados(p) * limitacionesBaja(p));
     tratado = bajaInfectados(p) - ntratado;
-    MR->bajaNuevosMuertos = ceil(tratado * 0.5) + ceil(ntratado * mortalidadNoTratarla);
+    MR->bajaNuevosMuertos = ceiLL(tratado * 0.5) + ceiLL(ntratado * mortalidadNoTratarla);
 
     // Actualizar datos restantes de MR
-    MR->fecha = 0;      //Modificar <Agregar fecha>
+    //MR->fecha = 0;      //Modificar <Agregar fecha>
     MR->totalNuevosInfectados += (MR->altaNuevosInfectados) + (MR->mediaNuevosInfectados) + (MR->bajaNuevosInfectados);
     MR->totalNuevosMuertos += (MR->altaNuevosMuertos) + (MR->mediaNuevosMuertos) + (MR->bajaNuevosMuertos);
 
     //------------------------------------ Datos Pais p ------------------------------------//
     // Actualizar la poblacion del pais p
-    p->claseAlta -= porcentaje(altaNuevosMuertos(MR), poblacionTotal(p) * claseAlta(p));
-    p->claseMedia -= porcentaje(mediaNuevosMuertos(MR), poblacionTotal(p) * claseMedia(p));
-    p->claseMedia -= porcentaje(bajaNuevosMuertos(MR), poblacionTotal(p) * claseBaja(p));
-    p->poblacionTotal -= MR->totalNuevosMuertos;
+    actualizarClaseAlta(p, - porcentaje(altaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseAlta(p))));
+    actualizarClaseMedia(p, - porcentaje(mediaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseMedia(p))));
+    actualizarClaseBaja(p, - porcentaje(bajaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseBaja(p))));
+    actualizarPoblacionTotal(p, - (MR->totalNuevosMuertos));
+    // p->claseAlta -= porcentaje(altaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseAlta(p)));
+    // p->claseMedia -= porcentaje(mediaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseMedia(p)));
+    // p->claseMedia -= porcentaje(bajaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
+    // p->poblacionTotal -= MR->totalNuevosMuertos;
 
     // Actualizar cantidad de contagiados del pais p 
-    p->altosInfectados += (MR->altaNuevosInfectados) - (MR->altaNuevosMuertos);
-    p->mediaInfectados += (MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos);
-    p->bajaInfectados += (MR->bajaNuevosInfectados) - (MR->bajaNuevosMuertos);
+    //p->altosInfectados += (MR->altaNuevosInfectados) - (MR->altaNuevosMuertos);
+    // p->mediaInfectados += (MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos);
+    // p->bajaInfectados += (MR->bajaNuevosInfectados) - (MR->bajaNuevosMuertos);
+    actualizarAltosInfectados(p, porcentaje((MR->altaNuevosInfectados) - (MR->altaNuevosMuertos), ceiLL(poblacionTotal(p) * claseAlta(p))));
+    actualizarMediaInfectados(p, porcentaje((MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos), ceiLL(poblacionTotal(p) * claseMedia(p))));
+    actualizarBajaInfectados(p, porcentaje((MR->bajaNuevosInfectados) - (MR->bajaNuevosMuertos), ceiLL(poblacionTotal(p) * claseBaja(p))));
 
     return msj;
 }
 
+/**
+ * @brief Dado un hito, genera un MensajeInformacional.
+ * @param pais
+ * @param tipoHito
+ * @return struct MensajeInformacional*
+ */
 MensajeInformacional *writeME(char *pais, int tipoHito){
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
-    ME *ME = (msj->MI)->ME; 
+    ME *ME = (msj->mensaje)->eventualidad; 
     //Asignar la informarcion al ME
     ME->pais = pais;
     ME->tipoHito = tipoHito;
@@ -293,8 +327,12 @@ MensajeInformacional *writeME(char *pais, int tipoHito){
     return msj;
 }
 
-
-
+/**
+ * @brief Dado un pais, genera un todos los MensajeInformacionales con los hitos correspondientes.
+ * @param eventos
+ * @param p
+ * @return struct Queue*
+ */
 Queue *hitoPais(Queue *eventos, Pais *p){
     // tipoHito:    
     //      0. Pais recibe paciente cero                    7. Un país cierra sus negocios por 1ra vez    	
@@ -384,23 +422,27 @@ Queue *hitoPais(Queue *eventos, Pais *p){
  * @param mundo
  */
 void calculoContagio(Mundo *mundo){
-    Pais *pais;
     Queue *eventos = emptyQ();    
-    Queue *p = paises;
+    Queue *r = mundo->regiones;
+    Pais *pais;
+    Queue *pp;
 
-    //Iterar por los paises y calcular su contagio
-    while(p){
-        pais = (Pais*) head(p);
+    while(r){
+        pp = ((Region*)r)->paises;
+        while(pp){
+            pais = (Pais*) head(pp);
 
-        //Si el pais no ha recibido su primer contagiado, continue
-        if(!firstCase(pais)) continue;
-        //Caso contrario, calcular el contagio
-        mundo->eventos = snoc((void*) contagioPais(pais), eventos);
-        mundo->eventos = hitoPais(mundo->eventos, pais);
+            //Si el pais no ha recibido su primer contagiado, continue
+            if(!firstCase(pais)) continue;
+            //Caso contrario, calcular el contagio
+            mundo->eventos = snoc((void*) contagioPais(mundo, pais), eventos);
+            //Generar mensajes de eventualidad
+            mundo->eventos = hitoPais(mundo->eventos, pais);
 
-        p = tail(p); 
+            pp = tail(pp);
+        }
+        r = tail(r);
     }
-
     days += 1;
 }
 
