@@ -1,6 +1,7 @@
 #include "../Utils/LinkedList/LinkedList.h"
-#include "./Region.h"
-#include "./Paises.h"
+#include "../Utils/Closures/Closure.h"
+#include "Modelos.h"
+#include "Mensaje.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
