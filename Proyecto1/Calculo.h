@@ -4,6 +4,7 @@
 #include "Modelos.h"
 #include <unistd.h>
 
+struct tm *addDay(struct tm* date);
 void Etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date);
 pid_t Etapa5(Mundo *mundo, char *fileName, int days);
 
@@ -40,8 +41,4 @@ pid_t Etapa5(Mundo *mundo, char *fileName, int days);
 // lista[11]   = primerTransporteDetenido;
 // lista[12]   = transportesDetenidos;
 
-//Funcion para sumar dia
-// time_t addDay(time_t *base){
-//     struct tm* tm = localtime(base);
-//     tm->tm_mday += 1;
-//     return mktime(tm);
+

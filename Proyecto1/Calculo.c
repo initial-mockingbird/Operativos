@@ -94,6 +94,16 @@ bool firstCase(Pais *p){
     return ((altaInfectados(p) > 0) || (mediaInfectados(p) > 0) || (bajaInfectados(p) > 0));
 }
 
+/**
+ * @brief Añade un día a una fecha determinada.
+ * @param date
+ * @return bool
+ */
+struct tm *addDay(struct tm* date){
+    date->tm_mday += 1;
+    return date;
+}
+
 // ---------------------- 
 // |      FUNCTIONS     |
 // ----------------------
