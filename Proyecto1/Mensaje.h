@@ -1,5 +1,8 @@
 #ifndef MENSAJE_H_
 #define MENSAJE_H_
+
+#include <time.h>
+
 typedef struct Mensaje {
     char* regionOrigen;
     char* regionDestino;
@@ -10,12 +13,10 @@ typedef struct Mensaje {
     int estado; // 1 identifica que el mensaje es de ida, aka: se deben anadir los pasajeros a los paises, 0 indica lo contrario: se deben quitar pasajeros a los paises.
 }Mensaje;
 
-
-
-
 typedef struct ME {
     char* pais;
     int tipoHito;
+    struct tm* fecha;
 } ME;
 
 typedef struct MR {
@@ -26,7 +27,7 @@ typedef struct MR {
     long long  altaNuevosMuertos;
     long long  mediaNuevosMuertos;
     long long  bajaNuevosMuertos;
-    //fecha :: date; // como sea que se modele una fecha
+    struct tm* fecha; 
     long long  totalNuevosInfectados;
     long long  totalNuevosMuertos;
 } MR;

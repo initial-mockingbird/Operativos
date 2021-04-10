@@ -5,10 +5,12 @@
 #include "Mensaje.h"
 #include "Calculo.h"
 #include <stdbool.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 // ---------------------- 
 // |      MACROS        |
@@ -99,7 +101,7 @@ bool firstCase(Pais *p){
 /**
  * @brief Guarda informacion del mensaje de reporte de un pais en un archivo .txt.
  * @param fp
- * @param pais
+ * @param p
  * @param MR
  * @param dato
  * @param estrato
@@ -107,6 +109,7 @@ bool firstCase(Pais *p){
 void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
     // dato: i (infectados), m (muertos)
     // estrato: Alta, Media, Baja
+    char buffer[MAX_LEN];
     double aux;
     switch(dato){
         case 'i':
@@ -117,7 +120,8 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
             }else if(COMPSTR(estrato, "Baja")){
                 aux = porcentaje(bajaNuevosInfectados(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
             }
-            fprintf(fp, "%s, %s, nuevos infectados, %d, %0.3f\n", MR->pais, estrato, 0, aux);   //Modificar <Agregar fecha>
+            strftime(buffer, MAX_LEN, "%x", MR->fecha);
+            fprintf(fp, "%s, %s, nuevos infectados, %s, %0.3f\n", MR->pais, estrato, buffer, aux);   
             return;
         case 'm':
             if(COMPSTR(estrato, "Alta")){
@@ -127,7 +131,8 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
             }else if(COMPSTR(estrato, "Baja")){
                 aux = porcentaje(bajaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
             }
-            fprintf(fp, "%s, %s, nuevos muertos, %d, %0.3f\n", MR->pais, estrato, 0, aux);      //Modificar <Agregar fecha>
+            strftime(buffer, MAX_LEN, "%x", MR->fecha);
+            fprintf(fp, "%s, %s, nuevos muertos, %s, %0.3f\n", MR->pais, estrato, buffer, aux);      
             return;
     }
 }
@@ -146,24 +151,27 @@ void printME(FILE *fp, ME *ME){
     //      4. Un país sale de cuarentena                   11. Un  país  detiene  su  transporte  publico  por 1ra vez
     //      5. Un país cierra sus aeropuertos por 1ra vez   12. Un país reactiva su transporte publico
     //      6. Un país reabre sus aeropuertos
-
+    
     char Hitos[13][MAX_LEN] = {"recibe paciente cero", "tiene su primer muerto", "es libre de la enfermedad",
                     "entra en cuarentena", "sale de cuarentena", "cierra sus aereopusetos por primera vez",
                     "reabre sus aereopuertos", "cierra sus negocios por primera vez",
                     "reabre sus negocios", "clausura sus mercados por primera vez", "reabre sus mercados",
                     "detiene sus transportes publicos por primera vez", "reactiva su transporte publico"};
-
-    fprintf(fp, "%s %s %d.\n", ME->pais, Hitos[ME->tipoHito], 0);     //Modificar <Agregar fecha>
+    char buffer[MAX_LEN];
+    strftime(buffer, MAX_LEN, "%x", ME->fecha);
+    fprintf(fp, "%s %s %s.\n", ME->pais, Hitos[ME->tipoHito], buffer);     
 }
 
 /**
  * @brief Guarda la informacion global e información correspondiente a cada pais en un archivo .txt.
  * @param mundo
  * @param filename
+ * @param days
  * @return int 
  */
 int print(Mundo *mundo, char *fileName, int days){
     MensajeInformacional *msj;
+    struct tm *date;
     FILE *fp, *bi;  
     Pais *pais;  
     ME *ME;
@@ -203,6 +211,7 @@ int print(Mundo *mundo, char *fileName, int days){
                 printMR(fp, pais, MR, 'm', "Media");
                 printMR(fp, pais, MR, 'i', "Baja");
                 printMR(fp, pais, MR, 'm', "Baja");
+                date = MR->fecha;
             }
             
             // Sumar el numero de infectados y numero de muertos por pais
@@ -212,8 +221,9 @@ int print(Mundo *mundo, char *fileName, int days){
         q = tail(q);
     }
     // Imprimir informacion global
-    fprintf(fp, "Global, Total, nuevos infectados, %d, %lld\n", 0, globalInfectados);   //Modificar <Agregar fecha>
-    fprintf(fp, "Global, Total, nuevos muertos, %d, %lld\n", 0, globalMuertos);         //Modificar <Agregar fecha>
+    strftime(buffer, MAX_LEN, "%x", date);
+    fprintf(fp, "Global, Total, nuevos infectados, %s, %lld\n", buffer, globalInfectados);   
+    fprintf(fp, "Global, Total, nuevos muertos, %s, %lld\n", buffer, globalMuertos);         
     
     fclose(fp);
     fclose(bi);
@@ -227,13 +237,18 @@ int print(Mundo *mundo, char *fileName, int days){
  * @brief Calcula el contagio de un pais.
  * @param p
  * @param msj
+ * @param listas
+ * @param tasaContagio
+ * @param mortalidadNoTratarla
+ * @param date
  * @return struct MensajeInformacional*
  */
-MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], double tasaContagio, double mortalidadNoTratarla){
+MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
     MR *MR = (msj->mensaje)->reporteDiario;
     long long tratado, ntratado;
 
+    msj->tipo = 1;
     //------------------------------------ Mensaje Reporte ------------------------------------//
     MR->pais = p->nombre;
 
@@ -254,9 +269,9 @@ MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], doubl
     MR->bajaNuevosMuertos = ceiLL(tratado * 0.5) + ceiLL(ntratado * mortalidadNoTratarla);
 
     // Actualizar datos restantes de MR
-    //MR->fecha = 0;      //Modificar <Agregar fecha>
-    MR->totalNuevosInfectados += (MR->altaNuevosInfectados) + (MR->mediaNuevosInfectados) + (MR->bajaNuevosInfectados);
-    MR->totalNuevosMuertos += (MR->altaNuevosMuertos) + (MR->mediaNuevosMuertos) + (MR->bajaNuevosMuertos);
+    MR->fecha = date;     
+    MR->totalNuevosInfectados = (MR->altaNuevosInfectados) + (MR->mediaNuevosInfectados) + (MR->bajaNuevosInfectados);
+    MR->totalNuevosMuertos = (MR->altaNuevosMuertos) + (MR->mediaNuevosMuertos) + (MR->bajaNuevosMuertos);
 
     //------------------------------------ Datos Pais p ------------------------------------//
     // Actualizar la poblacion del pais p
@@ -271,7 +286,7 @@ MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], doubl
     actualizarBajaInfectados(p, (double)((MR->bajaNuevosInfectados)  - (MR->bajaNuevosMuertos)));
 
     if(!searchQueue(listas[1], nombre(p))){
-        if((MR->altaNuevosMuertos > 0) || (MR->mediaNuevosMuertos) || (MR->bajaNuevosMuertos)){
+        if((MR->altaNuevosMuertos > 0) || (MR->mediaNuevosMuertos > 0) || (MR->bajaNuevosMuertos > 0)){
             listas[1] = snoc((void*) nombre(p), listas[1]);
         }
     }
@@ -283,14 +298,17 @@ MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], doubl
  * @brief Dado un hito, genera un MensajeInformacional.
  * @param pais
  * @param tipoHito
+ * @param date
  * @return struct MensajeInformacional*
  */
-MensajeInformacional *writeME(char *pais, int tipoHito){
+MensajeInformacional *writeME(char *pais, int tipoHito, struct tm *date){
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
     ME *ME = (msj->mensaje)->eventualidad; 
+    msj->tipo = 0;
     //Asignar la informarcion al ME
     ME->pais = pais;
     ME->tipoHito = tipoHito;
+    ME->fecha = date;
 
     return msj;
 }
@@ -299,9 +317,11 @@ MensajeInformacional *writeME(char *pais, int tipoHito){
  * @brief Dado un pais, genera un todos los MensajeInformacionales con los hitos correspondientes.
  * @param eventos
  * @param p
+ * @param listas
+ * @param date
  * @return struct Queue*
  */
-Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[]){
+Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[], struct tm* date){
     // tipoHito:    
     //      0. Pais recibe paciente cero                    7. Un país cierra sus negocios por 1ra vez    	
     //      1. Un país tiene su primer muerto               8. Un país reabre sus negocios
@@ -315,76 +335,76 @@ Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[]){
     //2. Un país se libra de la enfermedad
     if(!searchQueue(listas[3], nombre(p)) && searchQueue(listas[0], nombre(p)) && !firstCase(p)){
         listas[3] = snoc((void*) nombre(p), listas[3]);
-        eventos = snoc((void*) writeME(nombre(p), 2), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 2, date), eventos);
     }else if(searchQueue(listas[3], nombre(p)) && firstCase(p)){
         listas[3] = withoutNode(listas[3], nombre(p));
     }
     //0. Pais recibe paciente cero
     if(!searchQueue(listas[0], nombre(p)) && firstCase(p)){
         listas[0] = snoc((void*) nombre(p), listas[0]);
-        eventos = snoc((void*) writeME(nombre(p), 0), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 0, date), eventos);
     }
     //1. Un país tiene su primer muerto 
     if(searchQueue(listas[1], nombre(p)) && !searchQueue(listas[2], nombre(p))){
         listas[2] = snoc((void*) nombre(p), listas[2]);
-        eventos = snoc((void*) writeME(nombre(p), 1), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 1, date), eventos);
     }
     //3. Un país entra en cuarentena
     aux = altaInfectados(p) + mediaInfectados(p) + bajaInfectados(p);
     if(!searchQueue(listas[4], nombre(p)) && (aux >= contagiadosCuarentena(p))){
         listas[4] = snoc((void*) nombre(p), listas[4]); 
-        eventos = snoc((void*) writeME(nombre(p), 3), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 3, date), eventos);
     }
     //4. Un país sale de cuarentena
     if(searchQueue(listas[4], nombre(p)) && (aux < contagiadosCuarentena(p))){
         listas[4] = withoutNode(listas[4], nombre(p));
-        eventos = snoc((void*) writeME(nombre(p), 4), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 4, date), eventos);
     }
     //5. Un país cierra sus aeropuertos por 1ra vez
     if(!searchQueue(listas[5], nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
         listas[5] = snoc((void*) nombre(p), listas[5]);
-        eventos = snoc((void*) writeME(nombre(p), 5), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 5, date), eventos);
     }
     //6. Un país reabre sus aeropuertos
     if(searchQueue(listas[6], nombre(p)) && (aux < contagiadosCierreAeropuertos(p))){
         listas[6] = withoutNode(listas[6], nombre(p));
-        eventos = snoc((void*) writeME(nombre(p), 6), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 6, date), eventos);
     }else if(!searchQueue(listas[6], nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
         listas[6] = snoc((void*) nombre(p), listas[6]);
     }
     // 7. Un país cierra sus negocios por 1ra vez 
     if(!searchQueue(listas[7], nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
         listas[7] = snoc((void*) nombre(p), listas[7]);
-        eventos = snoc((void*) writeME(nombre(p), 7), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 7, date), eventos);
     }
     //8. Un país reabre sus negocios
     if(searchQueue(listas[8], nombre(p)) && (aux < contagiadosCierreNegocios(p))){
         listas[8] = withoutNode(listas[8], nombre(p));
-        eventos = snoc((void*) writeME(nombre(p), 8), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 8, date), eventos);
     }else if(!searchQueue(listas[8], nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
         listas[8] = snoc((void*) nombre(p), listas[8]);
     }
     //9. Un país clausura sus mercados por 1ra vez
     if(!searchQueue(listas[9], nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
         listas[9] = snoc((void*) nombre(p), listas[9]);
-        eventos = snoc((void*) writeME(nombre(p), 9), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 9, date), eventos);
     }
     //10. Un país reabre sus mercados
     if(searchQueue(listas[10], nombre(p)) && (aux < contagiadosClausuraMercados(p))){
         listas[10] = withoutNode(listas[10], nombre(p));
-        eventos = snoc((void*) writeME(nombre(p), 10), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 10, date), eventos);
     }else if(!searchQueue(listas[10], nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
         listas[10] = snoc((void*) nombre(p), listas[10]);
     }
     //11. Un  país  detiene  su  transporte  publico  por 1ra vez
     if(!searchQueue(listas[11], nombre(p)) && (aux >= contagiadosDetenerTransporte(p))){
         listas[11] = snoc((void*) nombre(p), listas[11]);
-        eventos = snoc((void*) writeME(nombre(p), 11), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 11, date), eventos);
     }
     //12. Un país reactiva su transporte publico
     if(searchQueue(listas[12], nombre(p)) && (aux < contagiadosDetenerTransporte(p))){
         listas[12] = withoutNode(listas[12], nombre(p));
-        eventos = snoc((void*) writeME(nombre(p), 12), eventos);
+        eventos = snoc((void*) writeME(nombre(p), 12, date), eventos);
     }else if(!searchQueue(listas[12], nombre(p)) && (aux >= contagiadosDetenerTransporte(p))){
         listas[12] = snoc((void*) nombre(p), listas[12]);
     }
@@ -395,8 +415,12 @@ Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[]){
 /**
  * @brief Calcula el contagio por region de todos los paises, y emite mensajes de eventualidad si se presenta un hito.
  * @param mundo
+ * @param listas
+ * @param tasaContagio
+ * @param mortalidadNoTratarla
+ * @param date
  */
-void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla){
+void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
     Queue *eventos = emptyQ();    
     Queue *r = mundo->regiones;
     Pais *pais;
@@ -410,9 +434,9 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
             //Si el pais no ha recibido su primer contagiado, continue
             if(!firstCase(pais)) continue;
             //Caso contrario, calcular el contagio
-            mundo->eventos = snoc((void*) contagioPais(mundo, pais, listas, tasaContagio, mortalidadNoTratarla), eventos);
+            mundo->eventos = snoc((void*) contagioPais(mundo, pais, listas, tasaContagio, mortalidadNoTratarla, date), eventos);
             //Generar mensajes de eventualidad
-            mundo->eventos = hitoPais(mundo->eventos, pais, listas);
+            mundo->eventos = hitoPais(mundo->eventos, pais, listas, date);
 
             pp = tail(pp);
         }
@@ -424,19 +448,32 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
  * @brief Calcula el contagio por region de todos los paises.
  * @param mundo
  * @param listas
- * @param days
+ * @param tasaContagio
+ * @param mortalidadNoTratarlar
+ * @param date
  */
-int Etapa3(Mundo *mundo, Queue *listas[], int days, double tasaContagio, double mortalidadNoTratarla){
-    calculoContagio(mundo, listas, tasaContagio, mortalidadNoTratarla);
-    days += 1;
-    return days;
+void Etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
+    calculoContagio(mundo, listas, tasaContagio, mortalidadNoTratarla, date);
 }
 
 /**
  * @brief Imprime todos los mensajes informacionales.
  * @param mundo
  * @param filename
+ * @param days
  */
-void Etapa5(Mundo *mundo, char *fileName, int days){
-    print(mundo, fileName, days);
+int Etapa5(Mundo *mundo, char *fileName, int days){
+    pid_t child_pid = fork(); 
+
+    if (child_pid < 0) {
+        fprintf(stderr, "Etapa5: No se pudo crear nuevo proceso.");
+        return EXIT_FAILURE;
+    }else if (child_pid == 0) {
+        print(mundo, fileName, days);
+    }else{
+        wait(NULL);
+        return days + 1;
+    }
+    
+    return;    
 }

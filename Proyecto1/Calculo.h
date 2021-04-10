@@ -3,8 +3,8 @@
 
 #include "Modelos.h"
 
-int Etapa3(Mundo *mundo, Queue *listas[], int days, double tasaContagio, double mortalidadNoTratarla);
-void Etapa5(Mundo *mundo, char *fileName, int days);
+void Etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date);
+int Etapa5(Mundo *mundo, char *fileName, int days);
 
 #endif // CALCULO_H_
 
@@ -38,3 +38,9 @@ void Etapa5(Mundo *mundo, char *fileName, int days);
 // lista[10]   = mercadosCerrados;
 // lista[11]   = primerTransporteDetenido;
 // lista[12]   = transportesDetenidos;
+
+//Funcion para sumar dia
+// time_t addDay(time_t *base){
+//     struct tm* tm = localtime(base);
+//     tm->tm_mday += 1;
+//     return mktime(tm);
