@@ -429,6 +429,7 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
 int Etapa3(Mundo *mundo, Queue *listas[], int days, double tasaContagio, double mortalidadNoTratarla){
     calculoContagio(mundo, listas, tasaContagio, mortalidadNoTratarla);
     days += 1;
+    return days;
 }
 
 /**
