@@ -26,10 +26,10 @@ OBJDIR   = archivosO
 #tambien suele hacerse un define con todos los archivos intermedios que se pueden crear
 #cuando hay varios archivos, debe ir separados por espacios en la misma linea
 #Pueden incluirse variables anteriores en las definiciones de otras variables
-OBJETOS  = $(OBJDIR)/Calculo.o $(OBJDIR)/Etapa1.o $(OBJDIR)/Etapa2.o $(OBJDIR)/Lectura.o $(OBJDIR)/Mensaje.o $(OBJDIR)/Modelos.o $(OBJDIR)/LinkedList.o $(OBJDIR)/main.o
+OBJETOS  = $(OBJDIR)/Calculo.o $(OBJDIR)/Etapa1.o $(OBJDIR)/Etapa2.o $(OBJDIR)/Lectura.o $(OBJDIR)/Mensaje.o $(OBJDIR)/Modelos.o $(OBJDIR)/LinkedList.o $(OBJDIR)/Closure.o $(OBJDIR)/main.o
 
 #El nombre del ejecutable suele darse como un DEFINE tambien
-PROGRAMA = modeloEpim
+PROGRAMA = modeloEpim.out
 
 #pueden especificarse parametros con ".PHONY" (archivos de mentira)
 #permitir hacer "make all" y "make clean" es muy comun
@@ -79,6 +79,9 @@ $(OBJDIR)/Modelos.o: Modelos.c $(OBJDIR) ../Utils/UsefulMacros/macros.h Modelos.
 
 $(OBJDIR)/LinkedList.o: ../Utils/LinkedList/LinkedList.c $(OBJDIR) ../Utils/Closures/Closure.h ../Utils/LinkedList/LinkedList.h
 	$(COMPILAR) ../Utils/LinkedList/LinkedList.c -o $(OBJDIR)/LinkedList.o
+
+$(OBJDIR)/Closure.o: ../Utils/Closures/Closure.c $(OBJDIR) ../Utils/Closures/Closure.h 
+	$(COMPILAR) ../Utils/Closures/Closure.c -o $(OBJDIR)/Closure.o  
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
