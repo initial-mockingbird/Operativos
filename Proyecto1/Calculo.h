@@ -3,6 +3,7 @@
 
 #include "Modelos.h"
 #include <unistd.h>
+#include <time.h>
 
 struct tm *addDay(struct tm* date);
 void Etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date);

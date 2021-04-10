@@ -100,8 +100,12 @@ bool firstCase(Pais *p){
  * @return bool
  */
 struct tm *addDay(struct tm* date){
+    time_t base;
+    // Agregar un día
     date->tm_mday += 1;
-    return date;
+    base = mktime(date);
+
+    return localtime(&base);
 }
 
 // ---------------------- 
@@ -130,7 +134,7 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
             }else if(COMPSTR(estrato, "Baja")){
                 aux = porcentaje(bajaNuevosInfectados(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
             }
-            strftime(buffer, MAX_LEN, "%x", MR->fecha);
+            strftime(buffer, MAX_LEN, "%d/%m/%Y", MR->fecha);
             fprintf(fp, "%s, %s, nuevos infectados, %s, %0.3f\n", MR->pais, estrato, buffer, aux);   
             return;
         case 'm':
@@ -141,7 +145,7 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
             }else if(COMPSTR(estrato, "Baja")){
                 aux = porcentaje(bajaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
             }
-            strftime(buffer, MAX_LEN, "%x", MR->fecha);
+            strftime(buffer, MAX_LEN, "%d/%m/%Y", MR->fecha);
             fprintf(fp, "%s, %s, nuevos muertos, %s, %0.3f\n", MR->pais, estrato, buffer, aux);      
             return;
     }
@@ -168,7 +172,7 @@ void printME(FILE *fp, ME *ME){
                     "reabre sus negocios", "clausura sus mercados por primera vez", "reabre sus mercados",
                     "detiene sus transportes publicos por primera vez", "reactiva su transporte publico"};
     char buffer[MAX_LEN];
-    strftime(buffer, MAX_LEN, "%x", ME->fecha);
+    strftime(buffer, MAX_LEN, "%d/%m/%Y", ME->fecha);
     fprintf(fp, "%s %s %s.\n", ME->pais, Hitos[ME->tipoHito], buffer);     
 }
 
@@ -231,7 +235,7 @@ int print(Mundo *mundo, char *fileName, int days){
         q = tail(q);
     }
     // Imprimir informacion global
-    strftime(buffer, MAX_LEN, "%x", date);
+    strftime(buffer, MAX_LEN, "%d/%m/%Y", date);
     fprintf(fp, "Global, Total, nuevos infectados, %s, %lld\n", buffer, globalInfectados);   
     fprintf(fp, "Global, Total, nuevos muertos, %s, %lld\n", buffer, globalMuertos);         
     
