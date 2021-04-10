@@ -29,55 +29,55 @@ Mensaje* emptyMessage(char* regionOrigen, char* paisOrigen){
 }
 
 /**
- * @brief Devuelve la cantidad de nuevos infectados pertenecientes a la clase alta.
+ * @brief Devuelve el porcentaje de nuevos infectados pertenecientes a la clase alta.
  * @param MR
- * @return long long
+ * @return double
  */
-long long altaNuevosInfectados(MR *MR){
+double altaNuevosInfectados(MR *MR){
     return (MR->altaNuevosInfectados);
 }
 
 /**
- * @brief Devuelve la cantidad de nuevos infectados pertenecientes a la clase media.
+ * @brief Devuelve el porcentaje de nuevos infectados pertenecientes a la clase media.
  * @param MR
- * @return long long
+ * @return double
  */
-long long mediaNuevosInfectados(MR *MR){
+double mediaNuevosInfectados(MR *MR){
     return (MR->mediaNuevosInfectados);
 }
 
 /**
- * @brief Devuelve la cantidad de nuevos infectados pertenecientes a la clase baja.
+ * @brief Devuelve el porcentaje de nuevos infectados pertenecientes a la clase baja.
  * @param MR
- * @return long long
+ * @return double
  */
-long long bajaNuevosInfectados(MR *MR){
+double bajaNuevosInfectados(MR *MR){
     return (MR->bajaNuevosInfectados);
 }
 
 /**
- * @brief Devuelve la cantidad de nuevos muertos pertenecientes a la clase alta.
+ * @brief Devuelve el porcentaje de nuevos muertos pertenecientes a la clase alta.
  * @param MR
- * @return long long
+ * @return double
  */
-long long altaNuevosMuertos(MR *MR){
+double altaNuevosMuertos(MR *MR){
     return (MR->altaNuevosMuertos);
 }
 
 /**
- * @brief Devuelve la cantidad de nuevos muertos pertenecientes a la clase media.
+ * @brief Devuelve el porcentaje de nuevos muertos pertenecientes a la clase media.
  * @param MR
- * @return long long
+ * @return double
  */
-long long mediaNuevosMuertos(MR *MR){
+double mediaNuevosMuertos(MR *MR){
     return (MR->mediaNuevosMuertos);
 }
 
 /**
- * @brief Devuelve la cantidad de nuevos muertos pertenecientes a la clase baja.
+ * @brief Devuelve el porcentaje de nuevos muertos pertenecientes a la clase baja.
  * @param MR
- * @return long long
+ * @return double
  */
-long long bajaNuevosMuertos(MR *MR){
+double bajaNuevosMuertos(MR *MR){
     return (MR->bajaNuevosMuertos);
 }

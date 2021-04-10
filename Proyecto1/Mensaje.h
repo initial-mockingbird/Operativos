@@ -21,12 +21,12 @@ typedef struct ME {
 
 typedef struct MR {
     char* pais;
-    long long altaNuevosInfectados;
-    long long  mediaNuevosInfectados;
-    long long  bajaNuevosInfectados;
-    long long  altaNuevosMuertos;
-    long long  mediaNuevosMuertos;
-    long long  bajaNuevosMuertos;
+    double  altaNuevosInfectados;
+    double  mediaNuevosInfectados;
+    double  bajaNuevosInfectados;
+    double  altaNuevosMuertos;
+    double  mediaNuevosMuertos;
+    double  bajaNuevosMuertos;
     struct tm* fecha; 
     long long  totalNuevosInfectados;
     long long  totalNuevosMuertos;
@@ -48,11 +48,11 @@ typedef struct MensajeInformacional {
 
 
 Mensaje* emptyMessage(char* regionOrigen, char* paisOrigen);
-long long altaNuevosInfectados(MR *MR);
-long long mediaNuevosInfectados(MR *MR);
-long long bajaNuevosInfectados(MR *MR);
-long long altaNuevosMuertos(MR *MR);
-long long mediaNuevosMuertos(MR *MR);
-long long bajaNuevosMuertos(MR *MR);
+double altaNuevosInfectados(MR *MR);
+double mediaNuevosInfectados(MR *MR);
+double bajaNuevosInfectados(MR *MR);
+double altaNuevosMuertos(MR *MR);
+double mediaNuevosMuertos(MR *MR);
+double bajaNuevosMuertos(MR *MR);
 
 #endif // MENSAJE_H_

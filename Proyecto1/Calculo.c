@@ -128,22 +128,22 @@ void printMR(FILE *fp, Pais *p, MR *MR, char dato, char *estrato){
     switch(dato){
         case 'i':
             if(COMPSTR(estrato, "Alta")){
-                aux = porcentaje(altaNuevosInfectados(MR), ceiLL(poblacionTotal(p) * claseAlta(p)));
+                aux = altaNuevosInfectados(MR);
             }else if(COMPSTR(estrato, "Media")){
-                aux = porcentaje(mediaNuevosInfectados(MR), ceiLL(poblacionTotal(p) * claseMedia(p)));
+                aux = mediaNuevosInfectados(MR);
             }else if(COMPSTR(estrato, "Baja")){
-                aux = porcentaje(bajaNuevosInfectados(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
+                aux = bajaNuevosInfectados(MR);
             }
             strftime(buffer, MAX_LEN, "%d/%m/%Y", MR->fecha);
             fprintf(fp, "%s, %s, nuevos infectados, %s, %0.3f\n", MR->pais, estrato, buffer, aux);   
             return;
         case 'm':
             if(COMPSTR(estrato, "Alta")){
-                aux = porcentaje(altaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseAlta(p)));
+                aux = altaNuevosMuertos(MR);
             }else if(COMPSTR(estrato, "Media")){
-                aux = porcentaje(mediaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseMedia(p)));
+                aux = mediaNuevosMuertos(MR);
             }else if(COMPSTR(estrato, "Baja")){
-                aux = porcentaje(bajaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
+                aux = bajaNuevosMuertos(MR);
             }
             strftime(buffer, MAX_LEN, "%d/%m/%Y", MR->fecha);
             fprintf(fp, "%s, %s, nuevos muertos, %s, %0.3f\n", MR->pais, estrato, buffer, aux);      
@@ -260,44 +260,56 @@ int print(Mundo *mundo, char *fileName, int days){
 MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
     MR *MR = (msj->mensaje)->reporteDiario;
-    long long tratado, ntratado;
+    long long tratado, ntratado, aux;
 
     msj->tipo = 1;
     //------------------------------------ Mensaje Reporte ------------------------------------//
     MR->pais = p->nombre;
 
     // Nuevos infectados por clase
-    MR->altaNuevosInfectados = abs(ceiLL(altaInfectados(p) * tasaContagio) - altaInfectados(p));   
-    MR->mediaNuevosInfectados = abs(ceiLL(mediaInfectados(p) * tasaContagio) - mediaInfectados(p));
-    MR->bajaNuevosInfectados = abs(ceiLL(bajaInfectados(p) * tasaContagio) - bajaInfectados(p));
+    aux = abs(ceiLL(altaInfectados(p) * tasaContagio) - altaInfectados(p));
+    MR->altaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseAlta(p)));  
+    MR->totalNuevosInfectados = aux;
+
+    aux = abs(ceiLL(mediaInfectados(p) * tasaContagio) - mediaInfectados(p));
+    MR->mediaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseMedia(p)));
+    MR->totalNuevosInfectados += aux;
+
+    aux = abs(ceiLL(bajaInfectados(p) * tasaContagio) - bajaInfectados(p));
+    MR->bajaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseBaja(p)));
+    MR->totalNuevosInfectados += aux;
 
     // Nuevos muertos por clase
-    MR->altaNuevosMuertos = ceiLL(altaInfectados(p) * ((double) 1/8));
+    aux = ceiLL(altaInfectados(p) * ((double) 1/8));
+    MR->altaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseAlta(p)));
+    MR->totalNuevosMuertos = aux;
 
     ntratado = ceiLL(mediaInfectados(p) * limitacionesMedia(p));
     tratado = mediaInfectados(p) - ntratado;
-    MR->mediaNuevosMuertos = ceiLL(tratado * 0.25) + ceiLL(ntratado * mortalidadNoTratarla);
+    aux = ceiLL(tratado * 0.25) + ceiLL(ntratado * mortalidadNoTratarla);
+    MR->mediaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseMedia(p)));
+    MR->totalNuevosMuertos += aux;
 
     ntratado = ceiLL(bajaInfectados(p) * limitacionesBaja(p));
     tratado = bajaInfectados(p) - ntratado;
-    MR->bajaNuevosMuertos = ceiLL(tratado * 0.5) + ceiLL(ntratado * mortalidadNoTratarla);
+    aux = ceiLL(tratado * 0.5) + ceiLL(ntratado * mortalidadNoTratarla);
+    MR->bajaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseBaja(p)));
+    MR->totalNuevosMuertos += aux;
 
     // Actualizar datos restantes de MR
     MR->fecha = date;     
-    MR->totalNuevosInfectados = (MR->altaNuevosInfectados) + (MR->mediaNuevosInfectados) + (MR->bajaNuevosInfectados);
-    MR->totalNuevosMuertos = (MR->altaNuevosMuertos) + (MR->mediaNuevosMuertos) + (MR->bajaNuevosMuertos);
 
     //------------------------------------ Datos Pais p ------------------------------------//
     // Actualizar la poblacion del pais p
-    actualizarClaseAlta(p, - porcentaje(altaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseAlta(p))));
-    actualizarClaseMedia(p, - porcentaje(mediaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseMedia(p))));
-    actualizarClaseBaja(p, - porcentaje(bajaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseBaja(p))));
+    actualizarClaseAlta (p, - altaNuevosMuertos(MR));
+    actualizarClaseMedia(p, - mediaNuevosMuertos(MR));
+    actualizarClaseBaja (p, - bajaNuevosMuertos(MR));
     actualizarPoblacionTotal(p, - (MR->totalNuevosMuertos));
 
     // Actualizar cantidad de contagiados del pais p 
-    actualizarAltaInfectados(p, (double)((MR->altaNuevosInfectados)  - (MR->altaNuevosMuertos)));
-    actualizarMediaInfectados(p, (double)((MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos)));
-    actualizarBajaInfectados(p, (double)((MR->bajaNuevosInfectados)  - (MR->bajaNuevosMuertos)));
+    actualizarAltaInfectados (p, (double) poblacionTotal(p) * ((MR->altaNuevosInfectados)  - (MR->altaNuevosMuertos)));
+    actualizarMediaInfectados(p, (double) poblacionTotal(p) * ((MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos)));
+    actualizarBajaInfectados (p, (double) poblacionTotal(p) * ((MR->bajaNuevosInfectados)  - (MR->bajaNuevosMuertos)));
 
     if(!searchQueue(listas[1], nombre(p))){
         if((MR->altaNuevosMuertos > 0) || (MR->mediaNuevosMuertos > 0) || (MR->bajaNuevosMuertos > 0)){
