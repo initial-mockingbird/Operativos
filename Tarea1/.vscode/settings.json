@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "persona.h": "c",
-        "linkedlist.h": "c",
-        "stdlib.h": "c"
-    }
-}
