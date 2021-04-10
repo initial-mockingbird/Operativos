@@ -462,17 +462,16 @@ void Etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalida
  * @param filename
  * @param days
  */
-int Etapa5(Mundo *mundo, char *fileName, int days){
+pid_t Etapa5(Mundo *mundo, char *fileName, int days){
     pid_t child_pid = fork(); 
 
-    if (child_pid < 0) {
+    if (child_pid < 0){
         fprintf(stderr, "Etapa5: No se pudo crear nuevo proceso.");
         return EXIT_FAILURE;
-    }else if (child_pid == 0) {
+    }else if (child_pid == 0){
         print(mundo, fileName, days);
     }else{
-        wait(NULL);
-        return days + 1;
+        return child_pid;
     }
     
     return;    

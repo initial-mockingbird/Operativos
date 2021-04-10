@@ -2,9 +2,10 @@
 #define CALCULO_H_
 
 #include "Modelos.h"
+#include <unistd.h>
 
 void Etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date);
-int Etapa5(Mundo *mundo, char *fileName, int days);
+pid_t Etapa5(Mundo *mundo, char *fileName, int days);
 
 #endif // CALCULO_H_
 
