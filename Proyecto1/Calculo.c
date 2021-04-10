@@ -20,28 +20,6 @@
 #define MAX_LEN 100
 
 // ---------------------- 
-// |      ESTADO        |
-// ----------------------
-
-int days = 0;
-double tasaContagio = 0;
-double mortalidadNoTratarla = 0;
-
-Queue* pacienteCero = NULL;
-Queue* primerMuerto = NULL;
-Queue* primerMuertoImpreso = NULL;
-Queue* libraEnfermedad = NULL;
-Queue* enCuarentena = NULL;
-Queue* primerCierreAereopuertos = NULL;
-Queue* aereopuertosCerrados = NULL;
-Queue* primerCierreNegocios = NULL;
-Queue* negociosCerrados = NULL;
-Queue* primerClausuraMercados = NULL;
-Queue* mercadosCerrados = NULL;
-Queue* primerTransporteDetenido = NULL;
-Queue* transportesDetenidos = NULL;
-
-// ---------------------- 
 // |    AUX FUNCTIONS   |
 // ---------------------- 
 /**
@@ -184,7 +162,7 @@ void printME(FILE *fp, ME *ME){
  * @param filename
  * @return int 
  */
-int print(Mundo *mundo, char *fileName){
+int print(Mundo *mundo, char *fileName, int days){
     MensajeInformacional *msj;
     FILE *fp, *bi;  
     Pais *pais;  
@@ -251,7 +229,7 @@ int print(Mundo *mundo, char *fileName){
  * @param msj
  * @return struct MensajeInformacional*
  */
-MensajeInformacional *contagioPais(Mundo *mundo, Pais *p){
+MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], double tasaContagio, double mortalidadNoTratarla){
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
     MR *MR = (msj->mensaje)->reporteDiario;
     long long tratado, ntratado;
@@ -286,22 +264,15 @@ MensajeInformacional *contagioPais(Mundo *mundo, Pais *p){
     actualizarClaseMedia(p, - porcentaje(mediaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseMedia(p))));
     actualizarClaseBaja(p, - porcentaje(bajaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseBaja(p))));
     actualizarPoblacionTotal(p, - (MR->totalNuevosMuertos));
-    // p->claseAlta -= porcentaje(altaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseAlta(p)));
-    // p->claseMedia -= porcentaje(mediaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseMedia(p)));
-    // p->claseMedia -= porcentaje(bajaNuevosMuertos(MR), ceiLL(poblacionTotal(p) * claseBaja(p)));
-    // p->poblacionTotal -= MR->totalNuevosMuertos;
 
     // Actualizar cantidad de contagiados del pais p 
     actualizarAltaInfectados(p, (double)((MR->altaNuevosInfectados)  - (MR->altaNuevosMuertos)));
     actualizarMediaInfectados(p, (double)((MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos)));
     actualizarBajaInfectados(p, (double)((MR->bajaNuevosInfectados)  - (MR->bajaNuevosMuertos)));
-    // p->altosInfectados += (MR->altaNuevosInfectados) - (MR->altaNuevosMuertos);
-    // p->mediaInfectados += (MR->mediaNuevosInfectados) - (MR->mediaNuevosMuertos);
-    // p->bajaInfectados += (MR->bajaNuevosInfectados) - (MR->bajaNuevosMuertos);
 
-    if(!searchQueue(primerMuerto, nombre(p))){
+    if(!searchQueue(listas[1], nombre(p))){
         if((MR->altaNuevosMuertos > 0) || (MR->mediaNuevosMuertos) || (MR->bajaNuevosMuertos)){
-            primerMuerto = snoc((void*) nombre(p), primerMuerto);
+            listas[1] = snoc((void*) nombre(p), listas[1]);
         }
     }
     
@@ -330,7 +301,7 @@ MensajeInformacional *writeME(char *pais, int tipoHito){
  * @param p
  * @return struct Queue*
  */
-Queue *hitoPais(Queue *eventos, Pais *p){
+Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[]){
     // tipoHito:    
     //      0. Pais recibe paciente cero                    7. Un país cierra sus negocios por 1ra vez    	
     //      1. Un país tiene su primer muerto               8. Un país reabre sus negocios
@@ -342,73 +313,80 @@ Queue *hitoPais(Queue *eventos, Pais *p){
 
     long long aux;
     //2. Un país se libra de la enfermedad
-    if(!searchQueue(libraEnfermedad, nombre(p)) && searchQueue(pacienteCero, nombre(p)) && firstCase(p)){
-        libraEnfermedad = snoc((void*) nombre(p), libraEnfermedad);
+    if(!searchQueue(listas[3], nombre(p)) && searchQueue(listas[0], nombre(p)) && !firstCase(p)){
+        listas[3] = snoc((void*) nombre(p), listas[3]);
         eventos = snoc((void*) writeME(nombre(p), 2), eventos);
+    }else if(searchQueue(listas[3], nombre(p)) && firstCase(p)){
+        listas[3] = withoutNode(listas[3], nombre(p));
     }
     //0. Pais recibe paciente cero
-    if(!searchQueue(pacienteCero, nombre(p)) && !firstCase(p)){
-        pacienteCero = snoc((void*) nombre(p), pacienteCero);
+    if(!searchQueue(listas[0], nombre(p)) && firstCase(p)){
+        listas[0] = snoc((void*) nombre(p), listas[0]);
         eventos = snoc((void*) writeME(nombre(p), 0), eventos);
     }
     //1. Un país tiene su primer muerto 
-    if(searchQueue(primerMuerto, nombre(p)) && !searchQueue(primerMuertoImpreso, nombre(p))){
-        primerMuertoImpreso = snoc((void*) nombre(p), primerMuertoImpreso);
+    if(searchQueue(listas[1], nombre(p)) && !searchQueue(listas[2], nombre(p))){
+        listas[2] = snoc((void*) nombre(p), listas[2]);
         eventos = snoc((void*) writeME(nombre(p), 1), eventos);
     }
-    //4. Un país sale de cuarentena
+    //3. Un país entra en cuarentena
     aux = altaInfectados(p) + mediaInfectados(p) + bajaInfectados(p);
-    if(!searchQueue(enCuarentena, nombre(p)) && (aux >= contagiadosCuarentena(p))){
-        enCuarentena = snoc((void*) nombre(p), enCuarentena);
+    if(!searchQueue(listas[4], nombre(p)) && (aux >= contagiadosCuarentena(p))){
+        listas[4] = snoc((void*) nombre(p), listas[4]); 
+        eventos = snoc((void*) writeME(nombre(p), 3), eventos);
+    }
+    //4. Un país sale de cuarentena
+    if(searchQueue(listas[4], nombre(p)) && (aux < contagiadosCuarentena(p))){
+        listas[4] = withoutNode(listas[4], nombre(p));
         eventos = snoc((void*) writeME(nombre(p), 4), eventos);
     }
     //5. Un país cierra sus aeropuertos por 1ra vez
-    if(!searchQueue(primerCierreAereopuertos, nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
-        primerCierreAereopuertos = snoc((void*) nombre(p), primerCierreAereopuertos);
+    if(!searchQueue(listas[5], nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
+        listas[5] = snoc((void*) nombre(p), listas[5]);
         eventos = snoc((void*) writeME(nombre(p), 5), eventos);
     }
     //6. Un país reabre sus aeropuertos
-    if(searchQueue(aereopuertosCerrados, nombre(p)) && (aux < contagiadosCierreAeropuertos(p))){
-        aereopuertosCerrados = withoutNode(aereopuertosCerrados, nombre(p));
+    if(searchQueue(listas[6], nombre(p)) && (aux < contagiadosCierreAeropuertos(p))){
+        listas[6] = withoutNode(listas[6], nombre(p));
         eventos = snoc((void*) writeME(nombre(p), 6), eventos);
-    }else if(!searchQueue(aereopuertosCerrados, nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
-        aereopuertosCerrados = snoc((void*) nombre(p), aereopuertosCerrados);
+    }else if(!searchQueue(listas[6], nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
+        listas[6] = snoc((void*) nombre(p), listas[6]);
     }
     // 7. Un país cierra sus negocios por 1ra vez 
-    if(!searchQueue(primerCierreNegocios, nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
-        primerCierreNegocios = snoc((void*) nombre(p), primerCierreNegocios);
+    if(!searchQueue(listas[7], nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
+        listas[7] = snoc((void*) nombre(p), listas[7]);
         eventos = snoc((void*) writeME(nombre(p), 7), eventos);
     }
     //8. Un país reabre sus negocios
-    if(searchQueue(negociosCerrados, nombre(p)) && (aux < contagiadosCierreNegocios(p))){
-        negociosCerrados = withoutNode(negociosCerrados, nombre(p));
+    if(searchQueue(listas[8], nombre(p)) && (aux < contagiadosCierreNegocios(p))){
+        listas[8] = withoutNode(listas[8], nombre(p));
         eventos = snoc((void*) writeME(nombre(p), 8), eventos);
-    }else if(!searchQueue(negociosCerrados, nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
-        negociosCerrados = snoc((void*) nombre(p), negociosCerrados);
+    }else if(!searchQueue(listas[8], nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
+        listas[8] = snoc((void*) nombre(p), listas[8]);
     }
     //9. Un país clausura sus mercados por 1ra vez
-    if(!searchQueue(primerClausuraMercados, nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
-        primerClausuraMercados = snoc((void*) nombre(p), primerClausuraMercados);
+    if(!searchQueue(listas[9], nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
+        listas[9] = snoc((void*) nombre(p), listas[9]);
         eventos = snoc((void*) writeME(nombre(p), 9), eventos);
     }
     //10. Un país reabre sus mercados
-    if(searchQueue(mercadosCerrados, nombre(p)) && (aux < contagiadosClausuraMercados(p))){
-        mercadosCerrados = withoutNode(mercadosCerrados, nombre(p));
+    if(searchQueue(listas[10], nombre(p)) && (aux < contagiadosClausuraMercados(p))){
+        listas[10] = withoutNode(listas[10], nombre(p));
         eventos = snoc((void*) writeME(nombre(p), 10), eventos);
-    }else if(!searchQueue(mercadosCerrados, nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
-        mercadosCerrados = snoc((void*) nombre(p), mercadosCerrados);
+    }else if(!searchQueue(listas[10], nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
+        listas[10] = snoc((void*) nombre(p), listas[10]);
     }
     //11. Un  país  detiene  su  transporte  publico  por 1ra vez
-    if(!searchQueue(primerTransporteDetenido, nombre(p)) && (aux >= contagiadosDetenerTransporte(p))){
-        primerTransporteDetenido = snoc((void*) nombre(p), primerTransporteDetenido);
+    if(!searchQueue(listas[11], nombre(p)) && (aux >= contagiadosDetenerTransporte(p))){
+        listas[11] = snoc((void*) nombre(p), listas[11]);
         eventos = snoc((void*) writeME(nombre(p), 11), eventos);
     }
     //12. Un país reactiva su transporte publico
-    if(searchQueue(transportesDetenidos, nombre(p)) && (aux < contagiadosDetenerTransporte(p))){
-        transportesDetenidos = withoutNode(transportesDetenidos, nombre(p));
+    if(searchQueue(listas[12], nombre(p)) && (aux < contagiadosDetenerTransporte(p))){
+        listas[12] = withoutNode(listas[12], nombre(p));
         eventos = snoc((void*) writeME(nombre(p), 12), eventos);
-    }else if(!searchQueue(transportesDetenidos, nombre(p)) && (aux >= contagiadosDetenerTransporte(p))){
-        transportesDetenidos = snoc((void*) nombre(p), transportesDetenidos);
+    }else if(!searchQueue(listas[12], nombre(p)) && (aux >= contagiadosDetenerTransporte(p))){
+        listas[12] = snoc((void*) nombre(p), listas[12]);
     }
 
     return eventos;
@@ -418,7 +396,7 @@ Queue *hitoPais(Queue *eventos, Pais *p){
  * @brief Calcula el contagio por region de todos los paises, y emite mensajes de eventualidad si se presenta un hito.
  * @param mundo
  */
-void calculoContagio(Mundo *mundo){
+void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla){
     Queue *eventos = emptyQ();    
     Queue *r = mundo->regiones;
     Pais *pais;
@@ -432,14 +410,32 @@ void calculoContagio(Mundo *mundo){
             //Si el pais no ha recibido su primer contagiado, continue
             if(!firstCase(pais)) continue;
             //Caso contrario, calcular el contagio
-            mundo->eventos = snoc((void*) contagioPais(mundo, pais), eventos);
+            mundo->eventos = snoc((void*) contagioPais(mundo, pais, listas, tasaContagio, mortalidadNoTratarla), eventos);
             //Generar mensajes de eventualidad
-            mundo->eventos = hitoPais(mundo->eventos, pais);
+            mundo->eventos = hitoPais(mundo->eventos, pais, listas);
 
             pp = tail(pp);
         }
         r = tail(r);
     }
+}
+
+/**
+ * @brief Calcula el contagio por region de todos los paises.
+ * @param mundo
+ * @param listas
+ * @param days
+ */
+int Etapa3(Mundo *mundo, Queue *listas[], int days, double tasaContagio, double mortalidadNoTratarla){
+    calculoContagio(mundo, listas, tasaContagio, mortalidadNoTratarla);
     days += 1;
 }
 
+/**
+ * @brief Imprime todos los mensajes informacionales.
+ * @param mundo
+ * @param filename
+ */
+void Etapa5(Mundo *mundo, char *fileName, int days){
+    print(mundo, fileName, days);
+}
