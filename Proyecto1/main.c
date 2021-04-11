@@ -65,7 +65,6 @@ int main(int args, char *argv[]){
        etapa2(mundo,NUM_THREADS);
        etapa3(mundo, listas, infoE->tasaContagio, infoE->mortalidad, date);
        child = etapa5(mundo, argv[2], i);
-       date = addDay(date);
     }
     
     if(child) waitpid(child, NULL, 0);

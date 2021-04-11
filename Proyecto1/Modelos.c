@@ -186,7 +186,7 @@ void actualizarAltaInfectados(Pais *p, double data){
  * @param data
  */
 void actualizarMediaInfectados(Pais *p, double data){
-    p->infectadosClase[1] = +data;
+    p->infectadosClase[1] += data;
 }
 
 /**

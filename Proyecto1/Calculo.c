@@ -252,7 +252,7 @@ int print(Mundo *mundo, char *fileName, int days){
     fclose(bi);
 
     mundo->eventos = NULL;
-
+    exit(0);
     return EXIT_SUCCESS;
 }
 
@@ -273,7 +273,8 @@ MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], doubl
     long long tratado, ntratado, aux;
     
     msj->tipo = 1;
-    
+    tasaContagio /= 100;
+    mortalidadNoTratarla /= 100;
     //------------------------------------ Mensaje Reporte ------------------------------------//
     MR->pais = p->nombre;
     
@@ -507,6 +508,7 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
  */
 void etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
     calculoContagio(mundo, listas, tasaContagio, mortalidadNoTratarla, date);
+    date = addDay(date);
 }
 
 /**
