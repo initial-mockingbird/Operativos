@@ -41,7 +41,8 @@ long long ceiLL(double dato){
  * @return double
  */
 double porcentaje(long long partial, long long total){
-    return (double) (partial * 100) / (double) total;
+    if(total == 0) return 0;
+    return abs((double) (partial * 100) / (double) total);
 }
 
 /**
@@ -78,7 +79,10 @@ Queue *withoutNode(Queue *q, char *name){
     Queue *qq = emptyQ();
 
     while(q){
-        if(head(q) && COMPSTR(name, (char*) head(q))) continue;
+        if(head(q) && COMPSTR(name, (char*) head(q))){
+            q = tail(q);
+            continue;
+        } 
         qq = snoc((void*) head(q), qq);
         q = tail(q);
     }
@@ -203,11 +207,11 @@ int print(Mundo *mundo, char *fileName, int days){
     strcat(buffer, ".txt");
     fp = fopen(buffer, "a+");
     // Si ocurre un error al abrir 
-    if(fp) return EXIT_FAILURE;
+    if(!fp) return EXIT_FAILURE;
     // Abrir archivo para hitos en modo append+, si no existe se crea
     bi = fopen("BoletinInformativo.txt", "a+");
     // Si ocurre un error al abrir 
-    if(bi) return EXIT_FAILURE;
+    if(!bi) return EXIT_FAILURE;
 
     // Imprimir/Guardar los mensajes informacionales
     while(q){
@@ -462,26 +466,19 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
     Queue *pp;
 
     while(r){
-        
         pp = ((Region*)head(r))->paises;
         while(pp){
-            
             pais = (Pais*) head(pp);
             pp   = tail(pp);
             
             //Si el pais no ha recibido su primer contagiado, continue
-            if(!firstCase(pais)){
-                
-                continue;
-            } 
+            if(!firstCase(pais)) continue;
             
             //Caso contrario, calcular el contagio
             mundo->eventos = snoc((void*) contagioPais(mundo, pais, listas, tasaContagio, mortalidadNoTratarla, date), mundo->eventos);
             //Generar mensajes de eventualidad
             
-            mundo->eventos = hitoPais(mundo->eventos, pais, listas, date);
-
-            
+            mundo->eventos = hitoPais(mundo->eventos, pais, listas, date);            
         }
         r = tail(r);
     }
@@ -513,9 +510,7 @@ pid_t etapa5(Mundo *mundo, char *fileName, int days){
         return EXIT_FAILURE;
     }else if (child_pid == 0){
         print(mundo, fileName, days);
-    }else{
-        return child_pid;
+        exit(0);
     }
-    
-    return 0;    
+    return child_pid;    
 }
