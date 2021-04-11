@@ -220,6 +220,8 @@ void consume_flight_msg(Mundo* mundo, Region* region,sem_t* mutexBuzonSalida, se
     // Mientras el buzon de salida no este vacio.
     // (nota, no necesitamos sincronizacion puesto que solo deseamos vaciar el buzon de salida
     // y esta rutina se llamara de forma constante).
+    
+
     while(region->buzonSalida){
         Mensaje* mensaje = (Mensaje*) malloc(sizeof(Mensaje));
         // esperamos a que el buzon de salida este libre para despachar el mensaje
@@ -659,15 +661,15 @@ void* envio_buzon_salida_wrapper(void* argsP){
     args = tail(args);
     Region* region           = (Region*) head(args);
     args = tail(args);
-    sem_t* mutexBuzonSalida = (sem_t*) head(args);
+    sem_t* mutexBuzonSalida  = (sem_t*) head(args);
     args = tail(args);
-    int* continuarEnviando = (int*) head(args);
+    int* continuarEnviando   = (int*) head(args);
     args = tail(args);
 
     while(*continuarEnviando){
-        consume_flight_msg(mundo, region,mutexBuzonSalida,  &buzonMundo);
+        consume_flight_msg(mundo, region, mutexBuzonSalida, &buzonMundo);
     }
-    printf("WUUUU\n");
+    
     return EXIT_SUCCESS;
 }
 
@@ -836,19 +838,19 @@ void etapa1(Mundo* mundo){
         }
         
     }
-    
+
     // Una vez que las regiones terminaron de crear los mensajes, esperamos
     // a que terminen de despacharlos.
     while (!all(nullBuzonsalida,mundo->regiones))
         ;
     
-    
+    continuarEnviando = 0;
     // Y luego esperamos a que el mundo termine de despechar sus mensajes.
     while (mundo->buzonMundo != NULL)
         ;
     // Para senalizar que podemos parar de enviar y consumir.
     continuarConsumiendo = 0;
-    continuarEnviando = 0;
+    
 
     
     // Esperamos a que cada region termine de ejecutar sus rutinas.

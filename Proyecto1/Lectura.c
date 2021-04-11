@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "Lectura.h"
 #include <string.h>
+#include <math.h>
 /** @def MAX_LEN
  * @brief Maxima longitud de una cadena de texto.
  * 
@@ -154,9 +155,9 @@ void crearRegion(char* siglas, Mundo* m){
         strcpy(r->siglas, siglas);
         r->aliadas = emptyQ();
         m->regiones = snoc((void*) (r), m->regiones);
-        r->buzonSalida = (Mensaje*) malloc(sizeof(Mensaje));
-        r->buzonEntrada = (Mensaje*) malloc(sizeof(Mensaje));
-        r->buzonPendientes = (Mensaje*) malloc(sizeof(Mensaje));
+        r->buzonSalida = emptyQ();
+        r->buzonEntrada = emptyQ();
+        r->buzonPendientes = emptyQ();
         r->paisesListos = 0;
         r->tareasPendientes = 0;
         return ;

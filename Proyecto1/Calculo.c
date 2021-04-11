@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <string.h>
 
 // ---------------------- 
 // |      MACROS        |
@@ -84,14 +85,17 @@ Queue *withoutNode(Queue *q, char *name){
     return qq;
 }
 
+
+
 /**
  * @brief Chequea si un pais tiene algún caso de contagio en un momento determinado.
  * @param p
  * @return bool
  */
-bool firstCase(Pais *p){
-    //Si no hay infectados, retorna false
-    return ((altaInfectados(p) > 0) || (mediaInfectados(p) > 0) || (bajaInfectados(p) > 0));
+int firstCase(Pais *p){
+    //Si no hay infectados, retorna false 
+    
+    return ( (altaInfectados(p) > 0) || (mediaInfectados(p) > 0) || (bajaInfectados(p) > 0) );
 }
 
 /**
@@ -258,19 +262,26 @@ int print(Mundo *mundo, char *fileName, int days){
  * @return struct MensajeInformacional*
  */
 MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
+    
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
-    MR *MR = (msj->mensaje)->reporteDiario;
+    
+    MR *MR = &((msj->mensaje)->reporteDiario);
+
+    
     long long tratado, ntratado, aux;
-
+    
     msj->tipo = 1;
+    
     //------------------------------------ Mensaje Reporte ------------------------------------//
-    MR->pais = p->nombre;
-
+    MR->pais = (char*) malloc(26*sizeof(char));
+    printf("%s\n",p->nombre);
+    strcpy(MR->pais,p->nombre);
+    
     // Nuevos infectados por clase
     aux = abs(ceiLL(altaInfectados(p) * tasaContagio) - altaInfectados(p));
     MR->altaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseAlta(p)));  
     MR->totalNuevosInfectados = aux;
-
+    
     aux = abs(ceiLL(mediaInfectados(p) * tasaContagio) - mediaInfectados(p));
     MR->mediaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseMedia(p)));
     MR->totalNuevosInfectados += aux;
@@ -296,6 +307,7 @@ MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], doubl
     MR->bajaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseBaja(p)));
     MR->totalNuevosMuertos += aux;
 
+    
     // Actualizar datos restantes de MR
     MR->fecha = date;     
 
@@ -453,18 +465,26 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
     Queue *pp;
 
     while(r){
-        pp = ((Region*)r)->paises;
+        
+        pp = ((Region*)head(r))->paises;
         while(pp){
+            
             pais = (Pais*) head(pp);
-
+            pp   = tail(pp);
+            
             //Si el pais no ha recibido su primer contagiado, continue
-            if(!firstCase(pais)) continue;
+            if(!firstCase(pais)){
+                
+                continue;
+            } 
+            
             //Caso contrario, calcular el contagio
-            mundo->eventos = snoc((void*) contagioPais(mundo, pais, listas, tasaContagio, mortalidadNoTratarla, date), eventos);
+            mundo->eventos = snoc((void*) contagioPais(mundo, pais, listas, tasaContagio, mortalidadNoTratarla, date), mundo->eventos);
             //Generar mensajes de eventualidad
+            
             mundo->eventos = hitoPais(mundo->eventos, pais, listas, date);
 
-            pp = tail(pp);
+            
         }
         r = tail(r);
     }

@@ -131,6 +131,7 @@ long long altaInfectados(Pais *p){
  * @return long long
  */
 long long mediaInfectados(Pais *p){
+    
     return (long long) ceil(p->infectadosClase[1]);
 }
 

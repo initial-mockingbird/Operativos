@@ -66,7 +66,8 @@ void etapa2(Mundo* mundo, int NUM_THREADS){
             exit(-1);
         }
     }
-    pthread_exit(NULL);
+    
+    //pthread_exit(NULL);
 }
 
 /*
