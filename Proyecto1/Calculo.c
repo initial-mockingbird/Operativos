@@ -213,12 +213,12 @@ int print(Mundo *mundo, char *fileName, int days){
     while(q){
         msj = (MensajeInformacional*) head(q);
         if(msj->tipo == 0){
-            ME = (msj->mensaje)->eventualidad;
+            ME = msj->mensaje;
             //Guardar informacion sobre un evento en cierto pais en el archivo
             printME(bi, ME);
             
         }else if(msj->tipo == 1){
-            MR = (msj->mensaje)->reporteDiario;
+            MR = msj->mensaje;
             pais = lookupByName(mundo, MR->pais);
 
             //Guardar información sobre el país en el archivo
@@ -262,20 +262,15 @@ int print(Mundo *mundo, char *fileName, int days){
  * @return struct MensajeInformacional*
  */
 MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
-    
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
-    
-    MR *MR = &((msj->mensaje)->reporteDiario);
-
-    
+    msj->mensaje = malloc(sizeof(struct MR));
+    MR *MR = msj->mensaje;    
     long long tratado, ntratado, aux;
     
     msj->tipo = 1;
     
     //------------------------------------ Mensaje Reporte ------------------------------------//
-    MR->pais = (char*) malloc(26*sizeof(char));
-    printf("%s\n",p->nombre);
-    strcpy(MR->pais,p->nombre);
+    MR->pais = p->nombre;
     
     // Nuevos infectados por clase
     aux = abs(ceiLL(altaInfectados(p) * tasaContagio) - altaInfectados(p));
@@ -341,7 +336,9 @@ MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], doubl
  */
 MensajeInformacional *writeME(char *pais, int tipoHito, struct tm *date){
     MensajeInformacional *msj = malloc(sizeof(struct MensajeInformacional));
-    ME *ME = (msj->mensaje)->eventualidad; 
+    msj->mensaje = malloc(sizeof(struct ME));
+    ME *ME = msj->mensaje;
+
     msj->tipo = 0;
     //Asignar la informarcion al ME
     ME->pais = pais;
@@ -512,7 +509,7 @@ pid_t etapa5(Mundo *mundo, char *fileName, int days){
     pid_t child_pid = fork(); 
 
     if (child_pid < 0){
-        fprintf(stderr, "Etapa5: No se pudo crear nuevo proceso.");
+        printf("Etapa5: No se pudo crear nuevo proceso.");
         return EXIT_FAILURE;
     }else if (child_pid == 0){
         print(mundo, fileName, days);
