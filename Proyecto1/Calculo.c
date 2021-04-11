@@ -234,20 +234,24 @@ int print(Mundo *mundo, char *fileName, int days){
                 printMR(fp, pais, MR, 'm', "Media");
                 printMR(fp, pais, MR, 'i', "Baja");
                 printMR(fp, pais, MR, 'm', "Baja");
-                date = MR->fecha;
+                strftime(buffer, MAX_LEN, "%d/%m/%Y", date);
             }
             
             // Sumar el numero de infectados y numero de muertos por pais
             globalInfectados += (MR->totalNuevosInfectados);
             globalMuertos += (MR->totalNuevosMuertos);
+
+
         }
         q = tail(q);
     }
-    // Imprimir informacion global
-    strftime(buffer, MAX_LEN, "%d/%m/%Y", date);
-    fprintf(fp, "Global, Total, nuevos infectados, %s, %lld\n", buffer, globalInfectados);   
-    fprintf(fp, "Global, Total, nuevos muertos, %s, %lld\n", buffer, globalMuertos);         
     
+    // Imprimir informacion global
+    if(days % 7){
+        fprintf(fp, "Global, Total, nuevos infectados, %s, %lld\n", buffer, globalInfectados);   
+        fprintf(fp, "Global, Total, nuevos muertos, %s, %lld\n", buffer, globalMuertos); 
+    }
+            
     fclose(fp);
     fclose(bi);
 
