@@ -12,6 +12,7 @@
 #include <math.h>
 #include <time.h>
 #include <string.h>
+#include <sys/wait.h>
 
 // ---------------------- 
 // |      MACROS        |
@@ -530,6 +531,7 @@ pid_t etapa5(Mundo *mundo, char *fileName, int days){
     }else if (child_pid == 0){
         print(mundo, fileName, days);
     }else{
+        wait(NULL);
         return child_pid;
     }
     
