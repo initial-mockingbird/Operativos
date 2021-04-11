@@ -283,32 +283,32 @@ MensajeInformacional *contagioPais(Mundo *mundo, Pais *p, Queue *listas[], doubl
     
     // Nuevos infectados por clase
     aux = abs(ceiLL(altaInfectados(p) * tasaContagio) - altaInfectados(p));
-    MR->altaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseAlta(p)));  
+    MR->altaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseAlta(p))/100);  
     MR->totalNuevosInfectados = aux;
     
     aux = abs(ceiLL(mediaInfectados(p) * tasaContagio) - mediaInfectados(p));
-    MR->mediaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseMedia(p)));
+    MR->mediaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseMedia(p))/100);
     MR->totalNuevosInfectados += aux;
 
     aux = abs(ceiLL(bajaInfectados(p) * tasaContagio) - bajaInfectados(p));
-    MR->bajaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseBaja(p)));
+    MR->bajaNuevosInfectados = porcentaje(aux, ceiLL(poblacionTotal(p) * claseBaja(p))/100);
     MR->totalNuevosInfectados += aux;
 
     // Nuevos muertos por clase
     aux = ceiLL(altaInfectados(p) * ((double) 1/8));
-    MR->altaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseAlta(p)));
+    MR->altaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseAlta(p))/100);
     MR->totalNuevosMuertos = aux;
 
     ntratado = ceiLL(mediaInfectados(p) * limitacionesMedia(p));
     tratado = mediaInfectados(p) - ntratado;
     aux = ceiLL(tratado * 0.25) + ceiLL(ntratado * mortalidadNoTratarla);
-    MR->mediaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseMedia(p)));
+    MR->mediaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseMedia(p))/100);
     MR->totalNuevosMuertos += aux;
 
     ntratado = ceiLL(bajaInfectados(p) * limitacionesBaja(p));
     tratado = bajaInfectados(p) - ntratado;
     aux = ceiLL(tratado * 0.5) + ceiLL(ntratado * mortalidadNoTratarla);
-    MR->bajaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseBaja(p)));
+    MR->bajaNuevosMuertos = porcentaje(aux, ceiLL(poblacionTotal(p) * claseBaja(p))/100);
     MR->totalNuevosMuertos += aux;
 
     

@@ -99,13 +99,13 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
     int numeroViajeros = MIN(pais->viajerosDiarios, pais->poblacionTotal);
     // Solo las proporciones de infectados: personas en la clase / personas infectadas en la clase.
     // Si no hay infectados, entonces la proporcion es 0.
-    double proporcion_infectados_alta  = pais->claseAlta  == 0 ? 0 : (100 * pais->infectadosClase[0]) / pais->claseAlta;
-    double proporcion_infectados_media = pais->claseMedia == 0 ? 0 : (100 * pais->infectadosClase[1]) / pais->claseMedia;
-    double proporcion_infectados_baja  = pais->claseBaja  == 0 ? 0 : (100 * pais->infectadosClase[2]) / pais->claseBaja;
+    double proporcion_infectados_alta  = pais->claseAlta  == 0 ? 0 : (pais->infectadosClase[0]) / (pais->claseAlta  * pais->poblacionTotal / 100);
+    double proporcion_infectados_media = pais->claseMedia == 0 ? 0 : (pais->infectadosClase[1]) / (pais->claseMedia * pais->poblacionTotal / 100);
+    double proporcion_infectados_baja  = pais->claseBaja  == 0 ? 0 : (pais->infectadosClase[2]) / (pais->claseBaja  * pais->poblacionTotal / 100);
     // el calculo de cuantos pasajeros tenemos que mandar al exterior, en punto flotante.
-    double contenido[3] = {     MIN( 0.6 * numeroViajeros, pais->claseAlta), 
-                                MIN( 0.3 * numeroViajeros, pais->claseMedia),
-                                MIN( 0.1 * numeroViajeros, pais->claseBaja) };
+    double contenido[3] = {     MIN( 0.6 * numeroViajeros, pais->poblacionTotal * pais->claseAlta / 100), 
+                                MIN( 0.3 * numeroViajeros, pais->poblacionTotal * pais->claseMedia / 100),
+                                MIN( 0.1 * numeroViajeros, pais->poblacionTotal * pais->claseBaja / 100) };
     // el calculo de cuantos de estos pasajeros estan infectados.
     double infectados[3] = {    contenido[0] * proporcion_infectados_alta, 
                                 contenido[1] * proporcion_infectados_media, 
@@ -114,7 +114,7 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
     // Ahora, la mitad de los pasajeros calculados en contenido van a ir a los paises aliados de la misma region
     double interno[3]           = {contenido[0] / 2, contenido[1] / 2, contenido[2] / 2 };
     // Lo mismo para los infectados.
-    double infectadosInterno[3] = {infectados[0] / 2, infectados[1] / 2, infectados[2] / 2 };
+    double infectadosInterno[3] = {ceil(infectados[0] / 2), ceil(infectados[1] / 2), ceil(infectados[2] / 2)};
 
     
     // Ahora creamos los mensajes.
@@ -193,9 +193,9 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
     // Tambien notemos que no es necesario ninguna sincronizacion ya que el proceso de devolucion toma lugar DESPUES
     // de que todos hayan enviado sus mensajes, es decir, despues de llamar a publish_message. 
     pais->poblacionTotal  = pais->poblacionTotal - (interno[0] + interno[1] + interno[2] + numeroRegiones * (externo[0] + externo[1] + externo[2]) );
-    pais->claseAlta       = pais->claseAlta  - (interno [0] + numeroRegiones * externo[0]);
-    pais->claseMedia      = pais->claseMedia - (interno [1] + numeroRegiones * externo[1]);
-    pais->claseBaja       = pais->claseBaja  - (interno [2] + numeroRegiones * externo[2]);
+    pais->claseAlta       = (pais->poblacionTotal * pais->claseAlta  / 100 - (interno [0] + numeroRegiones * externo[0])) / pais->poblacionTotal * 100;
+    pais->claseMedia      = (pais->poblacionTotal * pais->claseMedia / 100 - (interno [1] + numeroRegiones * externo[1])) / pais->poblacionTotal * 100;
+    pais->claseBaja       = (pais->poblacionTotal * pais->claseBaja  / 100 - (interno [2] + numeroRegiones * externo[2])) / pais->poblacionTotal * 100;
     
     /*for (int i = 0; i<3; i++){
         pais->infectadosClase[i] = pais->infectadosClase[i] - (infectadosInterno[i] + numeroRegiones * infectadosExterno[i]);
@@ -336,14 +336,14 @@ void* if_not_country_name_take(void* mssgs []){
     // el que llama la funcion).
     
     if (totalPaises != 0){
-        pais->claseAlta   =  MAX(pais->claseAlta  - mensaje->contenido[0] / totalPaises,0);
-        pais->claseMedia  =  MAX(pais->claseMedia - mensaje->contenido[1] / totalPaises,0);  
-        pais->claseBaja   =  MAX(pais->claseBaja  - mensaje->contenido[2] / totalPaises,0);
+        pais->claseAlta   =  MAX((pais->poblacionTotal * pais->claseAlta  /100  - mensaje->contenido[0] / totalPaises) / pais->poblacionTotal * 100,0);
+        pais->claseMedia  =  MAX((pais->poblacionTotal * pais->claseMedia /100  - mensaje->contenido[1] / totalPaises) / pais->poblacionTotal * 100,0);  
+        pais->claseBaja   =  MAX((pais->poblacionTotal * pais->claseBaja  /100  - mensaje->contenido[2] / totalPaises) / pais->poblacionTotal * 100,0);
     }
     
 
     // actualizamos la poblacion total.
-    pais->poblacionTotal = ceil(pais->claseAlta + pais->claseMedia + pais->claseBaja);
+    pais->poblacionTotal = ceil(pais->poblacionTotal * (pais->claseAlta + pais->claseMedia + pais->claseBaja) / 100);
 
     // y actualizamos los infectados.
     if (totalPaises != 0){
@@ -407,14 +407,14 @@ void* if_not_country_name_give(void* mssgs []){
 
     
     // Sino, anadimos de vuelta los pasajeros que se fueron.
-    pais->claseAlta   = pais->claseAlta  + mensaje->contenido[0] / totalPaises;
-    pais->claseMedia  = pais->claseMedia + mensaje->contenido[1] / totalPaises;
-    pais->claseBaja   = pais->claseBaja  + mensaje->contenido[2] / totalPaises;
+    pais->claseAlta   = (pais->poblacionTotal * pais->claseAlta  /100 + mensaje->contenido[0] / totalPaises) / pais->poblacionTotal * 100;
+    pais->claseMedia  = (pais->poblacionTotal * pais->claseMedia /100 + mensaje->contenido[1] / totalPaises) / pais->poblacionTotal * 100;
+    pais->claseBaja   = (pais->poblacionTotal * pais->claseBaja  /100 + mensaje->contenido[2] / totalPaises) / pais->poblacionTotal * 100;
 
-    pais->poblacionTotal = round(pais->claseAlta + pais->claseMedia + pais->claseBaja);
+    pais->poblacionTotal = round(pais->poblacionTotal * ( pais->claseAlta + pais->claseMedia + pais->claseBaja) / 100);
     
     for (int i=0; i <3 ;i++){        
-        pais->infectadosClase[i] = pais->infectadosClase[i] + mensaje->infectados[i] / totalPaises;
+        pais->infectadosClase[i] = pais->infectadosClase[i] + ceil(mensaje->infectados[i] / totalPaises);
     }
 
     return EXIT_SUCCESS;
