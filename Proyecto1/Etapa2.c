@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <math.h>
 struct Region* thread_data;
 
 void* intercambioClase(void *threadarg){

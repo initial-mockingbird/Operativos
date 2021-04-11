@@ -206,27 +206,24 @@ void appendPais(Pais* p, Region* r){
 
 /**
  * @brief lee los datos de un text y crea el mundo en torno a ello.
- * 
- * @param file_name //DEBERIA RECIBIR EL FILE NAME PERO DE MOMENTO LO TENGO COMO MACRO
  * @param m
+ * @param file_name 
+ * @param fechaContagio
  *  
 */ 
-void readData(Mundo* m){
-    char file_name[25], linebuf[MAX_LEN];
+void readData(Mundo* m, char* file_name, struct tm* fechaContagio, infoEnfermedad* infoE){
+    char linebuf[MAX_LEN];
 
     char enfermedad[MAX_LEN]; 
-    int duracionDias;
-    double tasaContagio, mortalidad;
     char paisOrigen[MAX_LEN];
     char clase[MAX_LEN];
-    struct tm fechaContagio;
-
+    
     int n_regiones;
 
     Region* region;
     Pais* p;
 
-    FILE *fp = fopen(FILE_NAME, "r"); // modo lectura
+    FILE *fp = fopen(file_name, "r"); // modo lectura
 
     if (fp == NULL) // Se falla leyendo el archivo
     {  
@@ -234,13 +231,13 @@ void readData(Mundo* m){
         exit(EXIT_FAILURE);
     }
 
-     if (linebuf[0] != '\n' || linebuf[0] != '\r'){
+    if (linebuf[0] != '\n' || linebuf[0] != '\r'){
         //datos iniciales
         fscanf(fp, "%s", enfermedad);
-        fscanf(fp, "%d", &duracionDias);
-        fscanf(fp, "%lf", &tasaContagio);
-        fscanf(fp, "%lf", &mortalidad);
-        fscanf(fp, "%s %s %d-%d-%d", paisOrigen, clase, &fechaContagio.tm_year, &fechaContagio.tm_mon, &fechaContagio.tm_mday);
+        fscanf(fp, "%d",  &infoE->duracionDias);
+        fscanf(fp, "%lf", &infoE->tasaContagio);
+        fscanf(fp, "%lf", &infoE->mortalidad);
+        fscanf(fp, "%s %s %d-%d-%d", paisOrigen, clase, &fechaContagio->tm_year, &fechaContagio->tm_mon, &fechaContagio->tm_mday);
         fscanf(fp, "%d", &n_regiones);
     }
 

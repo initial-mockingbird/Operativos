@@ -29,7 +29,7 @@ OBJDIR   = archivosO
 OBJETOS  = $(OBJDIR)/Calculo.o $(OBJDIR)/Etapa1.o $(OBJDIR)/Etapa2.o $(OBJDIR)/Lectura.o $(OBJDIR)/Mensaje.o $(OBJDIR)/Modelos.o $(OBJDIR)/LinkedList.o $(OBJDIR)/Closure.o $(OBJDIR)/main.o
 
 #El nombre del ejecutable suele darse como un DEFINE tambien
-PROGRAMA = modeloEpim.out
+PROGRAMA = modeloEpim
 
 #pueden especificarse parametros con ".PHONY" (archivos de mentira)
 #permitir hacer "make all" y "make clean" es muy comun

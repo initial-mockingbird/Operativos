@@ -478,7 +478,7 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
  * @param mortalidadNoTratarlar
  * @param date
  */
-void Etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
+void etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
     calculoContagio(mundo, listas, tasaContagio, mortalidadNoTratarla, date);
 }
 
@@ -488,7 +488,7 @@ void Etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalida
  * @param filename
  * @param days
  */
-pid_t Etapa5(Mundo *mundo, char *fileName, int days){
+pid_t etapa5(Mundo *mundo, char *fileName, int days){
     pid_t child_pid = fork(); 
 
     if (child_pid < 0){
@@ -500,5 +500,5 @@ pid_t Etapa5(Mundo *mundo, char *fileName, int days){
         return child_pid;
     }
     
-    return;    
+    return 0;    
 }
