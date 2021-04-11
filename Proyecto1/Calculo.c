@@ -234,7 +234,7 @@ int print(Mundo *mundo, char *fileName, int days){
                 printMR(fp, pais, MR, 'm', "Media");
                 printMR(fp, pais, MR, 'i', "Baja");
                 printMR(fp, pais, MR, 'm', "Baja");
-                strftime(buffer, MAX_LEN, "%d/%m/%Y", date);
+                strftime(buffer, MAX_LEN, "%d/%m/%Y", MR->fecha);
             }
             
             // Sumar el numero de infectados y numero de muertos por pais
