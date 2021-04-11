@@ -191,9 +191,9 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
     pais->claseAlta       = pais->claseAlta  - (interno [0] + numeroRegiones * externo[0]);
     pais->claseMedia      = pais->claseMedia - (interno [1] + numeroRegiones * externo[1]);
     pais->claseBaja       = pais->claseBaja  - (interno [2] + numeroRegiones * externo[2]);
-    for (int i = 0; i<3; i++){
+    /*for (int i = 0; i<3; i++){
         pais->infectadosClase[i] = pais->infectadosClase[i] - (infectadosInterno[i] + numeroRegiones * infectadosExterno[i]);
-    }
+    }*/
 
     // publicamos todos los mensajes
     publish_messages(region,mensajes,mutex, mensajesSalida);
@@ -326,16 +326,21 @@ void* if_not_country_name_take(void* mssgs []){
     // Si el pais de origen no es el mismo que el que origino el mensaje, entonces le quitamos tanta poblacion
     // como el mensaje diga / la cantidad de oaises de la region (-1 si es la misma region, pero de esto se encarga
     // el que llama la funcion).
-    pais->claseAlta   = totalPaises == 0 ?  pais->claseAlta  : pais->claseAlta  - mensaje->contenido[0] / totalPaises;
-    pais->claseMedia  = totalPaises == 0 ?  pais->claseMedia : pais->claseMedia - mensaje->contenido[1] / totalPaises;  
-    pais->claseBaja   = totalPaises == 0 ?  pais->claseBaja  : pais->claseBaja  - mensaje->contenido[2] / totalPaises;
+    if (totalPaises != 0){
+        pais->claseAlta   =  MAX(pais->claseAlta  - mensaje->contenido[0] / totalPaises,0);
+        pais->claseMedia  =  MAX(pais->claseMedia - mensaje->contenido[1] / totalPaises,0);  
+        pais->claseBaja   =  MAX(pais->claseBaja  - mensaje->contenido[2] / totalPaises,0);
+    }
+    
 
     // actualizamos la poblacion total.
-    pais->poblacionTotal = round(pais->claseAlta + pais->claseMedia + pais->claseBaja);
+    pais->poblacionTotal = ceil(pais->claseAlta + pais->claseMedia + pais->claseBaja);
 
     // y actualizamos los infectados.
-    for (int i=0; i <3 ;i++){
-        pais->infectadosClase[i] = totalPaises == 0 ?  pais->infectadosClase[i] : pais->infectadosClase[i] - mensaje->infectados[i] / totalPaises;
+    if (totalPaises != 0){
+        for (int i=0; i <3 ;i++){
+            pais->infectadosClase[i] = MAX(pais->infectadosClase[i] - mensaje->infectados[i] / totalPaises,0);
+        }
     }
 
     return EXIT_SUCCESS;
@@ -423,12 +428,12 @@ void add_passengers(Mensaje* mensaje, Region* region){
     }
 
     // Por cada pais con aeropuerto cerrado, le quitamos 1 al total de paises que tenemos que enviar personas.
-    while(paises){
+    /*while(paises){
         if (aeropuertoCerrado((Pais*) head(paises))){
             totalPaises --;
         }
         paises = tail(paises);
-    }
+    }*/
 
     // debido si el mensaje es intra region, y el pais que lo envio esta en cuarentena,
     // entonces acabaremos con una cota inferior de -1, ergo, necesitamos este statement.
@@ -694,7 +699,7 @@ void decrementarTTL(Mundo* mundo){
         mensajes =  region->buzonEntrada;
         while(mensajes){
             mensaje = (Mensaje*) head(mensajes);
-            mensaje->TTL = mensaje->TTL - 1;
+            mensaje->TTL = MAX(mensaje->TTL - 1,0);
             mensajes = tail(mensajes);
         }
         regiones = tail(regiones);
