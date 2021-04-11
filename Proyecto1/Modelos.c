@@ -219,8 +219,10 @@ Pais *lookupByName(Mundo *mundo, char *nombre){
     char* name;
 
     while(r){
+        
         pp = ((Region*)r)->paises;
         while(pp){
+            
             name = ((Pais*) head(pp))->nombre;
             if(name && COMPSTR(nombre, ((Pais*) head(pp))->nombre)){
                 return (Pais*) head(pp);
