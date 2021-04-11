@@ -61,13 +61,12 @@ int main(int args, char *argv[]){
     NUM_THREADS = length(mundo->regiones);
     //for (int i=0; i < infoE->duracionDias; i++){
     for (int i=0; i < 300; i++){
-       etapa1(mundo);
-       etapa2(mundo,NUM_THREADS);
-       etapa3(mundo, listas, infoE->tasaContagio, infoE->mortalidad, date);
-       child = etapa5(mundo, argv[2], i);
+        etapa1(mundo);
+        etapa2(mundo,NUM_THREADS);
+        etapa3(mundo, listas, infoE->tasaContagio, infoE->mortalidad, date);
+        etapa5(mundo, argv[2], i, date);
     }
     
-    if(child) waitpid(child, NULL, 0);
 
     return EXIT_SUCCESS;
 }

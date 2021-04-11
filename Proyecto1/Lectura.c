@@ -210,7 +210,7 @@ void appendPais(Pais* p, Region* r){
  * @param m
  * @param file_name 
  * @param fechaContagio
- *  
+ * @param infoE
 */ 
 void readData(Mundo* m, char* file_name, struct tm* fechaContagio, infoEnfermedad* infoE){
     char linebuf[MAX_LEN];

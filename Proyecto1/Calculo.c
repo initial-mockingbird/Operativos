@@ -256,7 +256,6 @@ int print(Mundo *mundo, char *fileName, int days){
     fclose(bi);
 
     mundo->eventos = NULL;
-    exit(0);
     return EXIT_SUCCESS;
 }
 
@@ -391,14 +390,12 @@ Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[], struct tm* date){
         eventos = snoc((void*) writeME(nombre(p), 0, date), eventos);
     }
 
-    
     //1. Un país tiene su primer muerto 
     if(searchQueue(listas[1], nombre(p)) && !searchQueue(listas[2], nombre(p))){
         listas[2] = snoc((void*) nombre(p), listas[2]);
         eventos = snoc((void*) writeME(nombre(p), 1, date), eventos);
     }
 
-    
     //3. Un país entra en cuarentena
     aux = altaInfectados(p) + mediaInfectados(p) + bajaInfectados(p);
     if(!searchQueue(listas[4], nombre(p)) && (aux >= contagiadosCuarentena(p))){
@@ -419,7 +416,6 @@ Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[], struct tm* date){
         listas[5] = snoc((void*) nombre(p), listas[5]);
         eventos = snoc((void*) writeME(nombre(p), 5, date), eventos);
     }
-
     
     //6. Un país reabre sus aeropuertos
     if(searchQueue(listas[6], nombre(p)) && (aux < contagiadosCierreAeropuertos(p))){
@@ -434,6 +430,7 @@ Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[], struct tm* date){
         listas[7] = snoc((void*) nombre(p), listas[7]);
         eventos = snoc((void*) writeME(nombre(p), 7, date), eventos);
     }
+
     //8. Un país reabre sus negocios
     if(searchQueue(listas[8], nombre(p)) && (aux < contagiadosCierreNegocios(p))){
         listas[8] = withoutNode(listas[8], nombre(p));
@@ -441,11 +438,13 @@ Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[], struct tm* date){
     }else if(!searchQueue(listas[8], nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
         listas[8] = snoc((void*) nombre(p), listas[8]);
     }
+
     //9. Un país clausura sus mercados por 1ra vez
     if(!searchQueue(listas[9], nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
         listas[9] = snoc((void*) nombre(p), listas[9]);
         eventos = snoc((void*) writeME(nombre(p), 9, date), eventos);
     }
+
     //10. Un país reabre sus mercados
     if(searchQueue(listas[10], nombre(p)) && (aux < contagiadosClausuraMercados(p))){
         listas[10] = withoutNode(listas[10], nombre(p));
@@ -453,11 +452,13 @@ Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[], struct tm* date){
     }else if(!searchQueue(listas[10], nombre(p)) && (aux >= contagiadosClausuraMercados(p))){
         listas[10] = snoc((void*) nombre(p), listas[10]);
     }
+
     //11. Un  país  detiene  su  transporte  publico  por 1ra vez
     if(!searchQueue(listas[11], nombre(p)) && (aux >= contagiadosDetenerTransporte(p))){
         listas[11] = snoc((void*) nombre(p), listas[11]);
         eventos = snoc((void*) writeME(nombre(p), 11, date), eventos);
     }
+    
     //12. Un país reactiva su transporte publico
     if(searchQueue(listas[12], nombre(p)) && (aux < contagiadosDetenerTransporte(p))){
         listas[12] = withoutNode(listas[12], nombre(p));
@@ -512,7 +513,7 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
  */
 void etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalidadNoTratarla, struct tm *date){
     calculoContagio(mundo, listas, tasaContagio, mortalidadNoTratarla, date);
-    date = addDay(date);
+    
 }
 
 /**
@@ -520,16 +521,9 @@ void etapa3(Mundo *mundo, Queue *listas[], double tasaContagio, double mortalida
  * @param mundo
  * @param filename
  * @param days
+ * @param date
  */
-pid_t etapa5(Mundo *mundo, char *fileName, int days){
-    pid_t child_pid = fork(); 
-
-    if (child_pid < 0){
-        printf("Etapa5: No se pudo crear nuevo proceso.");
-        return EXIT_FAILURE;
-    }else if (child_pid == 0){
-        print(mundo, fileName, days);
-        exit(0);
-    }
-    return child_pid;    
+void etapa5(Mundo *mundo, char *fileName, int days, struct tm *date){
+    print(mundo, fileName, days);   
+    date = addDay(date);
 }
