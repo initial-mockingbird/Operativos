@@ -247,7 +247,7 @@ int print(Mundo *mundo, char *fileName, int days){
     }
     
     // Imprimir informacion global
-    if(days % 7){
+    if(days % 7 == 0){
         fprintf(fp, "Global, Total, nuevos infectados, %s, %lld\n", buffer, globalInfectados);   
         fprintf(fp, "Global, Total, nuevos muertos, %s, %lld\n", buffer, globalMuertos); 
     }
