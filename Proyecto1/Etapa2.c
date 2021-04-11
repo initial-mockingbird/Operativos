@@ -1,6 +1,10 @@
 #include "Etapa2.h"
 #include "Modelos.h"
-
+#include <stdlib.h>
+#include <time.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
 struct Region* thread_data;
 
 void* intercambioClase(void *threadarg){
@@ -45,6 +49,23 @@ void* intercambioClase(void *threadarg){
         porcentajeContagiadoCB = (p->infectadosClase[2] * 100) / baja; //porcentaje de personas contagiadas en la clase baja
         p->infectadosSalen[2] = (long)round((p->domesticos * porcentajeContagiadoCB) / 100); //personas que van al mercado contagiadas
     }
+}
+
+
+void etapa2(Mundo* mundo, int NUM_THREADS){
+    pthread_t threads[NUM_THREADS]; //EL NUMERO DE THREADS ES EL NUMERO DE REGIONES
+    int *taskids[NUM_THREADS];
+    int rc, t, sum;
+
+    for(t=0;t<NUM_THREADS;t++) {
+        thread_data = (Region*)valueAt(mundo->regiones, t);
+        rc = pthread_create(&threads[t], NULL, intercambioClase, (void *) thread_data);
+        if (rc) {
+            printf("ERROR; return code from pthread_create() is %d\n", rc);
+            exit(-1);
+        }
+    }
+    pthread_exit(NULL);
 }
 
 /*

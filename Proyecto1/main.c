@@ -11,5 +11,17 @@
 #include <stdlib.h>
 
 int main(int args, char *argv[]){
+
+    Mundo* mundo = (Mundo*) malloc(sizeof(Mundo));
+    mundo->buzonMundo = emptyQ();
+    mundo->regiones   = emptyQ();
+    readData(mundo);
+    NUM_THREADS = length(mundo->regiones);
+   for (int i=0; i < 355; i++){
+       etapa1(mundo);
+       etapa2(mundo,NUM_THREADS);
+   }
+   
+
     return EXIT_SUCCESS;
 }
