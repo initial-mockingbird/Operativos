@@ -99,9 +99,9 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
     int numeroViajeros = MIN(pais->viajerosDiarios, pais->poblacionTotal);
     // Solo las proporciones de infectados: personas en la clase / personas infectadas en la clase.
     // Si no hay infectados, entonces la proporcion es 0.
-    double proporcion_infectados_alta  = pais->claseAlta  == 0 ? 0 : pais->infectadosClase[0] / pais->poblacionTotal;
-    double proporcion_infectados_media = pais->claseMedia == 0 ? 0 : pais->infectadosClase[1] / pais->poblacionTotal;
-    double proporcion_infectados_baja  = pais->claseBaja  == 0 ? 0 : pais->infectadosClase[2] / pais->poblacionTotal;
+    double proporcion_infectados_alta  = pais->claseAlta  == 0 ? 0 : (100 * pais->infectadosClase[0]) / pais->claseAlta;
+    double proporcion_infectados_media = pais->claseMedia == 0 ? 0 : (100 * pais->infectadosClase[1]) / pais->claseMedia;
+    double proporcion_infectados_baja  = pais->claseBaja  == 0 ? 0 : (100 * pais->infectadosClase[2]) / pais->claseBaja;
     // el calculo de cuantos pasajeros tenemos que mandar al exterior, en punto flotante.
     double contenido[3] = {     MIN( 0.6 * numeroViajeros, pais->claseAlta), 
                                 MIN( 0.3 * numeroViajeros, pais->claseMedia),
@@ -142,7 +142,7 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
     for (int i = 0; i < 3; i++){
 
         mensajeInterno->contenido[i]  = interno[i];
-        mensajeInterno->infectados[i] = infectadosInterno[i];
+        mensajeInterno->infectados[i] = ceil(infectadosInterno[i]);
         
     }
     
@@ -161,7 +161,7 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
     if (numeroRegiones != 0){
         for (int i = 0; i < 3; i ++){
             externo[i]            = interno[i]/numeroRegiones;
-            infectadosExterno [i] = infectadosInterno[i] / numeroRegiones;
+            infectadosExterno [i] = ceil(infectadosInterno[i] / numeroRegiones);
         }
         
     } 
@@ -196,9 +196,10 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
     pais->claseAlta       = pais->claseAlta  - (interno [0] + numeroRegiones * externo[0]);
     pais->claseMedia      = pais->claseMedia - (interno [1] + numeroRegiones * externo[1]);
     pais->claseBaja       = pais->claseBaja  - (interno [2] + numeroRegiones * externo[2]);
-    for (int i = 0; i<3; i++){
+    
+    /*for (int i = 0; i<3; i++){
         pais->infectadosClase[i] = pais->infectadosClase[i] - (infectadosInterno[i] + numeroRegiones * infectadosExterno[i]);
-    }
+    }*/
 
     // publicamos todos los mensajes
     publish_messages(region,mensajes,mutex, mensajesSalida);
@@ -333,6 +334,7 @@ void* if_not_country_name_take(void* mssgs []){
     // Si el pais de origen no es el mismo que el que origino el mensaje, entonces le quitamos tanta poblacion
     // como el mensaje diga / la cantidad de oaises de la region (-1 si es la misma region, pero de esto se encarga
     // el que llama la funcion).
+    
     if (totalPaises != 0){
         pais->claseAlta   =  MAX(pais->claseAlta  - mensaje->contenido[0] / totalPaises,0);
         pais->claseMedia  =  MAX(pais->claseMedia - mensaje->contenido[1] / totalPaises,0);  

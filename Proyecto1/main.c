@@ -60,7 +60,7 @@ int main(int args, char *argv[]){
     //printf("PAIS: %s\n",(Pais*) head(((Region*) head(mundo->regiones))->paises));
     NUM_THREADS = length(mundo->regiones);
     //for (int i=0; i < infoE->duracionDias; i++){
-    for (int i=0; i < 10; i++){
+    for (int i=0; i < 300; i++){
        etapa1(mundo);
        etapa2(mundo,NUM_THREADS);
        etapa3(mundo, listas, infoE->tasaContagio, infoE->mortalidad, date);
