@@ -4,6 +4,7 @@
 #include <time.h>
 #include <stdio.h>
 #include "Lectura.h"
+#include <string.h>
 /** @def MAX_LEN
  * @brief Maxima longitud de una cadena de texto.
  * 
@@ -63,7 +64,7 @@ static int compareStr(void* s, void*t){
  */
 char* tokenizeInput(char* s){
     char *token;
-    char *concatenate = (char *) malloc(MAX_LEN);
+    char *concatenate = (char *) malloc(MAX_LEN * sizeof(char));
     char* ss = malloc(strlen(s) * sizeof(s));
     ss = s;
     str_tolower(ss);
@@ -75,8 +76,7 @@ char* tokenizeInput(char* s){
             }
         }
     token = strtok(ss," ");
-    
-    while(token != NULL) {   
+    while(token != NULL) {
         strcat(concatenate, token);
         token = strtok(NULL, " ");
 
@@ -234,10 +234,10 @@ void readData(Mundo* m, char* file_name, struct tm* fechaContagio, infoEnfermeda
     if (linebuf[0] != '\n' || linebuf[0] != '\r'){
         //datos iniciales
         fscanf(fp, "%s", enfermedad);
-        fscanf(fp, "%d",  &infoE->duracionDias);
-        fscanf(fp, "%lf", &infoE->tasaContagio);
-        fscanf(fp, "%lf", &infoE->mortalidad);
-        fscanf(fp, "%s %s %d-%d-%d", paisOrigen, clase, &fechaContagio->tm_year, &fechaContagio->tm_mon, &fechaContagio->tm_mday);
+        fscanf(fp, "%d",  &(infoE->duracionDias));
+        fscanf(fp, "%lf", &(infoE->tasaContagio));
+        fscanf(fp, "%lf", &(infoE->mortalidad));
+        fscanf(fp, "%s %s %d-%d-%d", paisOrigen, clase, &(fechaContagio->tm_year), &(fechaContagio->tm_mon), &(fechaContagio->tm_mday));
         fscanf(fp, "%d", &n_regiones);
     }
 
@@ -257,6 +257,8 @@ void readData(Mundo* m, char* file_name, struct tm* fechaContagio, infoEnfermeda
         }
     }
 
+    
+
     //paises
     while(fgets(linebuf, sizeof linebuf, fp) != NULL){
         if (linebuf[0] == '\n' || linebuf[0] == '\r'){
@@ -265,6 +267,8 @@ void readData(Mundo* m, char* file_name, struct tm* fechaContagio, infoEnfermeda
         if (linebuf[0] != '\t'){
             p = crearPais(tokenizeInput(linebuf));
             fscanf(fp, "%s %d %d", linebuf, &(p->viajerosDiarios), &(p->contagiadosCierreAeropuertos));
+            p->region = (char*) malloc(MAX_LEN * sizeof(char));
+            strcpy(p->region,linebuf);
             fscanf(fp, "%lld %d", &(p->poblacionTotal), &(p->contagiadosCuarentena));
             fscanf(fp, "%lf %lf %d", &(p->claseAlta), &(p->compradores),  &(p->contagiadosCierreNegocios));
             fscanf(fp, "%lf %lf %lf %d", &(p->claseMedia),&(p->limitacionesMedia), &(p->mercado), &(p->contagiadosClausuraMercados));
@@ -286,6 +290,10 @@ void readData(Mundo* m, char* file_name, struct tm* fechaContagio, infoEnfermeda
             p->limitacionesMedia = roundTo(p->limitacionesMedia, 1);
             p->limitacionesBaja = roundTo(p->limitacionesBaja, 1);
 
+            /*char* rp = (char*) malloc(MAX_LEN * sizeof(char));
+            rp = tokenizeInput(linebuf);
+            p->region = (char*) malloc(MAX_LEN * sizeof(char));
+            strcpy(p->region,rp);*/
             appendPais(p, lookupByNameRegion(tokenizeInput(linebuf), m));
         }
     }

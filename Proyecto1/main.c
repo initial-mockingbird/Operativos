@@ -55,16 +55,18 @@ int main(int args, char *argv[]){
     listas[12]   = transportesDetenidos;
 
     readData(mundo, argv[1], date, infoE);
+    
+    //printf("PAIS: %s\n",(Pais*) head(((Region*) head(mundo->regiones))->paises));
     NUM_THREADS = length(mundo->regiones);
     //for (int i=0; i < infoE->duracionDias; i++){
-    for (int i=0; i < 355; i++){
+    for (int i=0; i < 1; i++){
        etapa1(mundo);
-       etapa2(mundo,NUM_THREADS);
-       etapa3(mundo, listas, infoE->tasaContagio, infoE->mortalidad, date);
-       child = etapa5(mundo, argv[2], i);
+       //etapa2(mundo,NUM_THREADS);
+       //etapa3(mundo, listas, infoE->tasaContagio, infoE->mortalidad, date);
+       //child = etapa5(mundo, argv[2], i);
     }
-
-    if(child) waitpid(child, NULL, 0);
+    
+    //if(child) waitpid(child, NULL, 0);
 
     return EXIT_SUCCESS;
 }

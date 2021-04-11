@@ -15,8 +15,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <pthread.h>
-//#include <semaphore.h>
+#include <pthread.h>
+#include <semaphore.h>
 #include <unistd.h>
 #include "Etapa1.h"
 #include <math.h>
@@ -90,7 +90,7 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
         return;
     }
 
-
+    
     // asumiendo que las regiones aliadas no se contienen a si mismas.
     int numeroRegiones  = length(region->aliadas);
     // sacamos tantos pasajeros como los viajeros diarios, 
@@ -116,16 +116,21 @@ void produce_flight_msg(Region* region, Pais* pais,sem_t* mutex, int* mensajesSa
     // Lo mismo para los infectados.
     double infectadosInterno[3] = {infectados[0] / 2, infectados[1] / 2, infectados[2] / 2 };
 
+    
     // Ahora creamos los mensajes.
-
+    
     // Hay un mensaje que se manda a la misma region, este es el mensaje interno.
     mensajeInterno = (Mensaje*) malloc(sizeof(Mensaje));
+    
     mensajeInterno->regionOrigen   = (char*) malloc((strlen(pais->region) +1) * sizeof(char));
     mensajeInterno->regionDestino  = (char*) malloc((strlen(pais->region) +1) * sizeof(char));
     mensajeInterno->paisOrigen     = (char*) malloc((strlen(pais->nombre) +1) * sizeof(char));
+
+    
     strcpy(mensajeInterno->regionOrigen, pais->region);
     strcpy(mensajeInterno->regionDestino, pais->region);
     strcpy(mensajeInterno->paisOrigen, pais->nombre);
+    
     mensajeInterno->regionOrigen  = pais->region;
     mensajeInterno->regionDestino = pais->region;
     mensajeInterno->paisOrigen    = pais->nombre;
@@ -229,7 +234,7 @@ void consume_flight_msg(Mundo* mundo, Region* region,sem_t* mutexBuzonSalida, se
         // Terminamos con el buzon del mundo.
         sem_post(mutexBuzonMundo);        
     }
-
+    
     return ;
 }
 
@@ -576,6 +581,7 @@ void creacion_de_mensajes(Region* region,int* vectorRegiones, int pos, sem_t* bu
     Queue* args   = emptyQ();
     // Arreglo de hilos, cada hilo representa un pais en el proceso de creacion de mensajes.
     pthread_t* threads = (pthread_t*) malloc(totalPaises * sizeof(pthread_t));
+    
     // Por cada pais:
     while(paises){
         // Creamos su lista de argumentos.
@@ -585,6 +591,7 @@ void creacion_de_mensajes(Region* region,int* vectorRegiones, int pos, sem_t* bu
         args = cons(region,args);
         // creamos el hilo correspondiente.
         pthread_create( &threads[i], NULL, produce_flight_msg_wrapper, (void*) args);
+
         i++;
         // y pasamos al siguiente pais.
         paises = tail(paises);
@@ -660,7 +667,7 @@ void* envio_buzon_salida_wrapper(void* argsP){
     while(*continuarEnviando){
         consume_flight_msg(mundo, region,mutexBuzonSalida,  &buzonMundo);
     }
-    
+    printf("WUUUU\n");
     return EXIT_SUCCESS;
 }
 
@@ -753,7 +760,7 @@ void etapa1(Mundo* mundo){
     int numeroRegiones = length(mundo->regiones);
     // Pedimos espacio para el vector de regiones (que senala cuando una region ha terminado alguna tarea
     // como la creacion de mensajes).
-    int *vectorRegiones = (int*) malloc(numeroRegiones * sizeof(int));
+    int *vectorRegiones = (int*) malloc((numeroRegiones+1) * sizeof(int));
     // Un vector de hilos para la creacion de mensajes.
     pthread_t* threadsRegionesCreacionMensaje = (pthread_t*) malloc(numeroRegiones * sizeof(pthread_t));
     // Un vector de hilos para el envio de mensajes desde regiones.
@@ -788,8 +795,9 @@ void etapa1(Mundo* mundo){
         
         
         // y creamos el hilo de creacion de mensajes.
-        pthread_create( &threadsRegionesCreacionMensaje[i], NULL, creacion_de_mensajes_wrapper, (void*) argsPGenerarMensajes);
         
+        pthread_create( &threadsRegionesCreacionMensaje[i], NULL, creacion_de_mensajes_wrapper, (void*) argsPGenerarMensajes);
+ 
         
         // luego crearemos el hilo para despachar el buzon de salida.
         argsPEnviarMensajes  = emptyQ();
@@ -806,6 +814,8 @@ void etapa1(Mundo* mundo){
         pthread_create( &threadsRegionesEnvioSalida[i], NULL, envio_buzon_salida_wrapper, (void*) argsPEnviarMensajes);
         
     }
+
+    
     
     // Señaliza cuando el buzon del mundo debe parar de despachar.
     int continuarConsumiendo = 1;
@@ -815,14 +825,16 @@ void etapa1(Mundo* mundo){
     argsPConsumirMundo = snoc(&continuarConsumiendo, argsPConsumirMundo);
     // y creamos el hilo.
     pthread_create(&threadBuzonMundo, NULL,consume_world_inbox_wrapper, (void*) argsPConsumirMundo);
-
+    
     // Hacemos poll al vector de regiones, cada vez que se escribe un 1 en el,
     // significa que una region termino de enviar mensajes.
+    
     while(j<numeroRegiones){
         if (vectorRegiones[j]){
             vectorRegiones[j] = 0;
             j++;
         }
+        
     }
     
     // Una vez que las regiones terminaron de crear los mensajes, esperamos
@@ -843,6 +855,7 @@ void etapa1(Mundo* mundo){
     for (int i=0; i<numeroRegiones; i++){
         pthread_join(threadsRegionesEnvioSalida[i], NULL);
     }
+    
     // Y ademas esperamos que el buzon del mundo tambien finiquite
     pthread_join(threadBuzonMundo, NULL);
     
