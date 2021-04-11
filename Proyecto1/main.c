@@ -62,10 +62,19 @@ int main(int args, char *argv[]){
     //for (int i=0; i < infoE->duracionDias; i++){
     for (int i=0; i < 10; i++){
        etapa1(mundo);
+<<<<<<< HEAD
        etapa2(mundo,NUM_THREADS);
        etapa3(mundo, listas, infoE->tasaContagio, infoE->mortalidad, date);
        child = etapa5(mundo, argv[2], i);
        date = addDay(date);
+=======
+       //printf("Etapa 1 acabada: %d\n", i);
+       etapa2(mundo,NUM_THREADS);
+       //printf("Etapa 2 acabada: %d\n", i);
+       etapa3(mundo, listas, infoE->tasaContagio, infoE->mortalidad, date);
+       //printf("Etapa 3 acabada: %d\n", i);
+       child = etapa5(mundo, argv[2], i);
+>>>>>>> cc801ed8f40be91cba0a6002094329a5543f2a10
     }
     
     if(child) waitpid(child, NULL, 0);

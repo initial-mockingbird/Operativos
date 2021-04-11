@@ -12,6 +12,7 @@
 #include <math.h>
 #include <time.h>
 #include <string.h>
+#include <sys/wait.h>
 
 // ---------------------- 
 // |      MACROS        |
@@ -378,32 +379,43 @@ Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[], struct tm* date){
     }else if(searchQueue(listas[3], nombre(p)) && firstCase(p)){
         listas[3] = withoutNode(listas[3], nombre(p));
     }
+    
     //0. Pais recibe paciente cero
     if(!searchQueue(listas[0], nombre(p)) && firstCase(p)){
         listas[0] = snoc((void*) nombre(p), listas[0]);
         eventos = snoc((void*) writeME(nombre(p), 0, date), eventos);
     }
+
+    
     //1. Un país tiene su primer muerto 
     if(searchQueue(listas[1], nombre(p)) && !searchQueue(listas[2], nombre(p))){
         listas[2] = snoc((void*) nombre(p), listas[2]);
         eventos = snoc((void*) writeME(nombre(p), 1, date), eventos);
     }
+
+    
     //3. Un país entra en cuarentena
     aux = altaInfectados(p) + mediaInfectados(p) + bajaInfectados(p);
     if(!searchQueue(listas[4], nombre(p)) && (aux >= contagiadosCuarentena(p))){
         listas[4] = snoc((void*) nombre(p), listas[4]); 
         eventos = snoc((void*) writeME(nombre(p), 3, date), eventos);
     }
+    
     //4. Un país sale de cuarentena
     if(searchQueue(listas[4], nombre(p)) && (aux < contagiadosCuarentena(p))){
+        
         listas[4] = withoutNode(listas[4], nombre(p));
+        
         eventos = snoc((void*) writeME(nombre(p), 4, date), eventos);
     }
+    
     //5. Un país cierra sus aeropuertos por 1ra vez
     if(!searchQueue(listas[5], nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
         listas[5] = snoc((void*) nombre(p), listas[5]);
         eventos = snoc((void*) writeME(nombre(p), 5, date), eventos);
     }
+
+    
     //6. Un país reabre sus aeropuertos
     if(searchQueue(listas[6], nombre(p)) && (aux < contagiadosCierreAeropuertos(p))){
         listas[6] = withoutNode(listas[6], nombre(p));
@@ -411,6 +423,7 @@ Queue *hitoPais(Queue *eventos, Pais *p, Queue *listas[], struct tm* date){
     }else if(!searchQueue(listas[6], nombre(p)) && (aux >= contagiadosCierreAeropuertos(p))){
         listas[6] = snoc((void*) nombre(p), listas[6]);
     }
+    
     // 7. Un país cierra sus negocios por 1ra vez 
     if(!searchQueue(listas[7], nombre(p)) && (aux >= contagiadosCierreNegocios(p))){
         listas[7] = snoc((void*) nombre(p), listas[7]);
@@ -467,6 +480,7 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
 
     while(r){
         pp = ((Region*)head(r))->paises;
+
         while(pp){
             pais = (Pais*) head(pp);
             pp   = tail(pp);
@@ -477,7 +491,6 @@ void calculoContagio(Mundo *mundo, Queue *listas[], double tasaContagio, double 
             //Caso contrario, calcular el contagio
             mundo->eventos = snoc((void*) contagioPais(mundo, pais, listas, tasaContagio, mortalidadNoTratarla, date), mundo->eventos);
             //Generar mensajes de eventualidad
-            
             mundo->eventos = hitoPais(mundo->eventos, pais, listas, date);            
         }
         r = tail(r);
