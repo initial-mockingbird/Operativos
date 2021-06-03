@@ -24,7 +24,7 @@
 #define MAX_LEVEL 3
 
 Queue* lvlListas[4] = {NULL};
-char  nombre1[MAX_LEN], nombre2[MAX_LEN];
+char   nombre1[MAX_LEN], nombre2[MAX_LEN];
 int    flag = 0;
 
 // ---------------------- 
