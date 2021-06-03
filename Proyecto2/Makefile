@@ -26,7 +26,7 @@ OBJDIR   = archivosO
 #tambien suele hacerse un define con todos los archivos intermedios que se pueden crear
 #cuando hay varios archivos, debe ir separados por espacios en la misma linea
 #Pueden incluirse variables anteriores en las definiciones de otras variables
-OBJETOS  = $(OBJDIR)/Readdir.o $(OBJDIR)/LinkedList.o $(OBJDIR)/Closure.o $(OBJDIR)/main.o
+OBJETOS  = $(OBJDIR)/Readdir.o $(OBJDIR)/split.o $(OBJDIR)/LinkedList.o $(OBJDIR)/Closure.o $(OBJDIR)/main.o
 
 #El nombre del ejecutable suele darse como un DEFINE tambien
 PROGRAMA = electoralCollege
@@ -56,11 +56,14 @@ clean:
 $(PROGRAMA): $(OBJETOS)
 	$(LINKEAR) $(OBJETOS) -o $(PROGRAMA) -lm -lpthread
 
-$(OBJDIR)/main.o: main.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h
+$(OBJDIR)/main.o: main.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h Methods.h
 	$(COMPILAR) main.c -o $(OBJDIR)/main.o
 
 $(OBJDIR)/Readdir.o: Readdir.c $(OBJDIR) ../Utils/LinkedList/LinkedList.c ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h 
 	$(COMPILAR) Readdir.c -o $(OBJDIR)/Readdir.o 
+
+$(OBJDIR)/split.o: split.c $(OBJDIR) ../Utils/LinkedList/LinkedList.c ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h Methods.h
+	$(COMPILAR) split.c -o $(OBJDIR)/split.o 
 
 $(OBJDIR)/LinkedList.o: ../Utils/LinkedList/LinkedList.c $(OBJDIR) ../Utils/Closures/Closure.h ../Utils/LinkedList/LinkedList.h
 	$(COMPILAR) ../Utils/LinkedList/LinkedList.c -o $(OBJDIR)/LinkedList.o

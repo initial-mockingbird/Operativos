@@ -2,6 +2,7 @@
 #include "../Utils/UsefulMacros/macros.h"
 #include "../Utils/Closures/Closure.h"
 #include "Readdir.h"
+#include "Methods.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -38,28 +39,34 @@ int main(int argc, char *argv[]){
     strcpy(method, argv[2]);
     
     /*------------------------------------- Recorrer directorios -------------------------------------*/
-    struct Reporte* inRp;
+    struct Reporte *inRp;
+    char dst[MAX_LEN] = "", *path;
 
+    //Inicializar reporte que representa al país
     inRp = initReport("Pais", 0);
     lvlListas[0] = snoc((void*) inRp, lvlListas[0]);
-    
-    readAllDir("./0", "", 0, inRp);
+    //Concatenar nombre del archivo para conseguir path
+    path = concatenateStrings(dst, "./", dir, "");
+    //Leer directorios, subdirectorios y archivos .txt
+    readAllDir(path, "", 0, inRp);
 
-    //Test
-    Queue *q = lvlListas[0], *k;
-    while(q){
-        printf("Directorio: %s\n", ((Reporte *) head(q))->nombre);
-        printf("cand1: %ld\n", ((Reporte *) head(q))->cand1);
-        printf("subCounts: %d\n", ((Reporte *) head(q))->subCounts);
-        k = ((Reporte *) head(q))->subdirs;
-        while(k){
-            printf("Subdirectorio: %s\n", ((Reporte *) head(k))->nombre);
-            k = tail(k);
-        }
-        q = tail(q);
-    }
+
     return EXIT_SUCCESS;
 }
+
+// //Test
+// Queue *q = lvlListas[0], *k;
+// while(q){
+//     printf("Directorio: %s\n", ((Reporte *) head(q))->nombre);
+//     printf("cand1: %ld\n", ((Reporte *) head(q))->cand1);
+//     printf("subCounts: %d\n", ((Reporte *) head(q))->subCounts);
+//     k = ((Reporte *) head(q))->subDirs;
+//     while(k){
+//         printf("Subdirectorio: %s\n", ((Reporte *) head(k))->nombre);
+//         k = tail(k);
+//     }
+//     q = tail(q);
+// }
 
 // int main(int argc, char *argv[]){
     
