@@ -8,8 +8,6 @@
 #include <unistd.h>
 #include <stdio.h>
 
-Queue* lvlListas[4] = {NULL};
-
 // ---------------------- 
 // |      MACROS        |
 // ----------------------
@@ -24,6 +22,10 @@ Queue* lvlListas[4] = {NULL};
  * 
  */
 #define MAX_LEVEL 3
+
+Queue* lvlListas[4] = {NULL};
+char*  nombre1[MAX_LEN], nombre2[MAX_LEN];
+int    flag = 0;
 
 // ---------------------- 
 // |    AUX FUNCTIONS   |
@@ -69,6 +71,10 @@ int isNumber(char *str){
     return 1;
 }
 
+// ---------------------- 
+// |      FUNCTIONS     |
+// ----------------------
+
 /**
  * @brief Crea, inicializa y devuelve un reporte.
  * @param nombre    Nombre del directorio/archivo a reportar
@@ -85,7 +91,7 @@ Reporte* initReport(char *nombre, int level){
     rp->cand1     = 0;
     rp->cand2     = 0;
     rp->subCounts = 0;
-    rp->subdirs   = NULL;
+    rp->subDirs   = NULL;
 
     return rp;
 }
@@ -101,7 +107,7 @@ void updateReport(Reporte *nextRp, Reporte *prevRp){
     prevRp->cand1     += nextRp->cand1;
     prevRp->cand2     += nextRp->cand2;
     prevRp->subCounts += 1;
-    prevRp->subdirs    = snoc((void*) nextRp, prevRp->subdirs);
+    prevRp->subDirs    = snoc((void*) nextRp, prevRp->subDirs);
 }
 
 /**
@@ -139,6 +145,18 @@ int getVotes(char *str){
     //Obtener string después del ":", en caso de no existir devolver el previo
     token = strtok(buff, s);
     while( token != NULL ){
+        //Copiar nombres de los candidatos
+        if ( flag == 0 ){
+            strcpy(nombre1, token);
+            flag += 1;
+        }else if ( flag == 1 ){
+            flag += 1;
+        }else if ( flag == 2 ){
+            strcpy(nombre2, token);
+            flag += 1;
+        }
+        
+        //Resguardar token
         strcpy(data, token);
         token = strtok(NULL, s);
     }
@@ -227,6 +245,7 @@ int readAllDir(char *fileDir, char *dirName, int level, Reporte *inRp){
             if( level < MAX_LEVEL - 1 ){
                 readAllDir(path, ent->d_name, level + 1, outRp);
             }else{
+                printf("Counting: %s\n", ent->d_name);
                 outRp = readFile(path, ent->d_name, outRp);
             }
             updateReport(outRp, inRp);                        
