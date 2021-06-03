@@ -48,6 +48,7 @@ void printHeader();
 void printRow(RowData*, RowData*);
 void split(splitData*);
 void npivc(npvicData*);
+void wta(splitData*);
 void printHeader(){
     printf("Nombre Candidato | Nombre Estado | Metodo Usado | Votos Colegio Electoral | Porcentaje de Votos Bruto\n");
 }
@@ -173,6 +174,67 @@ void split(splitData* data){
     candidato2Str->colegioLoc    = colegioLoc2;
     candidato2Str->estado        = estado->nombre;
     candidato2Str->metodo        = "split";
+    candidato2Str->porcentajeLoc = porcentajeLoc2;
+
+
+    printRow(candidato1Str, candidato2Str);
+
+    // Y pedir el mutex para actualizar las cosas compartidas
+    /*
+    sem_wait(data->mutexVotosColegio);
+    *(data->colegioGlob1) += colegioLoc1;
+    *(data->colegioGlob2) += colegioLoc2;
+    (*(data->estadosFinalizados))--;
+    sem_post(data->mutexVotosColegio);
+    */
+
+
+}
+
+
+void wta(splitData* data){
+    Reporte* estado = data->estadal;
+    float porcentajeLoc1;
+    float porcentajeLoc2;
+    long poblacionTotal = estado->cand1 + estado->cand2;
+    int colegioLoc1     = 0;
+    int colegioLoc2     = 0;
+    // Como esperamos un estado, el subDir es un distrito.
+    Queue* distritos = estado->subDirs;
+
+
+    // En este punto ya tenemos la cantidad de votos electorales simples que tiene un candidato
+    // falta por determinal los senatoriales.
+
+    // Si el candidato 1 tiene mas votos que el 2, los 2 votos senatoriales van pal 1
+    if (estado->cand1 >  estado->cand2){
+        colegioLoc1   += 2 + estado->subCounts;
+        porcentajeLoc1 = estado->cand1 / poblacionTotal * 100;
+        porcentajeLoc2 = 100 - porcentajeLoc1;
+    // Si el candidato 2 tiene mas votos que el 1, los 2 votos senatoriales van pal 2
+    } else if (estado->cand2 >  estado->cand1){
+        colegioLoc2   += 2 + estado->subCounts;
+        porcentajeLoc2 = estado->cand2 / poblacionTotal * 100;
+        porcentajeLoc1 = 100 - porcentajeLoc2;
+    // Si ambos tienen la misma cantidad, uno pa cada uno
+    } else {
+        perror("EMPATE WTA, QUE HAGO?");
+    }
+
+   // Llamadas a impresion.
+
+    RowData* candidato1Str = (RowData*) malloc(sizeof(RowData));
+    candidato1Str->candidato     = data->candidato1;
+    candidato1Str->colegioLoc    = colegioLoc1;
+    candidato1Str->estado        = estado->nombre;
+    candidato1Str->metodo        = "wta";
+    candidato1Str->porcentajeLoc = porcentajeLoc1;
+    
+    RowData* candidato2Str = (RowData*) malloc(sizeof(RowData));
+    candidato2Str->candidato     = data->candidato2;
+    candidato2Str->colegioLoc    = colegioLoc2;
+    candidato2Str->estado        = estado->nombre;
+    candidato2Str->metodo        = "wta";
     candidato2Str->porcentajeLoc = porcentajeLoc2;
 
 
