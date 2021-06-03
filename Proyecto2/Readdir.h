@@ -6,6 +6,7 @@
 // ----------------------
 #define MAX_LEN 256
 extern Queue* lvlListas[4];
+extern char nombre1[MAX_LEN], nombre2[MAX_LEN];
 
 // ---------------------- 
 // |      STRUCT        |
