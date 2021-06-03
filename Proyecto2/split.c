@@ -1,25 +1,14 @@
 #include "../Utils/LinkedList/LinkedList.h"
 #include "../Utils/UsefulMacros/macros.h"
 #include "../Utils/Closures/Closure.h"
+#include "Readdir.h"
+#include "Methods.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 //#include <pthread.h>
 //#include <semaphore.h>
 
-
-
-// esto lo tengo que borrar cuando kha integre el tipo
-// pero por ahora mejor tenerlo para que el coso este me detecte errores de tipos
-typedef struct Reporte{
-    char* nombre;   // El nombre del pais/estado/distrito/condado
-    int nivel;      // Niveles: [0] Pais [1] Estado [2] Distrito Electoral [3] Condado
-    long cand1;     // Cantidad de votos para el candidato 1
-    long cand2;     // Cantidad de votos para el candidato 2
-    int subCounts;  // Cantidad de estados (pais), distritos (estados) o condados (distritos) que posee el reporte 
-    Queue* subDirs; // Una cola a los reportes de estados (pais), distritos (estados) o condados (distritos).
-
-}Reporte;
 
 // Posible dummy structure, encapsula todas las cosas que necesito para hacer los calculos
 typedef struct splitData{
