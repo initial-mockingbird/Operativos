@@ -30,8 +30,11 @@ Reporte* pais;
 int main(int argc, char *argv[]){
     /*------------------------------------- Verificar argumentos -------------------------------------*/
 
-    if(argc < 2 || (argc > 2 && argc < 5)) {
+    if(argc < 2 || (argc == 3 && COMPSTR(argv[2], "-f") == 1)) {
         printf("Falta un argumento. \nPrueba --help o -h para más información.\n");
+        exit(EXIT_FAILURE);
+    } else if ((COMPSTR(argv[2], "-f") != 1 && argc > 3) || argc > 4) {
+        printf("Demasiados argumentos. \nPrueba --help o -h para más información.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -40,18 +43,20 @@ int main(int argc, char *argv[]){
         exit(EXIT_SUCCESS);
     } 
 
-    char dir[25]; 
-    char method[10] = "";
-    char file[15]   = "";
+    if(COMPSTR(argv[2], "-f") != 1 && COMPSTR(argv[2], "-FPTP") != 1 && COMPSTR(argv[2], "-WTA") != 1 && COMPSTR(argv[2], "-split") != 1 && COMPSTR(argv[2], "-dist") != 1 && COMPSTR(argv[2], "--NPIVC") != 1 && COMPSTR(argv[2], "-pop") != 1){
+        printf("Argumento invalido. \nPrueba --help o -h para más información.\n");
+        exit(EXIT_FAILURE);
+    } 
+
+    char dir[25], method[10], file[15];
     
     strcpy(dir, argv[1]);
-    strcpy(file, argv[4]);
-
-    if(COMPSTR(argv[2], "-FPTP") != 1 && COMPSTR(argv[2], "-WTA") != 1 && COMPSTR(argv[2], "-split") != 1 && COMPSTR(argv[2], "-dist") != 1 && COMPSTR(argv[2], "--NPIVC") != 1 && COMPSTR(argv[2], "-pop") != 1){
-        printf("Argumento invalido. \nPrueba --help o -h para más información.\n");
+    
+    if (COMPSTR(argv[2], "-f") == 1) {
+        strcpy(file, argv[3]);
+    } else {
+        strcpy(method, argv[2]);
     }
-
-    strcpy(method, argv[2]);
     
     /*------------------------------------- Recorrer directorios -------------------------------------*/
     // inicializando la variable extern
