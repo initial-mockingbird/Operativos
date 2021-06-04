@@ -1,41 +1,25 @@
 #include "../Utils/LinkedList/LinkedList.h"
 #include "../Utils/UsefulMacros/macros.h"
 #include "../Utils/Closures/Closure.h"
-#include "Readdir.h"
+#include "super.h"
 #include "Methods.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-//#include <pthread.h>
-//#include <semaphore.h>
+#include <pthread.h>
+#include <semaphore.h>
 
 
-// Posible dummy structure, encapsula todas las cosas que necesito para hacer los calculos
-typedef struct splitData{
-    Reporte* estadal;               // Para el modo split, basta con el reporte estadal
-    char*  candidato1;              // Nombre del candidato 1.
-    char*  candidato2;              // Nombre del candidato 2.
-    //sem_t* mutexVotosColegio;     // el mutex para poder modificar cuantos votos de COLEGIO ELECTORAL tienen los candidatos (globalmente)
-    int*   colegioGlob1;            // apuntador a la cantidad de votos del colegio electoral (global) que tiene el candidato 1.
-    int*   colegioGlob2;            // apuntador a la cantidad de votos del colegio electoral (global) que tiene el candidato 2.
-    int*   estadosFinalizados;      // apuntador a un entero que senaliza cuantos estados faltan por finalizar
+// ---------------------- 
+// |      EXTERN        |
+// ----------------------
+int pendientes;
 
-}splitData;
+// ---------------------- 
+// |      STRUCT        |
+// ----------------------
 
-// Posible dummy structure, encapsula todas las cosas que necesito para hacer los calculos
-typedef struct npvicData{
-    Reporte* pais;                  // Para el modo National Popular Vote Interstate Compact, basta con el reporte pais
-    char*  candidato1;              // Nombre del candidato 1.
-    char*  candidato2;              // Nombre del candidato 2.
-    char*  estado;                  // nombre del estado.
-    //sem_t* mutexVotosColegio;     // el mutex para poder modificar cuantos votos de COLEGIO ELECTORAL tienen los candidatos (globalmente)
-    int*   colegioGlob1;            // apuntador a la cantidad de votos del colegio electoral (global) que tiene el candidato 1.
-    int*   colegioGlob2;            // apuntador a la cantidad de votos del colegio electoral (global) que tiene el candidato 2.
-    int*   estadosFinalizados;      // apuntador a un entero que senaliza cuantos estados faltan por finalizar
-
-}npvicData;
-
-
+// Estructura con la info necesaria para imprimir 1 fila del resultado de estados.
 typedef struct RowData{
     char* candidato;     // Nombre del candidato
     char* metodo;        // Siglas del metodo con que se calculo el resultado.
@@ -44,24 +28,50 @@ typedef struct RowData{
     float porcentajeLoc; // Porcentaje de votos normales que obtuvo
 } RowData;
 
-void printHeader();
-void printRow(RowData*, RowData*);
-void split(splitData*);
-void npivc(npvicData*);
-void wta(splitData*);
+
+// ---------------------- 
+// |      FUNCTIONS     |
+// ----------------------
+
+
+/**
+ * @brief Imprime la cabecera de la tabla de resultados por estado.
+ * 
+ */
 void printHeader(){
-    printf("Nombre Candidato | Nombre Estado | Metodo Usado | Votos Colegio Electoral | Porcentaje de Votos Bruto\n");
+    printf("Nombre Candidato |    Nombre  Estado    | Metodo Usado | Votos Colegio Electoral | Porcentaje de Votos Bruto\n");
 }
 
+/**
+ * @brief Dado los resultados de dos candidatos para un estado, imprime dos filas de resultados
+ * 
+ * @param candidato1 informacion del primer  candidato
+ * @param candidato2 informacion del segundo candidato
+ */
 void printRow(RowData *candidato1, RowData *candidato2){
-    printf("%-16s | %-13s | %-12s | %23d | %25.3f \n",candidato1->candidato, candidato1->estado, candidato1->metodo, candidato1->colegioLoc, candidato1->porcentajeLoc);
-    printf("%-16s | %-13s | %-12s | %23d | %25.3f \n",candidato2->candidato, candidato2->estado, candidato2->metodo, candidato2->colegioLoc, candidato2->porcentajeLoc);
+    printf("%-16s | %-20s | %-12s | %23d | %25.3f \n",candidato1->candidato, candidato1->estado, candidato1->metodo, candidato1->colegioLoc, candidato1->porcentajeLoc);
+    printf("%-16s | %-20s | %-12s | %23d | %25.3f \n",candidato2->candidato, candidato2->estado, candidato2->metodo, candidato2->colegioLoc, candidato2->porcentajeLoc);
 }
 
+/**
+ * @brief Dada la data de un estado, calcula e imprime el resultado usnado el metodo NPIVC para ese estado, 
+ * y modifica la cantidad de votos electorales globales.
+ * 
+ * @param data Datos de un estado en especifico.
+ */
+void npivc(Data* data){
 
-void npivc(npvicData* data){
+    sem_wait(data->mutexVotosColegio);
+    pendientes--;
+    sem_post(data->mutexVotosColegio);
+    while(!(*(data->comienzo))){
+        ;
+    }
+
     // saca el % del ganador y perdedor de una por q q  fastidio.
-    float porcentajeGanador  = MAX(data->pais->cand1, data->pais->cand2) / (data->pais->cand1 + data->pais->cand2) * 100;
+    Reporte* pais   = data->rPais;
+    Reporte* estado = data->estadal;
+    float porcentajeGanador  = (float) MAX(pais->cand1, pais->cand2) / (float) (pais->cand1 + pais->cand2) * 100;
     float porcentajePerdedor = 100 - porcentajeGanador;
     int colegioLoc1     = 0;
     int colegioLoc2     = 0;
@@ -69,14 +79,14 @@ void npivc(npvicData* data){
     float porcentajeLoc2;
     
     // decide quien gana.
-    if (data->pais->cand1 > data->pais->cand2){
-        colegioLoc1 += 3;
+    if (pais->cand1 > pais->cand2){
+        colegioLoc1 += 2 + estado->subCounts;
         porcentajeLoc1 = porcentajeGanador;
         porcentajeLoc2 = porcentajePerdedor;
         
-    } else if (data->pais->cand2 > data->pais->cand1)
+    } else if (pais->cand2 > pais->cand1)
     {
-        colegioLoc2 += 3;
+        colegioLoc2   += 2 + estado->subCounts;
         porcentajeLoc2 = porcentajeGanador;
         porcentajeLoc1 = porcentajePerdedor;
     } else {
@@ -87,30 +97,34 @@ void npivc(npvicData* data){
     RowData* candidato1Str = (RowData*) malloc(sizeof(RowData));
     candidato1Str->candidato     = data->candidato1;
     candidato1Str->colegioLoc    = colegioLoc1;
-    candidato1Str->estado        = data->estado;
+    candidato1Str->estado        = estado->nombre;
     candidato1Str->metodo        = "NIPVC";
     candidato1Str->porcentajeLoc = porcentajeLoc1;
     
     RowData* candidato2Str = (RowData*) malloc(sizeof(RowData));
     candidato2Str->candidato     = data->candidato2;
     candidato2Str->colegioLoc    = colegioLoc2;
-    candidato2Str->estado        = data->estado;
+    candidato2Str->estado        = estado->nombre;
     candidato2Str->metodo        = "NIPVC";
     candidato2Str->porcentajeLoc = porcentajeLoc2;
 
     printRow(candidato1Str, candidato2Str);
 
     // Y pedir el mutex para actualizar las cosas compartidas
-    /*
     sem_wait(data->mutexVotosColegio);
     *(data->colegioGlob1) += colegioLoc1;
     *(data->colegioGlob2) += colegioLoc2;
-    (*(data->estadosFinalizados))--;
+    pendientes++;
     sem_post(data->mutexVotosColegio);
-    */
 }
 
-void split(splitData* data){
+/**
+ * @brief Dada la data de un estado, calcula e imprime el resultado usnado el metodo split para ese estado, 
+ * y modifica la cantidad de votos electorales globales.
+ * 
+ * @param data Datos de un estado en especifico.
+ */
+void split(Data* data){
     Reporte* estado = data->estadal;
     float porcentajeLoc1;
     float porcentajeLoc2;
@@ -145,12 +159,12 @@ void split(splitData* data){
     // Si el candidato 1 tiene mas votos que el 2, los 2 votos senatoriales van pal 1
     if (estado->cand1 >  estado->cand2){
         colegioLoc1 += 2;
-        porcentajeLoc1 = estado->cand1 / poblacionTotal * 100;
+        porcentajeLoc1 = (float) estado->cand1 / (float) poblacionTotal * 100;
         porcentajeLoc2 = 100 - porcentajeLoc1;
     // Si el candidato 2 tiene mas votos que el 1, los 2 votos senatoriales van pal 2
     } else if (estado->cand2 >  estado->cand1){
         colegioLoc2 += 2;
-        porcentajeLoc2 = estado->cand2 / poblacionTotal * 100;
+        porcentajeLoc2 = (float) estado->cand2 / (float) poblacionTotal * 100;
         porcentajeLoc1 = 100 - porcentajeLoc2;
     // Si ambos tienen la misma cantidad, uno pa cada uno
     } else {
@@ -180,19 +194,21 @@ void split(splitData* data){
     printRow(candidato1Str, candidato2Str);
 
     // Y pedir el mutex para actualizar las cosas compartidas
-    /*
     sem_wait(data->mutexVotosColegio);
     *(data->colegioGlob1) += colegioLoc1;
     *(data->colegioGlob2) += colegioLoc2;
-    (*(data->estadosFinalizados))--;
     sem_post(data->mutexVotosColegio);
-    */
 
 
 }
 
-
-void wta(splitData* data){
+/**
+ * @brief Dada la data de un estado, calcula e imprime el resultado usnado el metodo WTA para ese estado, 
+ * y modifica la cantidad de votos electorales globales.
+ * 
+ * @param data Datos de un estado en especifico.
+ */
+void wta(Data* data){
     Reporte* estado = data->estadal;
     float porcentajeLoc1;
     float porcentajeLoc2;
@@ -241,13 +257,10 @@ void wta(splitData* data){
     printRow(candidato1Str, candidato2Str);
 
     // Y pedir el mutex para actualizar las cosas compartidas
-    /*
     sem_wait(data->mutexVotosColegio);
     *(data->colegioGlob1) += colegioLoc1;
     *(data->colegioGlob2) += colegioLoc2;
-    (*(data->estadosFinalizados))--;
     sem_post(data->mutexVotosColegio);
-    */
 
 
 }

@@ -1,4 +1,4 @@
-#include "Readdir.h"
+/*#include "Readdir.h"
 
 
 void npvic(Reporte);
@@ -6,3 +6,4 @@ void npvic(Reporte);
 void npvic(Reporte reporte){
     
 }
+*/
