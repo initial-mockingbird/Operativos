@@ -22,8 +22,9 @@
 // ----------------------
 int colegioGlob1 = 0;
 int colegioGlob2 = 0;
-int comienzo = 0;
-int pendientes = 0;
+int comienzo     = 0;
+int pendientes   = 0;
+int empates      = 0;
 Queue* modos = NULL;
 sem_t mutexVotosColegio;
 sem_t comienzoSem;
@@ -131,6 +132,7 @@ int main(int argc, char *argv[]){
         printf("Con %d votos electorales\n",colegioGlob2);
     }
 
+    printf("\nCantidad de votos retenidos por empates: %d\n",empates);
     return EXIT_SUCCESS;
 }
 

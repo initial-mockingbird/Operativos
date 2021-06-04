@@ -15,6 +15,7 @@
 // ----------------------
 int pendientes;
 int comienzo;
+int empates;
 sem_t comienzoSem;
 // ---------------------- 
 // |      STRUCT        |
@@ -101,7 +102,9 @@ void npivc(Data* data){
         porcentajeLoc2 = porcentajeGanador;
         porcentajeLoc1 = porcentajePerdedor;
     } else {
-        perror("EMPATE A NIVEL NACIONAL, INSOLITO!");
+        sem_wait(&comienzoSem);
+        empates += 2 + estado->subCounts;
+        sem_post(&comienzoSem);
     }
     
     
@@ -159,7 +162,9 @@ void split(Data* data){
         // Si ambos candidatos tienen la MISMA cantidad de votos (lo cual es probabilisticamente imposible)
         // manda un error.
         } else {
-            perror("Lo imposible sucedio, dos distritos tienen la MISMA cantidad de votos");
+            sem_wait(&comienzoSem);
+            empates++;
+            sem_post(&comienzoSem);
         }
         distritos = tail(distritos);
     }
@@ -245,7 +250,9 @@ void wta(Data* data){
         porcentajeLoc1 = 100 - porcentajeLoc2;
     // Si ambos tienen la misma cantidad, uno pa cada uno
     } else {
-        perror("EMPATE WTA, QUE HAGO?");
+        sem_wait(&comienzoSem);
+        empates += 2 + estado->subCounts;
+        sem_post(&comienzoSem);
     }
 
    // Llamadas a impresion.

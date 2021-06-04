@@ -343,8 +343,8 @@ int readAllDir(char *fileDir, char *dirName, int level, Reporte *inRp){
     }
 
     //En caso de no poder abrir el directorio, indicar cuál e imprimir error
-    printf("%s \n", path);
-    perror("\t opendir() failed");
+    //printf("%s \n", path);
+    //perror("\t opendir() failed");
     return EXIT_FAILURE;
 }
 

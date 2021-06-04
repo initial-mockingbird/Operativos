@@ -67,5 +67,6 @@ extern sem_t comienzoSem;
 extern Queue* modos;
 extern Reporte* pais;
 extern int pendientes;
+extern int empates;
 
 #endif // SUPER_H_
