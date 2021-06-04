@@ -14,7 +14,8 @@
 // |      EXTERN        |
 // ----------------------
 int pendientes;
-
+int comienzo;
+sem_t comienzoSem;
 // ---------------------- 
 // |      STRUCT        |
 // ----------------------
@@ -64,19 +65,29 @@ void npivc(Data* data){
     sem_wait(data->mutexVotosColegio);
     pendientes--;
     sem_post(data->mutexVotosColegio);
-    while(!(*(data->comienzo))){
-        ;
+    while(1){
+        sem_wait(&comienzoSem);
+        if (comienzo){
+            sem_post(&comienzoSem);
+            break;
+        }
+        sem_post(&comienzoSem);
     }
 
+    
     // saca el % del ganador y perdedor de una por q q  fastidio.
-    Reporte* pais   = data->rPais;
-    Reporte* estado = data->estadal;
+    Reporte* pais   = (Reporte*) malloc(sizeof(Reporte));
+    pais = data->rPais;
+    Reporte* estado = (Reporte*) malloc(sizeof(Reporte));
+    estado = data->estadal;
     float porcentajeGanador  = (float) MAX(pais->cand1, pais->cand2) / (float) (pais->cand1 + pais->cand2) * 100;
+    
     float porcentajePerdedor = 100 - porcentajeGanador;
     int colegioLoc1     = 0;
     int colegioLoc2     = 0;
     float porcentajeLoc1;
     float porcentajeLoc2;
+    
     
     // decide quien gana.
     if (pais->cand1 > pais->cand2){
@@ -93,7 +104,7 @@ void npivc(Data* data){
         perror("EMPATE A NIVEL NACIONAL, INSOLITO!");
     }
     
-
+    
     RowData* candidato1Str = (RowData*) malloc(sizeof(RowData));
     candidato1Str->candidato     = data->candidato1;
     candidato1Str->colegioLoc    = colegioLoc1;

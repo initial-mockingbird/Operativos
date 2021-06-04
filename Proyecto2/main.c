@@ -23,14 +23,16 @@
 int colegioGlob1 = 0;
 int colegioGlob2 = 0;
 int comienzo = 0;
+int pendientes = 0;
 Queue* modos = NULL;
 sem_t mutexVotosColegio;
+sem_t comienzoSem;
 Reporte* pais;
 
 int main(int argc, char *argv[]){
     /*------------------------------------- Verificar argumentos -------------------------------------*/
 
-    char dir[25], method[10], file[15]; 
+    char dir[25], method[10], file[100]; 
 
     if(argc == 2) {
     
@@ -65,12 +67,11 @@ int main(int argc, char *argv[]){
             strcpy(method, argv[2]);
         }
     }
-    
-    /*------------------------------------- Recorrer directorios -------------------------------------*/
-    // inicializando la variable extern
-    int pendientes = 0;
-    Pair* pair =(Pair*) malloc(sizeof(Pair));
 
+    /*------------------------------------- Recorrer directorios -------------------------------------*/
+
+    Pair* pair =(Pair*) malloc(sizeof(Pair));
+    pais = (Reporte*) malloc(sizeof(Reporte));
     // inicializando el modo segun la opcion que el usuario proveyo
     if (!COMPSTR(method,"")){
         // cuando se provee un metodo, entonces el
@@ -94,6 +95,7 @@ int main(int argc, char *argv[]){
     }
 
     sem_init(&mutexVotosColegio,0,1);
+    sem_init(&comienzoSem,0,1);
     struct Reporte *inRp;
     char dst[MAX_LEN] = "", *path;
 
@@ -111,8 +113,12 @@ int main(int argc, char *argv[]){
 
     // DE AQUI EN ADELANTE es pura impresion
     pais = inRp;
+    sem_wait(&comienzoSem);
     comienzo = 1;
-    while(pendientes != 0);
+    sem_post(&comienzoSem);
+    while(pendientes != 0){
+        ;
+    }
 
     float porcentajeGanador  = ((float) MAX(inRp->cand1, inRp->cand2) / (float) (inRp->cand1 + inRp->cand2)) * 100;
     if (inRp->cand1 > inRp->cand2){
