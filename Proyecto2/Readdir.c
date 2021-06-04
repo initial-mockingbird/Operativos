@@ -47,6 +47,11 @@ char* concatenateStrings(char dst[], char *str1, char *str2, char *str3){
     return dst;
 }
 
+/**
+ * @brief Elimina espacios en blanco, new line, \r y \t en un string.
+ * @param str String al cual se le eliminará los espacios en blanco.
+ * @return char*
+ */
 char* trim(char *str) {
     int l = strlen(str);
 
