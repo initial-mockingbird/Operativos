@@ -19,7 +19,6 @@ sem_t comienzoSem;
 // ---------------------- 
 // |      STRUCT        |
 // ----------------------
-
 // Estructura con la info necesaria para imprimir 1 fila del resultado de estados.
 typedef struct RowData{
     char* candidato;     // Nombre del candidato
@@ -33,8 +32,6 @@ typedef struct RowData{
 // ---------------------- 
 // |      FUNCTIONS     |
 // ----------------------
-
-
 /**
  * @brief Imprime la cabecera de la tabla de resultados por estado.
  * 
@@ -283,28 +280,3 @@ void wta(Data* data){
 }
 
 
-// probando la tablita
-/*
-int main(int argc, char const *argv[])
-{
-
-    RowData* candidato1Str = (RowData*) malloc(sizeof(RowData));
-    candidato1Str->candidato     = "Trump";
-    candidato1Str->colegioLoc    = 10;
-    candidato1Str->estado        = "Alabama";
-    candidato1Str->metodo        = "split";
-    candidato1Str->porcentajeLoc = 90.32468;
-    
-    RowData* candidato2Str = (RowData*) malloc(sizeof(RowData));
-    candidato2Str->candidato     = "Biden";
-    candidato2Str->colegioLoc    = 5;
-    candidato2Str->estado        = "Alabama";
-    candidato2Str->metodo        = "split";
-    candidato2Str->porcentajeLoc = 100-90.32468;
-
-    printHeader();
-    printRow(candidato1Str, candidato2Str);
-
-    return 0;
-}
-*/

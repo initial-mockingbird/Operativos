@@ -72,7 +72,7 @@ int main(int argc, char *argv[]){
 
     Pair* pair =(Pair*) malloc(sizeof(Pair));
     pais = (Reporte*) malloc(sizeof(Reporte));
-    // inicializando el modo segun la opcion que el usuario proveyo
+    // inicializando el modo segun la opcion que el usuario introdujo
     if (!COMPSTR(method,"")){
         // cuando se provee un metodo, entonces el
         // default se convierte en el metodo
@@ -104,14 +104,12 @@ int main(int argc, char *argv[]){
     lvlListas[0] = snoc((void*) inRp, lvlListas[0]);
     //Concatenar nombre del archivo para conseguir path
     path = concatenateStrings(dst, "./", dir, "");
-    //printf("path is: %s\n",path);
-    //printf("method is: %s\n",method);
-    //printf("file is: %s\n", file);
+
     printHeader();
     //Leer directorios, subdirectorios y archivos .txt
     readAllDir(path, "", 0, inRp);
 
-    // DE AQUI EN ADELANTE es pura impresion
+    // Impresion
     pais = inRp;
     sem_wait(&comienzoSem);
     comienzo = 1;
@@ -135,43 +133,4 @@ int main(int argc, char *argv[]){
     return EXIT_SUCCESS;
 }
 
-// //Test
-// Queue *q = lvlListas[0], *k;
-// while(q){
-//     printf("Directorio: %s\n", ((Reporte *) head(q))->nombre);
-//     printf("cand1: %ld\n", ((Reporte *) head(q))->cand1);
-//     printf("subCounts: %d\n", ((Reporte *) head(q))->subCounts);
-//     k = ((Reporte *) head(q))->subDirs;
-//     while(k){
-//         printf("Subdirectorio: %s\n", ((Reporte *) head(k))->nombre);
-//         k = tail(k);
-//     }
-//     q = tail(q);
-// }
 
-// int main(int argc, char *argv[]){
-    
-//     if(argc < 2 || (argc > 2 && argc < 5)) {
-//         printf("Falta un argumento. \nPrueba --help o -h para más información.\n");
-//         exit(EXIT_FAILURE);
-//     }
-
-//     if(argc == 2 && (COMPSTR(argv[1], "-h") == 1 || COMPSTR(argv[1], "--help") == 1)) {
-//         printf(helpMessage);
-//         exit(EXIT_SUCCESS);
-//     } 
-
-//     char dir[25], method[10], file[15];
-    
-//     strcpy(dir, argv[1]);
-//     strcpy(file, argv[4]);
-
-//     if(COMPSTR(argv[2], "-FPTP") != 1 && COMPSTR(argv[2], "-WTA") != 1 && COMPSTR(argv[2], "-split") != 1 && COMPSTR(argv[2], "-dist") != 1 && COMPSTR(argv[2], "--NPIVC") != 1 && COMPSTR(argv[2], "-pop") != 1){
-//         printf("Argumento invalido. \nPrueba --help o -h para más información.\n");
-//     }
-//     strcpy(method, argv[2]);
-    
-    
-//     readAllDir("./0", "", 0);
-//     return EXIT_SUCCESS;
-// }

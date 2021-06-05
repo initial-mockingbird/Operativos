@@ -9,20 +9,16 @@
 #include <unistd.h>
 #include <stdio.h>
 
-/*
-
 // ---------------------- 
 // |      EXTERN        |
 // ----------------------
+Queue* lvlListas[4] = {NULL};
+char   nombre1[MAX_LEN], nombre2[MAX_LEN];
 
-int colegioGlob1 = 0;
-int colegioGlob2 = 0;
-int comienzo = 0;
-Queue* modos = NULL;
-sem_t mutexVotosColegio;
-Reporte* pais;
-*/
-
+// ---------------------- 
+// |      GLOBAL        |
+// ----------------------
+int    flag = 0;
 
 // ---------------------- 
 // |      MACROS        |
@@ -59,11 +55,6 @@ Reporte* pais;
  * 
  */
 #define DEFAULT 0
-
-
-Queue* lvlListas[4] = {NULL};
-char   nombre1[MAX_LEN], nombre2[MAX_LEN];
-int    flag = 0;
 
 // ---------------------- 
 // |    AUX FUNCTIONS   |
@@ -310,29 +301,26 @@ int readAllDir(char *fileDir, char *dirName, int level, Reporte *inRp){
                 // Luego, si la tabla de lookup que asocia estados con
                 // metodos esta vacia, entonces usamos el metodo WTA
                 // esto NUNCA deberia ocurrir ya que en main se asegura que tenga
-                // POR LO MENOS el default, cuando se logre correr el main bien vemos si
-                // explota quitando esto.
+                // POR LO MENOS el default
                 if (lookup == NULL){
                     pthread_create(&thread, NULL, wta, (void*) data);
                 }
-                // si no esta vacia, iteramos buscando el estado
+                // Si no esta vacia, iteramos buscando el estado
                 while(lookup){
-                    // si encontramos el estado, o llegamos a default, matcheamos el codigo y ejecutamos
-                    // la funcion necesaria.
                     if (COMPSTR(((Pair*) head(lookup))->fst,outRp->nombre) || COMPSTR(((Pair*) head(lookup))->fst,"default")){
                         switch ( ( (Pair*) head(lookup) )->snd) 
                         {
-                        case WTA:
-                            pthread_create(&thread, NULL, wta, (void*) data);
-                            break;
-                        case SPLIT:
-                            pthread_create(&thread, NULL, split, (void*) data);
-                            break;
-                        case NPIVC:
-                            pthread_create(&thread, NULL, npivc, (void*) data);
-                            break;
-                        default:
-                            break;
+                            case WTA:
+                                pthread_create(&thread, NULL, wta, (void*) data);
+                                break;
+                            case SPLIT:
+                                pthread_create(&thread, NULL, split, (void*) data);
+                                break;
+                            case NPIVC:
+                                pthread_create(&thread, NULL, npivc, (void*) data);
+                                break;
+                            default:
+                                break;
                         }
                     }
                     // Si no encontramos el estado, seguimos.
@@ -354,7 +342,6 @@ int readAllDir(char *fileDir, char *dirName, int level, Reporte *inRp){
 
 /**
  * @brief Lee el archivo en donde se especifica el modo de los estados, y los carga en modos.
- * 
  * @param path path relativo (o absoluto?) al archivo de lectura. 
  */
 void lecturaModo(char* path){
@@ -394,37 +381,6 @@ void lecturaModo(char* path){
     fclose(fp);
 }
 
-/*
-int main(int argc, char const *argv[])
-{
-    int pendientes = 0;
-    lecturaModo("./2020presidential/method.txt");
-    
-    sem_init(&mutexVotosColegio,0,1);
-    struct Reporte *inRp;
-    //Inicializar reporte que representa al país
-    inRp = initReport("Pais", 0);
-    lvlListas[0] = snoc((void*) inRp, lvlListas[0]);
 
-    //Leer directorios, subdirectorios y archivos .txt
-    printHeader();
-    readAllDir("./2020presidential", "", 0, inRp);
-    pais = inRp;
-    comienzo = 1;
-    while(pendientes != 0);
-
-    float porcentajeGanador  = ((float) MAX(inRp->cand1, inRp->cand2) / (float) (inRp->cand1 + inRp->cand2)) * 100;
-    if (inRp->cand1 > inRp->cand2){
-        printf("\nEl ganador es: %s\n", nombre1);
-        printf("Porcentaje de votos brutos: %.3f\n",porcentajeGanador);
-        printf("Con %d votos electorales\n",colegioGlob1);
-    } else {
-        printf("\nEl ganador es: %s\n",nombre2);
-        printf("Porcentaje de votos brutos: %.3f\n",porcentajeGanador);
-        printf("Con %d votos electorales\n",colegioGlob2);
-    }
-    return 0;
-}
-*/
 
 
