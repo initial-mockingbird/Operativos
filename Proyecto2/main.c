@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
         }
 
-        if(COMPSTR(argv[2], "-f") != 1 && COMPSTR(argv[2], "-FPTP") != 1 && COMPSTR(argv[2], "-WTA") != 1 && COMPSTR(argv[2], "-split") != 1 && COMPSTR(argv[2], "-dist") != 1 && COMPSTR(argv[2], "--NPIVC") != 1 && COMPSTR(argv[2], "-pop") != 1){
+        if(COMPSTR(argv[2], "-f") != 1 && COMPSTR(argv[2], "-FPTP") != 1 && COMPSTR(argv[2], "-WTA") != 1 && COMPSTR(argv[2], "-split") != 1 && COMPSTR(argv[2], "-dist") != 1 && COMPSTR(argv[2], "-NPVIC") != 1 && COMPSTR(argv[2], "-pop") != 1){
             printf("Argumento invalido. \nPrueba --help o -h para más información.\n");
             exit(EXIT_FAILURE);
         }
