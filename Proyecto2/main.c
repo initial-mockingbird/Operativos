@@ -3,7 +3,6 @@
 #include "../Utils/Closures/Closure.h"
 #include "super.h"
 #include "Readdir.h"
-#include "Methods.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

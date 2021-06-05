@@ -2,7 +2,6 @@
 #include "../Utils/UsefulMacros/macros.h"
 #include "../Utils/Closures/Closure.h"
 #include "super.h"
-#include "Methods.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

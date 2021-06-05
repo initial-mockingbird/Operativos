@@ -3,7 +3,6 @@
 #include "../Utils/Closures/Closure.h"
 #include "super.h"
 #include "Readdir.h"
-#include "Methods.h"
 #include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
@@ -222,7 +221,7 @@ int getVotes(char *str){
  */
 Reporte* readFile(char *fileDir, char *dirName, Reporte *outRP){
     //Si no es un archivo .txt return 
-    if( checkTXT(dirName) < 1 ) return;
+    if( checkTXT(dirName) < 1 ) return outRP;
 
     FILE *fp;
     char linebuf[MAX_LEN], *path;

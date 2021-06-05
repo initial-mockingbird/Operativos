@@ -56,13 +56,13 @@ clean:
 $(PROGRAMA): $(OBJETOS)
 	$(LINKEAR) $(OBJETOS) -o $(PROGRAMA) -lm -lpthread
 
-$(OBJDIR)/main.o: main.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h Methods.h
+$(OBJDIR)/main.o: main.c $(OBJDIR) ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h super.h
 	$(COMPILAR) main.c -o $(OBJDIR)/main.o
 
-$(OBJDIR)/Readdir.o: Readdir.c $(OBJDIR) ../Utils/LinkedList/LinkedList.c ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h 
+$(OBJDIR)/Readdir.o: Readdir.c $(OBJDIR) ../Utils/LinkedList/LinkedList.c ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h super.h 
 	$(COMPILAR) Readdir.c -o $(OBJDIR)/Readdir.o 
 
-$(OBJDIR)/split.o: split.c $(OBJDIR) ../Utils/LinkedList/LinkedList.c ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h Methods.h
+$(OBJDIR)/split.o: split.c $(OBJDIR) ../Utils/LinkedList/LinkedList.c ../Utils/LinkedList/LinkedList.h ../Utils/Closures/Closure.h ../Utils/UsefulMacros/macros.h Readdir.h super.h
 	$(COMPILAR) split.c -o $(OBJDIR)/split.o 
 
 $(OBJDIR)/LinkedList.o: ../Utils/LinkedList/LinkedList.c $(OBJDIR) ../Utils/Closures/Closure.h ../Utils/LinkedList/LinkedList.h
