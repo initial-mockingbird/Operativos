@@ -13,7 +13,7 @@
                     "[-method] es uno de los siguientes flags\n"\
                     "\t-FPTP, -WTA indicando que en todos los Estados deben asignarse los votos electorales al candidato con mayoría simple en el Estado\n"\
                     "\t-split, -dist indicando que el voto correspondiente a cada Distrito Electoral debe asignarse al candidato que obtenga mayoría simple\n"\
-                    "\t--NPIVC, -pop indicando que los votos del Colegio Electoral deben asignarse al candidato que obtenga mayoría simple a nivel nacional\n"\
+                    "\t--NPVIC, -pop indicando que los votos del Colegio Electoral deben asignarse al candidato que obtenga mayoría simple a nivel nacional\n"\
                     "-h, --help muestra esta ayuda y finaliza\n"
 
 // ---------------------- 
